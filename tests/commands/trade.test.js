@@ -236,3 +236,56 @@ describe(`/trade item resolvers`, () => {
         expect(empty).to.equal(null)
     })
 })
+
+describe(`/trade fetchTradeableInventory`, () => {
+
+    function clientWith(inventory) {
+        return {
+            db: {
+                userUtils: { async getUserInventory() { return inventory } }
+            }
+        }
+    }
+
+    it(`returns rows that are tradeable, dropping bound, in_use, and zero-qty lines`, async () => {
+        const client = clientWith([
+            { item_id: 100, name: `Apple`, quantity: 5, in_use: 0, bind: `y` },           //  ok
+            { item_id: 101, name: `Bound`, quantity: 5, in_use: 0, bind: `n` },           //  bound
+            { item_id: 102, name: `Empty`, quantity: 0, in_use: 0, bind: `y` },           //  zero qty
+            { item_id: 103, name: `Active`, quantity: 1, in_use: 1, bind: `y` },          //  in use
+            { item_id: 104, name: `Legacy`, quantity: 1, in_use: 0, bind: null },         //  no bind metadata
+        ])
+        const result = await tradeCommand.fetchTradeableInventory(client, `g1`, `userA`)
+        const ids = result.map(r => r.item_id)
+        expect(ids).to.deep.equal([100])
+    })
+
+    it(`drops the excluded line items (artcoins, fragments, lucky tickets) regardless of bind`, async () => {
+        const client = clientWith([
+            { item_id: 52, name: `Artcoins`, quantity: 9999, in_use: 0, bind: `y` },
+            { item_id: 51, name: `Fragments`, quantity: 200, in_use: 0, bind: `y` },
+            { item_id: 71, name: `LuckyTicket`, quantity: 5, in_use: 0, bind: `y` },
+            { item_id: 200, name: `Pear`, quantity: 3, in_use: 0, bind: `y` },
+        ])
+        const result = await tradeCommand.fetchTradeableInventory(client, `g1`, `userA`)
+        expect(result.map(r => r.item_id)).to.deep.equal([200])
+    })
+
+    it(`scopes custom items by owned_by_guild_id`, async () => {
+        const client = clientWith([
+            { item_id: 300, name: `Local`, quantity: 1, in_use: 0, bind: `y`, owned_by_guild_id: `g1` },
+            { item_id: 301, name: `Foreign`, quantity: 1, in_use: 0, bind: `y`, owned_by_guild_id: `g2` },
+            { item_id: 302, name: `Global`, quantity: 1, in_use: 0, bind: `y`, owned_by_guild_id: null }
+        ])
+        const result = await tradeCommand.fetchTradeableInventory(client, `g1`, `userA`)
+        expect(result.map(r => r.item_id).sort()).to.deep.equal([300, 302])
+    })
+})
+
+describe(`/trade truncate`, () => {
+    it(`leaves short strings alone and ellipsises overflowing ones`, () => {
+        expect(tradeCommand.truncate(`abc`, 10)).to.equal(`abc`)
+        expect(tradeCommand.truncate(`abcdefghij`, 10)).to.equal(`abcdefghij`)
+        expect(tradeCommand.truncate(`abcdefghijk`, 10)).to.equal(`abcdefghi…`)
+    })
+})

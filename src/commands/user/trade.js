@@ -10,13 +10,14 @@ const {
     TextInputBuilder,
     TextInputStyle,
     EmbedBuilder,
+    StringSelectMenuBuilder,
     ComponentType,
     MessageFlags
 } = require(`discord.js`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
 const trueInt = require(`../../utils/trueInt`)
-const { TradeSession, TradeError, STATE, ARTCOINS_ITEM_ID } = require(`../../libs/trade`)
+const { TradeSession, TradeError, STATE, ARTCOINS_ITEM_ID, NON_LINE_ITEM_IDS } = require(`../../libs/trade`)
 const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 
 /**
@@ -334,12 +335,50 @@ module.exports = {
                         }
 
                         case `trade:add`: {
-                            const modalId = `trade:add:${i.id}`
-                            const itemInput = new TextInputBuilder()
-                                .setCustomId(`item`)
-                                .setLabel(locale(`TRADE.ADD_MODAL_ITEM_LABEL`))
-                                .setStyle(TextInputStyle.Short)
-                                .setRequired(true)
+                            //  Two-step flow: select item from inventory, then
+                            //  modal for qty. A single modal can't host a
+                            //  select menu (Discord limitation), so the
+                            //  ephemeral select runs first.
+                            const ownerId = side === `a` ? initiator.id : target.id
+                            const candidates = await this.fetchTradeableInventory(client, messageRef.guild.id, ownerId)
+                            if (!candidates.length) {
+                                return i.reply({
+                                    content: locale(`TRADE.ADD_NO_TRADEABLE_ITEMS`),
+                                    flags: MessageFlags.Ephemeral
+                                })
+                            }
+                            const selectId = `trade:add:select:${i.id}`
+                            const select = new StringSelectMenuBuilder()
+                                .setCustomId(selectId)
+                                .setPlaceholder(locale(`TRADE.ADD_SELECT_PLACEHOLDER`))
+                                .addOptions(candidates.slice(0, 25).map(c => ({
+                                    label: this.truncate(c.name, 100),
+                                    description: this.truncate(`Owned: ${c.quantity}`, 100),
+                                    value: String(c.item_id)
+                                })))
+                            await i.reply({
+                                content: locale(`TRADE.ADD_SELECT_PROMPT`),
+                                components: [new ActionRowBuilder().addComponents(select)],
+                                flags: MessageFlags.Ephemeral
+                            })
+                            collector.resetTimer()
+                            const selectInteraction = await i.fetchReply().then(reply => reply.awaitMessageComponent({
+                                componentType: ComponentType.StringSelect,
+                                filter: s => s.customId === selectId && s.user.id === i.user.id,
+                                time: 60 * 1000
+                            })).catch(() => null)
+                            if (!selectInteraction) {
+                                await i.editReply({
+                                    content: locale(`TRADE.ADD_SELECT_TIMEOUT`),
+                                    components: []
+                                }).catch(() => {})
+                                return
+                            }
+                            const chosenItemId = parseInt(selectInteraction.values[0], 10)
+                            const chosen = candidates.find(c => Number(c.item_id) === chosenItemId)
+                            //  Now the qty modal — has to be shown from the
+                            //  select interaction, not the original button click.
+                            const modalId = `trade:add:qty:${selectInteraction.id}`
                             const qtyInput = new TextInputBuilder()
                                 .setCustomId(`qty`)
                                 .setLabel(locale(`TRADE.ADD_MODAL_QTY_LABEL`))
@@ -347,43 +386,37 @@ module.exports = {
                                 .setRequired(true)
                             const modal = new ModalBuilder()
                                 .setCustomId(modalId)
-                                .setTitle(locale(`TRADE.ADD_MODAL_TITLE`))
-                                .addComponents(
-                                    new ActionRowBuilder().addComponents(itemInput),
-                                    new ActionRowBuilder().addComponents(qtyInput)
-                                )
-                            await i.showModal(modal)
+                                .setTitle(this.truncate(`${locale(`TRADE.ADD_QTY_MODAL_TITLE`)} — ${chosen.name}`, 45))
+                                .addComponents(new ActionRowBuilder().addComponents(qtyInput))
+                            await selectInteraction.showModal(modal)
                             collector.resetTimer()
-                            const submission = await i.awaitModalSubmit({
+                            const submission = await selectInteraction.awaitModalSubmit({
                                 time: 60 * 1000,
                                 filter: s => s.customId === modalId
                             }).catch(() => null)
-                            if (!submission) return
-                            const itemKeyword = submission.fields.getTextInputValue(`item`).trim()
+                            if (!submission) {
+                                await i.editReply({ content: locale(`TRADE.ADD_SELECT_TIMEOUT`), components: [] }).catch(() => {})
+                                return
+                            }
                             const rawQty = submission.fields.getTextInputValue(`qty`).trim()
                             const qty = trueInt(rawQty)
                             if (!qty || qty <= 0) {
                                 await submission.reply({ content: locale(`TRADE.QTY_INVALID`), flags: MessageFlags.Ephemeral })
                                 return
                             }
-                            const resolved = await this.resolveItemForUser(client, messageRef.guild.id, side === `a` ? initiator.id : target.id, itemKeyword)
-                            if (!resolved) {
-                                await submission.reply({ content: locale(`TRADE.ITEM_NOT_FOUND`), flags: MessageFlags.Ephemeral })
-                                return
-                            }
                             try {
-                                await session.addItem(side, { itemId: resolved.item_id, qty })
+                                await session.addItem(side, { itemId: chosen.item_id, qty })
                             } catch (err) {
                                 if (err instanceof TradeError) {
                                     const code = err.code
                                     if (code === `ITEM_NOT_TRADEABLE`) {
-                                        await submission.reply({ content: locale(`TRADE.ITEM_NOT_TRADEABLE`).replace(`{{item}}`, resolved.name), flags: MessageFlags.Ephemeral })
+                                        await submission.reply({ content: locale(`TRADE.ITEM_NOT_TRADEABLE`).replace(`{{item}}`, chosen.name), flags: MessageFlags.Ephemeral })
                                     } else if (code === `INSUFFICIENT_ITEM`) {
                                         await submission.reply({
                                             content: locale(`TRADE.INSUFFICIENT_ITEM`)
                                                 .replace(`{{user}}`, side === `a` ? initiator.username : target.username)
                                                 .replace(`{{qty}}`, qty)
-                                                .replace(`{{item}}`, resolved.name),
+                                                .replace(`{{item}}`, chosen.name),
                                             flags: MessageFlags.Ephemeral
                                         })
                                     } else {
@@ -394,6 +427,9 @@ module.exports = {
                                 throw err
                             }
                             await submission.deferUpdate().catch(() => {})
+                            //  Tidy the ephemeral select prompt so it doesn't
+                            //  hang around once the qty has landed.
+                            await i.editReply({ content: locale(`TRADE.OFFER_LINE`).replace(`{{qty}}`, qty).replace(`{{item}}`, chosen.name), components: [] }).catch(() => {})
                             return await refreshUi()
                         }
 
@@ -466,6 +502,50 @@ module.exports = {
                 resolve()
             })
         })
+    },
+
+    /**
+     * Walk the user's inventory once, return only the entries that are
+     * actually addable to a trade offer: positive quantity, not in_use, has
+     * a row in `items` with bind starting with "y", and the item id is not
+     * one of the excluded line items (artcoins / fragments / lucky_ticket).
+     *
+     * Capped at 25 because that's the hard ceiling for `StringSelectMenu`
+     * options. If a future install has more than 25 tradeable items per
+     * user, we'll need pagination on the select; today this is well within
+     * what any guild has.
+     *
+     * @param {object} client
+     * @param {string} guildId
+     * @param {string} userId
+     * @return {Promise<object[]>} candidate item rows (id + name + quantity)
+     */
+    async fetchTradeableInventory(client, guildId, userId) {
+        const inventory = await client.db.userUtils.getUserInventory(userId, guildId)
+        if (!inventory || !inventory.length) return []
+        return inventory.filter(row => {
+            if (!row || row.quantity == null || row.quantity <= 0) return false
+            if (row.in_use && Number(row.in_use) === 1) return false
+            if (NON_LINE_ITEM_IDS.has(Number(row.item_id))) return false
+            const bind = typeof row.bind === `string` ? row.bind.toLowerCase() : ``
+            if (!bind.startsWith(`y`)) return false
+            //  Custom-item scope: items owned by another guild are not
+            //  tradeable here. NULL owned_by_guild_id is a global item and
+            //  passes.
+            if (row.owned_by_guild_id && String(row.owned_by_guild_id) !== String(guildId)) return false
+            return true
+        })
+    },
+
+    /**
+     * Trim a label to Discord's component limits without throwing on shorter
+     * input. We use the same helper for select option labels (100), select
+     * descriptions (100), and modal titles (45).
+     */
+    truncate(str = ``, max = 100) {
+        const s = String(str)
+        if (s.length <= max) return s
+        return `${s.slice(0, Math.max(0, max - 1))}…`
     },
 
     /**
