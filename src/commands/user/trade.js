@@ -376,34 +376,36 @@ module.exports = {
                             }
                             const chosenItemId = parseInt(selectInteraction.values[0], 10)
                             const chosen = candidates.find(c => Number(c.item_id) === chosenItemId)
-                            //  Now the qty modal — has to be shown from the
-                            //  select interaction, not the original button click.
-                            const modalId = `trade:add:qty:${selectInteraction.id}`
-                            const qtyInput = new TextInputBuilder()
-                                .setCustomId(`qty`)
-                                .setLabel(locale(`TRADE.ADD_MODAL_QTY_LABEL`))
-                                .setStyle(TextInputStyle.Short)
-                                .setRequired(true)
-                            const modal = new ModalBuilder()
-                                .setCustomId(modalId)
-                                .setTitle(this.truncate(`${locale(`TRADE.ADD_QTY_MODAL_TITLE`)} — ${chosen.name}`, 45))
-                                .addComponents(new ActionRowBuilder().addComponents(qtyInput))
-                            await selectInteraction.showModal(modal)
-                            collector.resetTimer()
-                            const submission = await selectInteraction.awaitModalSubmit({
-                                time: 60 * 1000,
-                                filter: s => s.customId === modalId
-                            }).catch(() => null)
-                            if (!submission) {
+                            const owned = Number(chosen.quantity) || 0
+                            //  Subtract whatever this side has already offered
+                            //  for this item — that's the real ceiling we need
+                            //  to enforce, not the raw inventory count.
+                            const alreadyOffered = (session.snapshot().offers[side].items.find(l => Number(l.itemId) === chosenItemId) || { qty: 0 }).qty
+                            const maxAddable = owned - alreadyOffered
+
+                            //  Loop the qty modal up to 3 attempts. Each invalid
+                            //  attempt re-shows a modal with the failure inline
+                            //  in the title — Discord modals can't carry an
+                            //  arbitrary banner, but the title is dynamic and is
+                            //  the most visible thing the user reads. The
+                            //  text-input label also surfaces the owned count
+                            //  so the answer is right in front of them.
+                            const qtyResult = await this.collectAddQuantity({
+                                anchorInteraction: selectInteraction,
+                                locale,
+                                chosen,
+                                maxAddable,
+                                collector
+                            })
+                            if (qtyResult.timeout) {
                                 await i.editReply({ content: locale(`TRADE.ADD_SELECT_TIMEOUT`), components: [] }).catch(() => {})
                                 return
                             }
-                            const rawQty = submission.fields.getTextInputValue(`qty`).trim()
-                            const qty = trueInt(rawQty)
-                            if (!qty || qty <= 0) {
-                                await submission.reply({ content: locale(`TRADE.QTY_INVALID`), flags: MessageFlags.Ephemeral })
+                            if (qtyResult.aborted) {
+                                await i.editReply({ content: locale(`TRADE.ADD_TOO_MANY_RETRIES`), components: [] }).catch(() => {})
                                 return
                             }
+                            const { submission, qty } = qtyResult
                             try {
                                 await session.addItem(side, { itemId: chosen.item_id, qty })
                             } catch (err) {
@@ -502,6 +504,79 @@ module.exports = {
                 resolve()
             })
         })
+    },
+
+    /**
+     * Drive the qty-input loop for the Add flow. Each invalid attempt
+     * re-shows a modal with the failure inline in the title. Caps at
+     * `maxAttempts` to avoid an unbounded loop if the user keeps
+     * submitting garbage.
+     *
+     * The modal title is the only piece of dynamic surface a Discord
+     * modal exposes after submit — Discord doesn't let us repaint the
+     * label of a TextInputBuilder mid-flow because the modal is
+     * re-rendered fresh on every showModal call. So we encode "your
+     * last attempt was invalid because X" into the title and re-stamp
+     * the input's label with the same owned count.
+     *
+     * Resolves to one of:
+     *   { submission, qty }            valid; caller may proceed
+     *   { timeout: true }              the user closed the modal / 60s elapsed
+     *   { aborted: true }              maxAttempts exhausted with bad input
+     *
+     * @param {object} params
+     * @param {import('discord.js').Interaction} params.anchorInteraction
+     *   The interaction we showModal off of for the first attempt.
+     * @param {Function} params.locale
+     * @param {object} params.chosen   `{ item_id, name, quantity }`
+     * @param {number} params.maxAddable Hard ceiling: owned minus already-offered.
+     * @param {object} params.collector Parent button collector (we reset its idle timer).
+     * @param {number} [params.maxAttempts=3]
+     */
+    async collectAddQuantity({ anchorInteraction, locale, chosen, maxAddable, collector, maxAttempts = 3 }) {
+        let nextInteraction = anchorInteraction
+        let attempt = 0
+        while (attempt < maxAttempts) {
+            attempt++
+            const titleBase = `${locale(`TRADE.ADD_QTY_MODAL_TITLE`)} — ${chosen.name}`
+            const title = attempt > 1
+                //  Mirrors the previous failure into the modal title so the
+                //  user sees why their last attempt was rejected.
+                ? `${titleBase} · ${this.lastQtyErrorLabel}`
+                : titleBase
+            const modalId = `trade:add:qty:${nextInteraction.id}`
+            const qtyInput = new TextInputBuilder()
+                .setCustomId(`qty`)
+                .setLabel(this.truncate(locale(`TRADE.ADD_QTY_LABEL_WITH_OWNED`).replace(`{{owned}}`, maxAddable), 45))
+                .setPlaceholder(this.truncate(locale(`TRADE.ADD_QTY_PLACEHOLDER`).replace(`{{max}}`, maxAddable), 100))
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true)
+            const modal = new ModalBuilder()
+                .setCustomId(modalId)
+                .setTitle(this.truncate(title, 45))
+                .addComponents(new ActionRowBuilder().addComponents(qtyInput))
+            await nextInteraction.showModal(modal)
+            if (collector) collector.resetTimer()
+            const submission = await nextInteraction.awaitModalSubmit({
+                time: 60 * 1000,
+                filter: s => s.customId === modalId
+            }).catch(() => null)
+            if (!submission) return { timeout: true }
+            const raw = submission.fields.getTextInputValue(`qty`).trim()
+            const qty = trueInt(raw)
+            if (!qty || qty <= 0) {
+                this.lastQtyErrorLabel = locale(`TRADE.ADD_QTY_ERROR_INVALID`)
+                nextInteraction = submission
+                continue
+            }
+            if (qty > maxAddable) {
+                this.lastQtyErrorLabel = locale(`TRADE.ADD_QTY_ERROR_TOO_MANY`).replace(`{{max}}`, maxAddable)
+                nextInteraction = submission
+                continue
+            }
+            return { submission, qty }
+        }
+        return { aborted: true }
     },
 
     /**
