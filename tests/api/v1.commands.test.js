@@ -65,6 +65,33 @@ function buildFixtureTree() {
         }
     `)
 
+    //  Developer-tier command (permissionLevel 4). Must be excluded from
+    //  the API response — exposing dev tooling defeats the purpose of the
+    //  guard and risks leaking internal command names.
+    fs.writeFileSync(path.join(settingDir, `bdfRefreshStats.js`), `
+        "use strict"
+        module.exports = {
+            name: \`bdfrefreshstats\`,
+            description: \`Force-refresh dev stats\`,
+            permissionLevel: 4,
+            applicationCommand: true,
+            execute() {}
+        }
+    `)
+
+    //  Administrator-tier command (permissionLevel 3). Must still surface,
+    //  since 3 is the highest tier we are willing to expose.
+    fs.writeFileSync(path.join(settingDir, `setRank.js`), `
+        "use strict"
+        module.exports = {
+            name: \`setrank\`,
+            description: \`Configure rank roles\`,
+            permissionLevel: 3,
+            applicationCommand: true,
+            execute() {}
+        }
+    `)
+
     //  Non-js file in a category — must be ignored.
     fs.writeFileSync(path.join(settingDir, `README.md`), `not a command`)
 
@@ -75,7 +102,7 @@ describe(`api/v1 listCommands`, () => {
     it(`keys results by file basename without the extension`, () => {
         const root = buildFixtureTree()
         const commands = listCommands(root)
-        expect(Object.keys(commands).sort()).to.deep.equal([`pay`, `sellFragments`])
+        expect(Object.keys(commands).sort()).to.deep.equal([`pay`, `sellFragments`, `setRank`])
         //  `sellFragments` has `name: 'sellfragments'` but the key is the
         //  file basename, not the declared name.
         expect(commands.sellFragments.name).to.equal(`sellfragments`)
@@ -115,8 +142,19 @@ describe(`api/v1 listCommands`, () => {
         const root = buildFixtureTree()
         const commands = listCommands(root)
         expect(commands).to.not.have.property(`legacy`)
-        //  The README.md sat next to legacy.js — neither should appear.
-        expect(Object.keys(commands)).to.have.lengthOf(2)
+        //  pay + sellFragments + setRank survive; legacy, bdfRefreshStats,
+        //  and the README are filtered out.
+        expect(Object.keys(commands)).to.have.lengthOf(3)
+    })
+
+    it(`drops commands above the administrator permission tier`, () => {
+        const root = buildFixtureTree()
+        const commands = listCommands(root)
+        //  Developer-tier (level 4) command must not appear — that's the
+        //  whole point of the guard. Admin-tier (level 3) is allowed.
+        expect(commands).to.not.have.property(`bdfRefreshStats`)
+        expect(commands).to.have.property(`setRank`)
+        expect(commands.setRank.permissionLevel).to.equal(3)
     })
 })
 

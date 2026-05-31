@@ -14,6 +14,15 @@ const path = require(`path`)
 const FORCED_OMIT = new Set([`execute`, `Iexecute`, `run`])
 
 /**
+ * Highest permission level the API is willing to expose. Commands gated above
+ * this threshold (currently `4` = Developer per `src/config/permissions.js`)
+ * are dropped before serialization so internal/dev-only tooling does not leak
+ * through the public surface. Adjust this constant — not the route — if the
+ * permission tiers ever shift.
+ */
+const MAX_EXPOSED_PERMISSION_LEVEL = 3
+
+/**
  * Walk the on-disk command directory and return a `{ filename: metadata }`
  * map. The key is the file basename without the `.js` extension (matches the
  * way the bot itself addresses files), which is *not* always the same as
@@ -47,6 +56,12 @@ function listCommands(commandsDir) {
             if (!src || typeof src !== `object`) continue
             //  Mirror the loader's deprecation gate.
             if (Object.prototype.hasOwnProperty.call(src, `help`)) continue
+            //  Skip developer-tier commands. `permissionLevel` of `4` is the
+            //  Developer tier; we treat anything above the public-admin
+            //  threshold as internal and never expose its metadata. Commands
+            //  that omit `permissionLevel` default to `0` (User) and pass.
+            const declaredLevel = typeof src.permissionLevel === `number` ? src.permissionLevel : 0
+            if (declaredLevel > MAX_EXPOSED_PERMISSION_LEVEL) continue
             const metadata = {}
             for (const key of Object.keys(src)) {
                 if (FORCED_OMIT.has(key)) continue
