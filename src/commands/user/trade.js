@@ -198,6 +198,13 @@ module.exports = {
             session.cancel(`render_failed`)
             return
         }
+        //  Pin the "double-check before Ready" reminder right under the
+        //  trade window so users see it before they start adding items.
+        //  Reads more naturally as a follow-up than as part of the main
+        //  embed footer, where it tends to get ignored.
+        await reply.send(locale(`TRADE.ACTIVE_HINT_FOLLOWUP`), {
+            socket: { emoji: await client.getEmoji(`692428692999241771`) }
+        }).catch(() => {})
 
         const collector = tradeMessage.createMessageComponentCollector({
             componentType: ComponentType.Button,
@@ -276,9 +283,21 @@ module.exports = {
                                 const result = await session.execute()
                                 clearFinalTimer()
                                 if (result.ok) {
-                                    return await finishWith(`TRADE.EXEC_SUCCESS`, {
-                                        socket: { tradeId: result.tradeId }
+                                    await finishWith(`TRADE.EXEC_SUCCESS`, {
+                                        socket: {
+                                            a: initiator.username,
+                                            b: target.username,
+                                            emoji: await client.getEmoji(`692428692999241771`)
+                                        }
                                     })
+                                    //  Quick follow-up nudging the user
+                                    //  toward /tradehistory. Sent after
+                                    //  finishWith so it lands below the
+                                    //  success line in the channel.
+                                    await reply.send(locale(`TRADE.EXEC_SUCCESS_FOLLOWUP`), {
+                                        socket: { emoji: await client.getEmoji(`692428692999241771`) }
+                                    }).catch(() => {})
+                                    return
                                 }
                                 if (result.code === `INSUFFICIENT_ITEM` || result.code === `INSUFFICIENT_ARTCOINS`) {
                                     //  Whoever's debit failed is in `result.detail`;
@@ -745,7 +764,15 @@ module.exports = {
                 const name = row && row.name ? row.name : `#${line.itemId}`
                 lines.push(locale(`TRADE.OFFER_LINE`).replace(`{{qty}}`, line.qty).replace(`{{item}}`, name))
             }
-            const itemsBlock = lines.length ? lines.join(`\n`) : locale(`TRADE.OFFER_EMPTY`)
+            //  Hide the "(no items)" placeholder when artcoins are offered —
+            //  the AC line carries weight on its own and the placeholder
+            //  reads as wrong then. Only when both items AND artcoins are
+            //  empty do we explicitly say "(no items)".
+            const acAmount = Number(offer.artcoins) || 0
+            let itemsBlock
+            if (lines.length) itemsBlock = lines.join(`\n`)
+            else if (acAmount > 0) itemsBlock = ``
+            else itemsBlock = locale(`TRADE.OFFER_EMPTY`)
             const acBlock = locale(`TRADE.OFFER_ARTCOINS`)
                 .replace(`{{emoji}}`, acEmoji)
                 .replace(`{{amount}}`, commanifier(offer.artcoins))
