@@ -66,6 +66,7 @@ class Database {
 		this.shop = new Shop(this)
 		this.covers = new Covers(this)
 		this.relationships = new Relationships(this)
+		this.trades = new Trades(this)
 	}
 
 	/**
@@ -2719,11 +2720,87 @@ class Quests extends DatabaseUtils {
 		)
 	}
 }
+
+class Trades extends DatabaseUtils {
+	constructor (client) {
+		super(client)
+		this.fnClass = `Trades`
+	}
+
+	/**
+	 * Append one row to `user_trade_log`. Called from inside a `transaction`
+	 * for committed trades (so a log-write failure rolls the trade back),
+	 * and best-effort outside the transaction for failed/cancelled trades.
+	 *
+	 * @param {object} params
+	 * @param {string} params.guildId
+	 * @param {string} params.userAId
+	 * @param {string} params.userBId
+	 * @param {object} params.aOffer  `{ items: [{itemId, qty}], artcoins: N }`
+	 * @param {object} params.bOffer
+	 * @param {('committed'|'cancelled'|'failed')} params.status
+	 * @param {string} [params.failureReason]
+	 * @return {Promise<{tradeId:number}|null>} the new row's id when available
+	 */
+	async recordTradeLog({ guildId, userAId, userBId, aOffer, bOffer, status, failureReason = null } = {}) {
+		const fn = this.formatFunctionLog(`recordTradeLog`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!userAId) throw new TypeError(`${fn} parameter "userAId" cannot be blank.`)
+		if (!userBId) throw new TypeError(`${fn} parameter "userBId" cannot be blank.`)
+		if (!aOffer || !bOffer) throw new TypeError(`${fn} parameters "aOffer" and "bOffer" are required.`)
+		if (![`committed`, `cancelled`, `failed`].includes(status)) {
+			throw new RangeError(`${fn} parameter "status" must be one of committed/cancelled/failed`)
+		}
+		const res = await this._query(`
+            INSERT INTO user_trade_log (guild_id, user_a_id, user_b_id, a_offer, b_offer, status, failure_reason)
+            VALUES ($guildId, $userAId, $userBId, $aOffer, $bOffer, $status, $failureReason)`
+			, `run`
+			, {
+				guildId: guildId,
+				userAId: userAId,
+				userBId: userBId,
+				aOffer: JSON.stringify(aOffer),
+				bOffer: JSON.stringify(bOffer),
+				status: status,
+				failureReason: failureReason
+			}
+			, `${fn} ${status} trade between ${userAId} and ${userBId} in guild ${guildId}`
+		)
+		const row = res && res.rows && res.rows[0]
+		return row ? { tradeId: Number(row.trade_id) } : null
+	}
+
+	/**
+	 * Pull a user's trade history (rows where they were either party).
+	 * Sorted newest-first via the per-user index.
+	 *
+	 * @param {string} userId
+	 * @param {object} [options]
+	 * @param {number} [options.limit=10]
+	 * @param {number} [options.offset=0]
+	 * @return {Promise<object[]>}
+	 */
+	async getTradeHistory(userId, { limit = 10, offset = 0 } = {}) {
+		const fn = this.formatFunctionLog(`getTradeHistory`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		const res = await this._query(`
+            SELECT trade_id, registered_at, guild_id, user_a_id, user_b_id, a_offer, b_offer, status, failure_reason
+            FROM user_trade_log
+            WHERE user_a_id = $userId OR user_b_id = $userId
+            ORDER BY registered_at DESC
+            LIMIT $limit OFFSET $offset`
+			, `all`
+			, { userId: userId, limit: limit, offset: offset }
+			, `${fn} fetching history for ${userId}`
+		)
+		return res || []
+	}
+}
 /* class Template extends DatabaseUtils{
 	constructor(client){
 		super(client)
 	}
-	
+
 } */
 
 module.exports = Database
