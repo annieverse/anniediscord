@@ -4,6 +4,7 @@ const PixivApi = require(`pixiv-api-client`)
 const PixImg = require(`pixiv-img`)
 const pixiv = new PixivApi()
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 /**
  * Note:
  * This module requires pixiv account (verified username and pw) in order to get acccess to the API.
@@ -55,12 +56,27 @@ module.exports = {
     async fetchPixivResult(client, reply, arg, locale) {
         //  Logging in to get access to the Pixiv API
         await pixiv.refreshAccessToken(process.env.PIXIV_REFRESH_TOKEN)
+        //  `withResponse: true` forces slash interactions to resolve into an
+        //  InteractionCallbackResponse (which carries .resource.message) instead
+        //  of a bare InteractionResponse — the latter has no .delete() and was
+        //  the trigger for "loadmsg.delete is not a function". Message-command
+        //  invocations still resolve to a regular Message.
         reply.send(locale(`PIXIV${[arg ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`]}`), {
+            withResponse: true,
             socket: {
                 keyword: arg,
                 emoji: await client.getEmoji(`790994076257353779`)
             }
         }).then(async loadmsg => {
+            const dismissLoading = () => {
+                if (!loadmsg) return
+                const target = isInteractionCallbackResponse(loadmsg)
+                    ? loadmsg.resource && loadmsg.resource.message
+                    : loadmsg
+                if (target && typeof target.delete === `function`) {
+                    return target.delete().catch(() => {})
+                }
+            }
             //  Dynamically choose recommended/custom search based on input
             let data = arg ? await this.fetchCustomSearch(arg) : await this.fetchRecommendedWork()
             //  Prevent forbidden search
@@ -68,16 +84,16 @@ module.exports = {
             if (usedForbiddenKeyword.length > 0) data = null
             //  Handle if no returned result from the query
             if (!data) {
-                loadmsg.delete()
+                await dismissLoading()
                 return await reply.send(locale(`PIXIV.NO_RESULT`))
             }
             const img = await this.getImage(data.image_urls.medium, data.id)
             //  Handle if no returned result from given img path
             if (!img) {
-                loadmsg.delete()
+                await dismissLoading()
                 return await reply.send(locale(`PIXIV.FAIL_TO_LOAD`))
             }
-            loadmsg.delete()
+            await dismissLoading()
             const tools = this.getTools(data.tools)
             const toolText = tools === `` ? `TOOLS` : `NONE`
             const hashTags = this.getHashtags(data.tags)
