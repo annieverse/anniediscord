@@ -115,7 +115,7 @@
     "CAT": {
         "RESPONSES": [
             "*halus~*",
-            ":kucing:",
+            ":cat:",
             "Nyaa~",
             "Cakar!"
         ]
@@ -280,7 +280,7 @@
     },
     "FOX": {
         "RESPONSES": [
-            ":rubah:",
+            ":fox:",
             "Aduh",
             "Jangan terlalu dekat, aku mungkin akan menggigitmu.",
             "Halus~"
@@ -327,7 +327,7 @@
         "UNAVAILABLE": "**Ah, kamu tidak punya hadiah apa pun saat ini!**\nTapi jangan khawatir- Kamu bisa mendapatkannya dari **`{{prefix}}gacha`** dan **`{{prefix}}shop`** aku!♡ {{emoji}}"
     },
     "GIVE_REPUTATION": {
-        "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nPerwakilan kamu akan tersedia\n:jam1: **{{time}}**\n╰────────☆～*:;,．*",
+        "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nPerwakilan kamu akan tersedia\n:clock1: **{{time}}**\n╰────────☆～*:;,．*",
         "SELF_TARGETING": "Kamu tidak bisa membohongi kamu sendiri, *baka*. {{emoji}}",
         "SHORT_GUIDE": "**Tampilkan perwakilan seseorang yang kamu kagumi!** {{emoji}}\nmisalnya **`{{prefix}}rep @friend`**",
         "SUCCESSFUL": "╭*:;,．★ ～☆*────────╮\n{{user}} telah diterima\n**+1 poin reputasi!**\n╰────────☆～*:;,．*╯\nBetapa murah hati~♡"
@@ -391,7 +391,7 @@
     "LEADERBOARD": {
         "AUTHOR_RANK": "Kamu saat ini **#{{rank}}** dengan total **{{points}}** {{emoji}}",
         "GUIDE": "Tahukah kamu bahwa guild ini memiliki papan peringkat peringkatnya sendiri? lihat perintah di bawah ini! {{emoji}}\n\n**`{{prefix}}lb exp`**\n> Daftar pengguna dengan poin & level pengalaman tertinggi. Obrolan berjam-jam mereka membuahkan hasil.\n\n**`{{prefix}}lb bal`**\n> Daftar pengguna kaya dengan akun saldo tertinggi. Mereka berasal dari keluarga kaya atau mendedikasikan waktunya untuk menggiling koin.\n\n**`{{prefix}}lb fame`**\n> Daftar pengguna yang paling disukai dengan popularitas poin ketenaran tertinggi. Mereka terlalu luar biasa untuk seleraku.",
-        "HEADER": ":piala: **| Pemimpin {{leaders}}**\nPeringkat {{guildName}}",
+        "HEADER": ":trophy: **| Pemimpin {{leaders}}**\nPeringkat {{guildName}}",
         "INVALID_CATEGORY": "**Maaf- tapi belum ada papan peringkat untuk kategori itu.** {{emoji}}",
         "NO_DATA": "Belum ada data peringkat yang ditemukan untuk **Papan Peringkat {{category}}.** Kembali lagi nanti!",
         "UNRANKED": "Kamu tidak memiliki peringkat."
@@ -572,7 +572,7 @@
     },
     "QUEST": {
         "CANCEL": "Baiklah, misi telah dibatalkan.",
-        "COOLDOWN": "╭*:;,．★ ～☆*────────╮\nPencarian kamu berikutnya akan tersedia\n:jam1: **{{time}}**\n╰────────☆～:;,．╯\nKlaim **`{{prefix}}daily`** kamu jika belum!",
+        "COOLDOWN": "╭*:;,．★ ～☆*────────╮\nPencarian kamu berikutnya akan tersedia\n:clock1: **{{time}}**\n╰────────☆～:;,．╯\nKlaim **`{{prefix}}daily`** kamu jika belum!",
         "DISPLAY": "╭*:;,．★ ～☆*─────────────╮\n\n**__{{questTitle}}__**\n{{description}}\n**Hadiah: {{reward}}**\n\n╰────────────☆～*:;,．*╯",
         "EMPTY": "Maaf, tidak ada misi yang tersedia untuk diambil saat ini!",
         "EXPIRED": "Waktu pencarian kamu telah berakhir, jangan khawatir, jalankan saja perintah pencarian lagi untuk melanjutkan dari bagian terakhir yang kamu tinggalkan",
