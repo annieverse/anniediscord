@@ -1,0 +1,541 @@
+"use strict"
+const stringSimilarity = require(`string-similarity`)
+const {
+    ApplicationCommandType,
+    ApplicationCommandOptionType,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle,
+    EmbedBuilder,
+    ComponentType,
+    MessageFlags
+} = require(`discord.js`)
+const User = require(`../../libs/user`)
+const commanifier = require(`../../utils/commanifier`)
+const trueInt = require(`../../utils/trueInt`)
+const { TradeSession, TradeError, STATE, ARTCOINS_ITEM_ID } = require(`../../libs/trade`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
+
+/**
+ * Player-to-player trading. Two participants exchange items + artcoins inside
+ * a single guild through a paired confirmation flow.
+ *
+ * The state machine and atomic execution live in `src/libs/trade.js`. This
+ * file is the Discord adapter — it owns the embed, the button rows, the
+ * modals, and the message-component collector that drives them.
+ *
+ * @link docs/trade-system-design.md
+ * @author klerikdust
+0 */
+module.exports = {
+    name: `trade`,
+    aliases: [`trade`, `tr`],
+    description: `Trade items and artcoins with another member of this server.`,
+    usage: `trade <User>`,
+    permissionLevel: 0,
+    multiUser: false,
+    applicationCommand: true,
+    messageCommand: true,
+    server_specific: false,
+    options: [{
+        name: `user`,
+        description: `User you wish to trade with`,
+        required: true,
+        type: ApplicationCommandOptionType.User
+    }],
+    type: ApplicationCommandType.ChatInput,
+    REQUEST_TIMEOUT_MS: 30 * 1000,
+    IDLE_TIMEOUT_MS: 5 * 60 * 1000,
+    FINAL_TIMEOUT_MS: 15 * 1000,
+    ARTCOINS_EMOJI_ID: `758720612087627787`,
+
+    async execute(client, reply, message, arg, locale) {
+        if (!arg) return await reply.send(locale(`TRADE.GUIDE`), {
+            socket: { prefix: client.prefix }
+        })
+        const userLib = new User(client, message)
+        const lookup = await userLib.lookFor(arg)
+        if (!lookup) return await reply.send(locale(`USER.IS_INVALID`))
+        const target = lookup.master || lookup
+        return await this.run(client, reply, message, locale, target)
+    },
+
+    async Iexecute(client, reply, interaction, options, locale) {
+        const target = options.getUser(`user`)
+        if (!target) return await reply.send(locale(`USER.IS_INVALID`))
+        return await this.run(client, reply, interaction, locale, target)
+    },
+
+    async run(client, reply, messageRef, locale, target) {
+        const initiator = messageRef.member.user
+        if (target.id === initiator.id) return await reply.send(locale(`TRADE.SELF_TRADE`), {
+            socket: { emoji: await client.getEmoji(`692428748838010970`) }
+        })
+        if (target.bot) return await reply.send(locale(`TRADE.BOT_TRADE`))
+
+        const session = new TradeSession({
+            db: client.db,
+            guildId: messageRef.guild.id,
+            userAId: initiator.id,
+            userBId: target.id,
+            deps: { logger: client.logger }
+        })
+
+        try {
+            await session.requireBothFree()
+        } catch (err) {
+            if (err instanceof TradeError && err.code === `ALREADY_IN_TRADE`) {
+                const which = err.detail === `b` ? target.username : initiator.username
+                return await reply.send(locale(`TRADE.ALREADY_IN_TRADE`), { socket: { user: which } })
+            }
+            throw err
+        }
+        await session.acquireLocks()
+
+        try {
+            //  Step 1 — request prompt to user B with Accept/Decline buttons.
+            const accepted = await this.promptRequest(client, reply, locale, messageRef, initiator, target)
+            if (!accepted) return
+
+            //  Step 2+ — active session. Owns its own message + collector.
+            await this.runActiveSession(client, reply, locale, messageRef, session, initiator, target)
+        } finally {
+            await session.releaseLocks()
+        }
+    },
+
+    /**
+     * Render the request embed, attach Accept/Decline buttons, and resolve
+     * to true once user B accepts. Resolves false on decline, timeout, or
+     * any error path. Side effect: the request message is removed when this
+     * settles, regardless of outcome.
+     */
+    async promptRequest(client, reply, locale, messageRef, initiator, target) {
+        const acceptBtn = new ButtonBuilder().setCustomId(`trade:accept`).setLabel(`Accept`).setStyle(ButtonStyle.Success)
+        const declineBtn = new ButtonBuilder().setCustomId(`trade:decline`).setLabel(`Decline`).setStyle(ButtonStyle.Danger)
+        const row = new ActionRowBuilder().addComponents(acceptBtn, declineBtn)
+        const sent = await reply.send(locale(`TRADE.REQUEST_PROMPT`), {
+            socket: { a: initiator.username, b: target.username },
+            components: [row]
+        })
+        const requestMessage = isInteractionCallbackResponse(sent) ? sent.resource && sent.resource.message : sent
+        if (!requestMessage) return false
+
+        const collector = requestMessage.createMessageComponentCollector({
+            componentType: ComponentType.Button,
+            time: this.REQUEST_TIMEOUT_MS,
+            filter: i => i.user.id === target.id || i.user.id === initiator.id,
+            max: 1
+        })
+
+        const result = await new Promise(resolve => {
+            collector.on(`collect`, async i => {
+                //  Only B is allowed to accept/decline. Filter above lets A
+                //  through too so we can give them feedback rather than the
+                //  silent collector ignore.
+                if (i.user.id !== target.id) {
+                    return i.reply({ content: locale(`TRADE.NOT_PARTICIPANT`), flags: MessageFlags.Ephemeral })
+                }
+                if (i.customId === `trade:accept`) {
+                    await i.update({ components: [] }).catch(() => {})
+                    return resolve(true)
+                }
+                if (i.customId === `trade:decline`) {
+                    await i.update({ components: [] }).catch(() => {})
+                    await reply.send(locale(`TRADE.REQUEST_DECLINED`), { socket: { b: target.username } })
+                    return resolve(false)
+                }
+                return resolve(false)
+            })
+            collector.on(`end`, async (_collected, reasonStr) => {
+                if (reasonStr === `time`) {
+                    try { await requestMessage.edit({ components: [] }) } catch (_) { /* deleted */ }
+                    await reply.send(locale(`TRADE.REQUEST_TIMEOUT`), { socket: { b: target.username } })
+                    resolve(false)
+                }
+            })
+        })
+        return result
+    },
+
+    /**
+     * Drive the post-accept lifecycle: render the trade window, listen for
+     * Add/Remove/SetAc/Ready/Cancel button presses, and execute when both
+     * sides confirm. Returns when the session reaches a terminal state.
+     */
+    async runActiveSession(client, reply, locale, messageRef, session, initiator, target) {
+        session.accept()
+
+        const tradeEmbed = await this.renderEmbed(client, locale, messageRef, session, initiator, target)
+        const sent = await reply.send(``, {
+            embeds: [tradeEmbed],
+            raw: false,
+            components: this.buildButtonRows()
+        })
+        const tradeMessage = isInteractionCallbackResponse(sent) ? sent.resource && sent.resource.message : sent
+        if (!tradeMessage) {
+            session.cancel(`render_failed`)
+            return
+        }
+
+        const collector = tradeMessage.createMessageComponentCollector({
+            componentType: ComponentType.Button,
+            time: this.IDLE_TIMEOUT_MS,
+            filter: i => i.user.id === initiator.id || i.user.id === target.id
+        })
+
+        let finalCommitTimer = null
+        const clearFinalTimer = () => {
+            if (finalCommitTimer) { clearTimeout(finalCommitTimer); finalCommitTimer = null }
+        }
+
+        const refreshUi = async (interaction) => {
+            const embed = await this.renderEmbed(client, locale, messageRef, session, initiator, target)
+            //  Always reply via interaction.update so Discord doesn't surface
+            //  "this interaction failed" — the collector also calls editReply
+            //  on the parent message, which we use after non-interaction edits
+            //  (timer-driven state changes).
+            if (interaction) {
+                await interaction.update({ embeds: [embed], components: this.buildButtonRows(session) }).catch(() => {})
+            } else {
+                await tradeMessage.edit({ embeds: [embed], components: this.buildButtonRows(session) }).catch(() => {})
+            }
+        }
+
+        await new Promise(resolve => {
+            const finishWith = async (statusKey, payload = {}) => {
+                clearFinalTimer()
+                try { await tradeMessage.edit({ components: [] }) } catch (_) { /* deleted */ }
+                if (statusKey) await reply.send(locale(statusKey), payload).catch(() => {})
+                collector.stop(`done`)
+                resolve()
+            }
+
+            collector.on(`collect`, async i => {
+                const side = i.user.id === initiator.id ? `a` : `b`
+                try {
+                    switch (i.customId) {
+                        case `trade:cancel`:
+                            session.cancel(`user_cancel`)
+                            return await finishWith(`TRADE.CANCELLED`)
+
+                        case `trade:ready`: {
+                            const wasReadied = session.state === STATE.READIED
+                            session.setReady(side, !session.snapshot().ready[side])
+                            if (session.state === STATE.READIED && !wasReadied) {
+                                //  Both ready now — open final-confirm window.
+                                clearFinalTimer()
+                                finalCommitTimer = setTimeout(async () => {
+                                    if (session.state !== STATE.READIED) return
+                                    //  Treat the timeout as both sides toggling
+                                    //  off; the session goes back to ACTIVE.
+                                    session.setReady(`a`, false)
+                                    session.setReady(`b`, false)
+                                    await refreshUi()
+                                    await reply.send(locale(`TRADE.FINAL_TIMEOUT`)).catch(() => {})
+                                }, this.FINAL_TIMEOUT_MS)
+                                await refreshUi(i)
+                                //  Run execute when both sides have toggled.
+                                //  We commit on the second ready click, not on
+                                //  a separate button — simpler UX, matches the
+                                //  design doc's `both Ready -> READIED -> exec`.
+                                const result = await session.execute()
+                                clearFinalTimer()
+                                if (result.ok) {
+                                    return await finishWith(`TRADE.EXEC_SUCCESS`, {
+                                        socket: { tradeId: result.tradeId }
+                                    })
+                                }
+                                if (result.code === `INSUFFICIENT_ITEM` || result.code === `INSUFFICIENT_ARTCOINS`) {
+                                    //  Whoever's debit failed is in `result.detail`;
+                                    //  we name the side back to the user via session
+                                    //  ids — keeping it brief here.
+                                    return await finishWith(`TRADE.EXEC_FAILED_INSUFFICIENT`, {
+                                        socket: { user: result.detail || `someone` }
+                                    })
+                                }
+                                return await finishWith(`TRADE.EXEC_FAILED_GENERIC`)
+                            }
+                            return await refreshUi(i)
+                        }
+
+                        case `trade:setac`: {
+                            const modalId = `trade:setac:${i.id}`
+                            const input = new TextInputBuilder()
+                                .setCustomId(`amount`)
+                                .setLabel(locale(`TRADE.AC_MODAL_LABEL`))
+                                .setStyle(TextInputStyle.Short)
+                                .setRequired(true)
+                            const modal = new ModalBuilder()
+                                .setCustomId(modalId)
+                                .setTitle(locale(`TRADE.AC_MODAL_TITLE`))
+                                .addComponents(new ActionRowBuilder().addComponents(input))
+                            await i.showModal(modal)
+                            collector.resetTimer()
+                            const submission = await i.awaitModalSubmit({
+                                time: 60 * 1000,
+                                filter: s => s.customId === modalId
+                            }).catch(() => null)
+                            if (!submission) return
+                            const raw = submission.fields.getTextInputValue(`amount`).trim()
+                            const amount = trueInt(raw) || (raw === `0` ? 0 : NaN)
+                            if (!Number.isInteger(amount) || amount < 0) {
+                                await submission.reply({ content: locale(`TRADE.AC_INVALID`), flags: MessageFlags.Ephemeral })
+                                return
+                            }
+                            //  Friendly preflight against the user's actual balance.
+                            const balance = await client.db.userUtils.getUserBalance(
+                                side === `a` ? initiator.id : target.id,
+                                messageRef.guild.id
+                            )
+                            if (amount > balance) {
+                                await submission.reply({
+                                    content: locale(`TRADE.AC_INSUFFICIENT`),
+                                    flags: MessageFlags.Ephemeral
+                                })
+                                return
+                            }
+                            session.setArtcoins(side, amount)
+                            await submission.deferUpdate().catch(() => {})
+                            return await refreshUi()
+                        }
+
+                        case `trade:add`: {
+                            const modalId = `trade:add:${i.id}`
+                            const itemInput = new TextInputBuilder()
+                                .setCustomId(`item`)
+                                .setLabel(locale(`TRADE.ADD_MODAL_ITEM_LABEL`))
+                                .setStyle(TextInputStyle.Short)
+                                .setRequired(true)
+                            const qtyInput = new TextInputBuilder()
+                                .setCustomId(`qty`)
+                                .setLabel(locale(`TRADE.ADD_MODAL_QTY_LABEL`))
+                                .setStyle(TextInputStyle.Short)
+                                .setRequired(true)
+                            const modal = new ModalBuilder()
+                                .setCustomId(modalId)
+                                .setTitle(locale(`TRADE.ADD_MODAL_TITLE`))
+                                .addComponents(
+                                    new ActionRowBuilder().addComponents(itemInput),
+                                    new ActionRowBuilder().addComponents(qtyInput)
+                                )
+                            await i.showModal(modal)
+                            collector.resetTimer()
+                            const submission = await i.awaitModalSubmit({
+                                time: 60 * 1000,
+                                filter: s => s.customId === modalId
+                            }).catch(() => null)
+                            if (!submission) return
+                            const itemKeyword = submission.fields.getTextInputValue(`item`).trim()
+                            const rawQty = submission.fields.getTextInputValue(`qty`).trim()
+                            const qty = trueInt(rawQty)
+                            if (!qty || qty <= 0) {
+                                await submission.reply({ content: locale(`TRADE.QTY_INVALID`), flags: MessageFlags.Ephemeral })
+                                return
+                            }
+                            const resolved = await this.resolveItemForUser(client, messageRef.guild.id, side === `a` ? initiator.id : target.id, itemKeyword)
+                            if (!resolved) {
+                                await submission.reply({ content: locale(`TRADE.ITEM_NOT_FOUND`), flags: MessageFlags.Ephemeral })
+                                return
+                            }
+                            try {
+                                await session.addItem(side, { itemId: resolved.item_id, qty })
+                            } catch (err) {
+                                if (err instanceof TradeError) {
+                                    const code = err.code
+                                    if (code === `ITEM_NOT_TRADEABLE`) {
+                                        await submission.reply({ content: locale(`TRADE.ITEM_NOT_TRADEABLE`).replace(`{{item}}`, resolved.name), flags: MessageFlags.Ephemeral })
+                                    } else if (code === `INSUFFICIENT_ITEM`) {
+                                        await submission.reply({
+                                            content: locale(`TRADE.INSUFFICIENT_ITEM`)
+                                                .replace(`{{user}}`, side === `a` ? initiator.username : target.username)
+                                                .replace(`{{qty}}`, qty)
+                                                .replace(`{{item}}`, resolved.name),
+                                            flags: MessageFlags.Ephemeral
+                                        })
+                                    } else {
+                                        await submission.reply({ content: locale(`TRADE.ITEM_NOT_FOUND`), flags: MessageFlags.Ephemeral })
+                                    }
+                                    return
+                                }
+                                throw err
+                            }
+                            await submission.deferUpdate().catch(() => {})
+                            return await refreshUi()
+                        }
+
+                        case `trade:remove`: {
+                            const offer = session.snapshot().offers[side].items
+                            if (!offer.length) {
+                                return i.reply({ content: locale(`TRADE.REMOVE_NO_ITEMS`), flags: MessageFlags.Ephemeral })
+                            }
+                            //  Simple shape: a modal asking for the item name +
+                            //  qty, mirroring add. Keeps the surface symmetrical
+                            //  and avoids select-menu pagination this PR.
+                            const modalId = `trade:remove:${i.id}`
+                            const itemInput = new TextInputBuilder()
+                                .setCustomId(`item`)
+                                .setLabel(locale(`TRADE.ADD_MODAL_ITEM_LABEL`))
+                                .setStyle(TextInputStyle.Short)
+                                .setRequired(true)
+                            const qtyInput = new TextInputBuilder()
+                                .setCustomId(`qty`)
+                                .setLabel(locale(`TRADE.ADD_MODAL_QTY_LABEL`))
+                                .setStyle(TextInputStyle.Short)
+                                .setRequired(true)
+                            const modal = new ModalBuilder()
+                                .setCustomId(modalId)
+                                .setTitle(locale(`TRADE.REMOVE_MODAL_TITLE`))
+                                .addComponents(
+                                    new ActionRowBuilder().addComponents(itemInput),
+                                    new ActionRowBuilder().addComponents(qtyInput)
+                                )
+                            await i.showModal(modal)
+                            collector.resetTimer()
+                            const submission = await i.awaitModalSubmit({
+                                time: 60 * 1000,
+                                filter: s => s.customId === modalId
+                            }).catch(() => null)
+                            if (!submission) return
+                            const itemKeyword = submission.fields.getTextInputValue(`item`).trim()
+                            const rawQty = submission.fields.getTextInputValue(`qty`).trim()
+                            const qty = trueInt(rawQty)
+                            if (!qty || qty <= 0) {
+                                await submission.reply({ content: locale(`TRADE.QTY_INVALID`), flags: MessageFlags.Ephemeral })
+                                return
+                            }
+                            //  Resolve against the offer (not the inventory) so
+                            //  we only touch what's actually being offered.
+                            const offered = session.snapshot().offers[side].items
+                            const resolved = await this.resolveItemFromOffer(client, messageRef.guild.id, offered, itemKeyword)
+                            if (!resolved) {
+                                await submission.reply({ content: locale(`TRADE.ITEM_NOT_FOUND`), flags: MessageFlags.Ephemeral })
+                                return
+                            }
+                            session.removeItem(side, { itemId: resolved.item_id, qty })
+                            await submission.deferUpdate().catch(() => {})
+                            return await refreshUi()
+                        }
+                    }
+                } catch (err) {
+                    client.logger.error({ action: `trade_button_failed`, msg: err && err.message, stack: err && err.stack })
+                    await i.reply({ content: locale(`TRADE.EXEC_FAILED_GENERIC`), flags: MessageFlags.Ephemeral }).catch(() => {})
+                }
+            })
+
+            collector.on(`end`, async (_, reasonStr) => {
+                clearFinalTimer()
+                if (reasonStr === `done`) return  //  finishWith handled cleanup
+                if (session.state === STATE.COMMITTED || session.state === STATE.FAILED) return
+                session.cancel(`idle_timeout`)
+                try { await tradeMessage.edit({ components: [] }) } catch (_) { /* deleted */ }
+                await reply.send(locale(`TRADE.IDLE_TIMEOUT`)).catch(() => {})
+                resolve()
+            })
+        })
+    },
+
+    /**
+     * Best-match item lookup against the invoking user's tradeable inventory
+     * for the current guild. Used by the `add` flow.
+     */
+    async resolveItemForUser(client, guildId, userId, keyword) {
+        const inventory = await client.db.databaseUtils.getUserInventory(userId, guildId)
+        if (!inventory || !inventory.length) return null
+        const candidates = inventory.filter(row => row.quantity > 0 && (!row.in_use || Number(row.in_use) === 0))
+        if (!candidates.length) return null
+        const byId = candidates.find(c => parseInt(c.item_id, 10) === parseInt(keyword, 10))
+        if (byId) return byId
+        const names = candidates.map(c => (c.name || ``).toLowerCase())
+        const match = stringSimilarity.findBestMatch(keyword.toLowerCase(), names)
+        if (match.bestMatch.rating >= 0.5) {
+            return candidates.find(c => (c.name || ``).toLowerCase() === match.bestMatch.target) || null
+        }
+        return null
+    },
+
+    /**
+     * Best-match against the *currently-offered* lines, not the user's full
+     * inventory. Used by the `remove` flow so we don't accidentally resolve
+     * to an item the user has but hasn't put on the table yet.
+     */
+    async resolveItemFromOffer(client, guildId, offeredLines, keyword) {
+        if (!offeredLines || !offeredLines.length) return null
+        //  We need item names — pull them from the items table for the offered ids.
+        const items = []
+        for (const line of offeredLines) {
+            const rows = await client.db.shop.getItem(line.itemId, guildId)
+            const row = Array.isArray(rows) ? rows[0] : rows
+            if (row) items.push({ ...row, item_id: line.itemId })
+        }
+        if (!items.length) return null
+        const byId = items.find(c => parseInt(c.item_id, 10) === parseInt(keyword, 10))
+        if (byId) return byId
+        const names = items.map(c => (c.name || ``).toLowerCase())
+        const match = stringSimilarity.findBestMatch(keyword.toLowerCase(), names)
+        if (match.bestMatch.rating >= 0.5) {
+            return items.find(c => (c.name || ``).toLowerCase() === match.bestMatch.target) || null
+        }
+        return null
+    },
+
+    /**
+     * Build the dual-pane embed showing both offers + ready states.
+     * Pure render — does not mutate session.
+     */
+    async renderEmbed(client, locale, messageRef, session, initiator, target) {
+        const snap = session.snapshot()
+        const acEmoji = await client.getEmoji(this.ARTCOINS_EMOJI_ID)
+        const renderSide = async (side, user) => {
+            const offer = snap.offers[side]
+            const lines = []
+            for (const line of offer.items) {
+                const rows = await client.db.shop.getItem(line.itemId, messageRef.guild.id)
+                const row = Array.isArray(rows) ? rows[0] : rows
+                const name = row && row.name ? row.name : `#${line.itemId}`
+                lines.push(locale(`TRADE.OFFER_LINE`).replace(`{{qty}}`, line.qty).replace(`{{item}}`, name))
+            }
+            const itemsBlock = lines.length ? lines.join(`\n`) : locale(`TRADE.OFFER_EMPTY`)
+            const acBlock = locale(`TRADE.OFFER_ARTCOINS`)
+                .replace(`{{emoji}}`, acEmoji)
+                .replace(`{{amount}}`, commanifier(offer.artcoins))
+            const readyBlock = snap.ready[side] ? locale(`TRADE.READY_YES`) : locale(`TRADE.READY_NO`)
+            return {
+                name: user.username,
+                value: `${itemsBlock}\n${acBlock}\n${readyBlock}`,
+                inline: true
+            }
+        }
+        const fields = [
+            await renderSide(`a`, initiator),
+            await renderSide(`b`, target)
+        ]
+        const headerHint = snap.state === STATE.READIED
+            ? locale(`TRADE.FINAL_PROMPT`)
+            : locale(`TRADE.ACTIVE_HINT`)
+        return new EmbedBuilder()
+            .setTitle(locale(`TRADE.ACTIVE_HEADER`).replace(`{{guildName}}`, messageRef.guild.name))
+            .setDescription(headerHint)
+            .addFields(fields)
+            .setColor(snap.state === STATE.READIED ? `#90ee90` : `#ffc9e2`)
+    },
+
+    /**
+     * Static button row layout. Doesn't depend on session state today, but
+     * the session is forwarded so a future iteration can disable individual
+     * buttons (e.g. dim Add/Remove during execution).
+     */
+    buildButtonRows() {
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder().setCustomId(`trade:add`).setLabel(`Add item`).setStyle(ButtonStyle.Primary),
+            new ButtonBuilder().setCustomId(`trade:remove`).setLabel(`Remove item`).setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder().setCustomId(`trade:setac`).setLabel(`Set artcoins`).setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder().setCustomId(`trade:ready`).setLabel(`Ready`).setStyle(ButtonStyle.Success),
+            new ButtonBuilder().setCustomId(`trade:cancel`).setLabel(`Cancel`).setStyle(ButtonStyle.Danger)
+        )
+        return [row]
+    }
+}
