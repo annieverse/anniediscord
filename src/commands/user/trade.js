@@ -429,9 +429,11 @@ module.exports = {
                                 throw err
                             }
                             await submission.deferUpdate().catch(() => {})
-                            //  Tidy the ephemeral select prompt so it doesn't
-                            //  hang around once the qty has landed.
-                            await i.editReply({ content: locale(`TRADE.OFFER_LINE`).replace(`{{qty}}`, qty).replace(`{{item}}`, chosen.name), components: [] }).catch(() => {})
+                            //  Wipe the ephemeral select+confirmation message
+                            //  so the trade window is the only thing in focus.
+                            //  i is the original button click; deleteReply on
+                            //  it removes the ephemeral we replied to it with.
+                            await i.deleteReply().catch(() => {})
                             return await refreshUi()
                         }
 
