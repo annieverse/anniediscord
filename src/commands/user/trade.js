@@ -21,6 +21,7 @@ const trueInt = require(`../../utils/trueInt`)
 const { TradeSession, TradeError, STATE, ARTCOINS_ITEM_ID, NON_LINE_ITEM_IDS } = require(`../../libs/trade`)
 const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 const TradeWindowGUI = require(`../../ui/prebuild/tradeWindow`)
+const { crimson } = require(`../../ui/colors/default`)
 
 /**
  * Player-to-player trading. Two participants exchange items + artcoins inside
@@ -835,7 +836,7 @@ module.exports = {
             .setTitle(locale(`TRADE.ACTIVE_HEADER`).replace(`{{guildName}}`, messageRef.guild.name))
             .setDescription(headerHint)
             .addFields(fields)
-            .setColor(snap.state === STATE.READIED ? `#90ee90` : `#ffc9e2`)
+            .setColor(crimson)
     },
 
     /**
