@@ -65,15 +65,24 @@ class TradeSession {
      * @param {string} ctx.guildId
      * @param {string} ctx.userAId                  Initiator.
      * @param {string} ctx.userBId                  Acceptor.
+     * @param {boolean} [ctx.allowSelfTrade=false]  Escape hatch for solo dev
+     *                                              testing — when true, A and B
+     *                                              are allowed to be the same
+     *                                              user. The command surface is
+     *                                              the only place that should
+     *                                              ever set this to true, and
+     *                                              only after gating on env
+     *                                              flags. The lib itself stays
+     *                                              policy-free.
      * @param {object} [ctx.deps]                   Test seam — override `now`/`logger`.
      * @param {Function} [ctx.deps.now]             Returns current epoch ms (default Date.now).
      * @param {object} [ctx.deps.logger]            Optional pino-shaped logger.
      */
-    constructor({ db, guildId, userAId, userBId, deps = {} }) {
+    constructor({ db, guildId, userAId, userBId, allowSelfTrade = false, deps = {} }) {
         if (!db) throw new TypeError(`TradeSession: missing db`)
         if (!guildId) throw new TypeError(`TradeSession: missing guildId`)
         if (!userAId || !userBId) throw new TypeError(`TradeSession: missing user ids`)
-        if (userAId === userBId) throw new TradeError(`SELF_TRADE`)
+        if (userAId === userBId && !allowSelfTrade) throw new TradeError(`SELF_TRADE`)
         this.db = db
         this.guildId = guildId
         this.userAId = userAId
@@ -90,6 +99,12 @@ class TradeSession {
         this.lastTouchedAt = this.now()
         this.failureReason = null
         this.tradeLogId = null
+        //  Self-trade signals to the UI layer that one user is acting as
+        //  both columns. The lib doesn't change behavior beyond letting the
+        //  constructor pass; the command uses `currentSide` to know which
+        //  column the active button click should mutate.
+        this.isSelfTrade = userAId === userBId
+        this.currentSide = SIDE_A
     }
 
     /**
@@ -125,6 +140,12 @@ class TradeSession {
      * separately so it can be paired with releaseLocks in a finally.
      */
     async requireBothFree() {
+        if (this.isSelfTrade) {
+            //  Only one identity to check when A and B are the same user.
+            const aLocked = await this.db.databaseUtils.doesCacheExist(SESSION_LOCK_PREFIX + this.userAId)
+            if (aLocked) throw new TradeError(`ALREADY_IN_TRADE`, `a`)
+            return
+        }
         const [aLocked, bLocked] = await Promise.all([
             this.db.databaseUtils.doesCacheExist(SESSION_LOCK_PREFIX + this.userAId),
             this.db.databaseUtils.doesCacheExist(SESSION_LOCK_PREFIX + this.userBId)
@@ -135,13 +156,19 @@ class TradeSession {
 
     /**
      * Set both Redis locks with a hard 15-min TTL. Idempotent if already held;
-     * safe to call once per session start.
+     * safe to call once per session start. In self-trade mode only one lock
+     * is set (A and B are the same user id, so two writes would dedupe in
+     * Redis anyway — keeping this explicit for clarity).
      */
     async acquireLocks() {
-        await Promise.all([
-            this.db.databaseUtils.setCache(SESSION_LOCK_PREFIX + this.userAId, `1`, { EX: SESSION_LOCK_TTL_SECONDS }),
-            this.db.databaseUtils.setCache(SESSION_LOCK_PREFIX + this.userBId, `1`, { EX: SESSION_LOCK_TTL_SECONDS })
-        ])
+        if (this.isSelfTrade) {
+            await this.db.databaseUtils.setCache(SESSION_LOCK_PREFIX + this.userAId, `1`, { EX: SESSION_LOCK_TTL_SECONDS })
+        } else {
+            await Promise.all([
+                this.db.databaseUtils.setCache(SESSION_LOCK_PREFIX + this.userAId, `1`, { EX: SESSION_LOCK_TTL_SECONDS }),
+                this.db.databaseUtils.setCache(SESSION_LOCK_PREFIX + this.userBId, `1`, { EX: SESSION_LOCK_TTL_SECONDS })
+            ])
+        }
         this.locksAcquired = true
     }
 
@@ -152,10 +179,14 @@ class TradeSession {
      */
     async releaseLocks() {
         try {
-            await Promise.all([
-                this.db.databaseUtils.delCache(SESSION_LOCK_PREFIX + this.userAId),
-                this.db.databaseUtils.delCache(SESSION_LOCK_PREFIX + this.userBId)
-            ])
+            if (this.isSelfTrade) {
+                await this.db.databaseUtils.delCache(SESSION_LOCK_PREFIX + this.userAId)
+            } else {
+                await Promise.all([
+                    this.db.databaseUtils.delCache(SESSION_LOCK_PREFIX + this.userAId),
+                    this.db.databaseUtils.delCache(SESSION_LOCK_PREFIX + this.userBId)
+                ])
+            }
         } catch (err) {
             if (this.logger) this.logger.warn({ action: `trade_lock_release_failed`, msg: err && err.message })
         }

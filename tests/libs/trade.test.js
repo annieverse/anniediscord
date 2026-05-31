@@ -134,6 +134,44 @@ describe(`TradeSession state machine`, () => {
         expect(caught.code).to.equal(`SELF_TRADE`)
     })
 
+    it(`accepts self-trade when allowSelfTrade flag is set`, async () => {
+        //  The escape hatch is gated at the *command* layer (NODE_ENV=development
+        //  + BYPASS_SELF_TRADE=1). The lib only honors the explicit flag — it
+        //  never reads env directly, so we can probe the constructor without
+        //  setting any process.env values.
+        const ctx = buildDb({
+            inventory: { 'solo@200@g1': 5 },
+            items: { 200: { item_id: 200, bind: `y` } }
+        })
+        const session = new TradeSession({
+            db: ctx.db,
+            guildId: `g1`,
+            userAId: `solo`,
+            userBId: `solo`,
+            allowSelfTrade: true
+        })
+        expect(session.isSelfTrade).to.equal(true)
+        expect(session.currentSide).to.equal(`a`)
+        await session.requireBothFree()
+        await session.acquireLocks()
+        //  Only one Redis key is set, since A and B are the same user id.
+        expect(ctx.caches.size).to.equal(1)
+        expect(ctx.caches.has(SESSION_LOCK_PREFIX + `solo`)).to.equal(true)
+        session.accept()
+        await session.addItem(`a`, { itemId: 200, qty: 2 })
+        //  The lib doesn't know which "side" the same user means; the command
+        //  layer flips currentSide via the Switch button. We simulate that here.
+        session.currentSide = `b`
+        //  Both sides drawing from the same inventory: A reserved 2, so B
+        //  can still take up to 3.
+        await session.addItem(`b`, { itemId: 200, qty: 3 })
+        const snap = session.snapshot()
+        expect(snap.offers.a.items).to.deep.equal([{ itemId: 200, qty: 2 }])
+        expect(snap.offers.b.items).to.deep.equal([{ itemId: 200, qty: 3 }])
+        await session.releaseLocks()
+        expect(ctx.caches.size).to.equal(0)
+    })
+
     it(`acquires both locks on accept and releases them on cancel`, async () => {
         const { ctx, session } = await buildActiveSession()
         expect(ctx.caches.has(SESSION_LOCK_PREFIX + `userA`)).to.equal(true)

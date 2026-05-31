@@ -71,16 +71,25 @@ module.exports = {
 
     async run(client, reply, messageRef, locale, target) {
         const initiator = messageRef.member.user
-        if (target.id === initiator.id) return await reply.send(locale(`TRADE.SELF_TRADE`), {
+        //  Self-trade is normally an instant rejection. The bypass requires
+        //  BOTH `NODE_ENV=development` AND `BYPASS_SELF_TRADE=1`. Either alone
+        //  is not enough — keeps a stray env var from accidentally enabling
+        //  self-trade in a production-ish environment, and keeps a misnamed
+        //  NODE_ENV from doing it either.
+        const selfTradeAllowed = process.env.NODE_ENV === `development`
+            && (process.env.BYPASS_SELF_TRADE === `1` || process.env.BYPASS_SELF_TRADE === `true`)
+        if (target.id === initiator.id && !selfTradeAllowed) return await reply.send(locale(`TRADE.SELF_TRADE`), {
             socket: { emoji: await client.getEmoji(`692428748838010970`) }
         })
         if (target.bot) return await reply.send(locale(`TRADE.BOT_TRADE`))
 
+        const isSelfTrade = target.id === initiator.id
         const session = new TradeSession({
             db: client.db,
             guildId: messageRef.guild.id,
             userAId: initiator.id,
             userBId: target.id,
+            allowSelfTrade: isSelfTrade,
             deps: { logger: client.logger }
         })
 
@@ -96,9 +105,13 @@ module.exports = {
         await session.acquireLocks()
 
         try {
-            //  Step 1 — request prompt to user B with Accept/Decline buttons.
-            const accepted = await this.promptRequest(client, reply, locale, messageRef, initiator, target)
-            if (!accepted) return
+            //  Step 1 — request prompt is only sent when there's a second
+            //  human to ask. Self-trade jumps straight to the active
+            //  session because there's no one to accept.
+            if (!isSelfTrade) {
+                const accepted = await this.promptRequest(client, reply, locale, messageRef, initiator, target)
+                if (!accepted) return
+            }
 
             //  Step 2+ — active session. Owns its own message + collector.
             await this.runActiveSession(client, reply, locale, messageRef, session, initiator, target)
@@ -173,7 +186,7 @@ module.exports = {
         const sent = await reply.send(``, {
             embeds: [tradeEmbed],
             raw: false,
-            components: this.buildButtonRows()
+            components: this.buildButtonRows(session)
         })
         const tradeMessage = isInteractionCallbackResponse(sent) ? sent.resource && sent.resource.message : sent
         if (!tradeMessage) {
@@ -215,9 +228,22 @@ module.exports = {
             }
 
             collector.on(`collect`, async i => {
-                const side = i.user.id === initiator.id ? `a` : `b`
+                //  In normal trades, the side is whoever clicked. In self-trade
+                //  (dev only — gated by NODE_ENV=development + BYPASS_SELF_TRADE),
+                //  both columns belong to the same user; the Switch button toggles
+                //  which side subsequent clicks affect.
+                const side = session.isSelfTrade
+                    ? session.currentSide
+                    : (i.user.id === initiator.id ? `a` : `b`)
                 try {
                     switch (i.customId) {
+                        case `trade:switch`: {
+                            //  Self-trade only — no-op when not in self-trade
+                            //  mode (the button isn't even rendered).
+                            session.currentSide = session.currentSide === `a` ? `b` : `a`
+                            return await refreshUi(i)
+                        }
+
                         case `trade:cancel`:
                             session.cancel(`user_cancel`)
                             return await finishWith(`TRADE.CANCELLED`)
@@ -524,18 +550,27 @@ module.exports = {
     },
 
     /**
-     * Static button row layout. Doesn't depend on session state today, but
-     * the session is forwarded so a future iteration can disable individual
-     * buttons (e.g. dim Add/Remove during execution).
+     * Button row layout. Adds a Switch-side button only in self-trade mode
+     * so a solo dev can flip which column the next click affects.
      */
-    buildButtonRows() {
-        const row = new ActionRowBuilder().addComponents(
+    buildButtonRows(session) {
+        const buttons = [
             new ButtonBuilder().setCustomId(`trade:add`).setLabel(`Add item`).setStyle(ButtonStyle.Primary),
             new ButtonBuilder().setCustomId(`trade:remove`).setLabel(`Remove item`).setStyle(ButtonStyle.Secondary),
             new ButtonBuilder().setCustomId(`trade:setac`).setLabel(`Set artcoins`).setStyle(ButtonStyle.Secondary),
             new ButtonBuilder().setCustomId(`trade:ready`).setLabel(`Ready`).setStyle(ButtonStyle.Success),
             new ButtonBuilder().setCustomId(`trade:cancel`).setLabel(`Cancel`).setStyle(ButtonStyle.Danger)
-        )
-        return [row]
+        ]
+        if (session && session.isSelfTrade) {
+            //  Discord caps a row at 5 buttons; we already have 5 above, so
+            //  the switch goes on a second row. Side label tells the user
+            //  which column the next click will modify.
+            const switchLabel = `Switch (now: ${session.currentSide === `a` ? `A` : `B`})`
+            const switchRow = new ActionRowBuilder().addComponents(
+                new ButtonBuilder().setCustomId(`trade:switch`).setLabel(switchLabel).setStyle(ButtonStyle.Secondary)
+            )
+            return [new ActionRowBuilder().addComponents(...buttons), switchRow]
+        }
+        return [new ActionRowBuilder().addComponents(...buttons)]
     }
 }

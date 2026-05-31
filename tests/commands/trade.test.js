@@ -1,5 +1,5 @@
 "use strict"
-const { describe, it } = require(`mocha`)
+const { describe, it, beforeEach, afterEach } = require(`mocha`)
 const { expect } = require(`chai`)
 const sinon = require(`sinon`)
 
@@ -59,7 +59,25 @@ describe(`/trade run() early exits`, () => {
         }
     }
 
+    /**
+     * Save the env vars we touch so each test can scope its mutations.
+     * Skipping the bypass tests if NODE_ENV is somehow already set to
+     * production while running locally — better to skip than to fight
+     * an outer config the dev didn't expect.
+     */
+    let prevNodeEnv, prevBypass
+    beforeEach(() => {
+        prevNodeEnv = process.env.NODE_ENV
+        prevBypass = process.env.BYPASS_SELF_TRADE
+    })
+    afterEach(() => {
+        process.env.NODE_ENV = prevNodeEnv
+        process.env.BYPASS_SELF_TRADE = prevBypass
+    })
+
     it(`refuses self-trade with the SELF_TRADE locale`, async () => {
+        delete process.env.BYPASS_SELF_TRADE
+        process.env.NODE_ENV = `development`   //  one flag without the other must NOT bypass
         const client = buildClient()
         const reply = buildReply()
         const locale = key => key
@@ -68,6 +86,55 @@ describe(`/trade run() early exits`, () => {
         await tradeCommand.run(client, reply, messageRef, locale, target)
         expect(reply.calls).to.have.lengthOf(1)
         expect(reply.calls[0].content).to.equal(`TRADE.SELF_TRADE`)
+    })
+
+    it(`still refuses self-trade when only BYPASS_SELF_TRADE is set`, async () => {
+        delete process.env.NODE_ENV
+        process.env.BYPASS_SELF_TRADE = `1`     //  needs NODE_ENV too
+        const client = buildClient()
+        const reply = buildReply()
+        const locale = key => key
+        const messageRef = fakeMessageRef()
+        const target = { id: `userA`, username: `Alice`, bot: false }
+        await tradeCommand.run(client, reply, messageRef, locale, target)
+        expect(reply.calls).to.have.lengthOf(1)
+        expect(reply.calls[0].content).to.equal(`TRADE.SELF_TRADE`)
+    })
+
+    it(`bypasses self-trade gate when both NODE_ENV=development and BYPASS_SELF_TRADE=1 are set`, async () => {
+        process.env.NODE_ENV = `development`
+        process.env.BYPASS_SELF_TRADE = `1`
+        //  We can't drive the full Discord flow here without a real client,
+        //  but we can confirm the early-exit path doesn't trigger. We stub
+        //  the post-bypass calls so the flow short-circuits cleanly:
+        //  requireBothFree must run without throwing, and we never reach
+        //  the embed render.
+        const caches = new Set()
+        const client = buildClient({
+            db: {
+                databaseUtils: {
+                    async doesCacheExist(key) { return caches.has(key) },
+                    async setCache(key) { caches.add(key) },
+                    async delCache(key) { caches.delete(key) }
+                }
+            }
+        })
+        //  Override reply.send so the moment runActiveSession tries to render
+        //  the embed, we throw a sentinel error and unwind. That tells us we
+        //  passed the gate without actually engaging the component collector.
+        const reply = {
+            send: async () => { throw new Error(`__reached_active__`) }
+        }
+        const locale = key => key
+        const messageRef = fakeMessageRef()
+        const target = { id: `userA`, username: `Alice`, bot: false }
+        let caught
+        try { await tradeCommand.run(client, reply, messageRef, locale, target) } catch (e) { caught = e }
+        expect(caught, `should have reached the active-session render`).to.exist
+        expect(caught.message).to.equal(`__reached_active__`)
+        //  Only one lock should have been written (self-trade collapses both
+        //  to the same user id).
+        expect(caches.size).to.equal(0)  //  finally{} released it
     })
 
     it(`refuses bot trade partners`, async () => {
