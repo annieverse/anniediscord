@@ -51,6 +51,17 @@ module.exports = {
         type: ApplicationCommandOptionType.Subcommand
     },
     {
+        name: `edit`,
+        description: `Edit the message and timer of one of your active reminders`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `id`,
+            description: `The id of the reminder (as shown in 'remind list')`,
+            required: true,
+            type: ApplicationCommandOptionType.Integer
+        }]
+    },
+    {
         name: `delete`,
         description: `Delete one of your active reminders`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -74,6 +85,18 @@ module.exports = {
      * @type {array}
      */
     deleteAliases: [`delete`, `remove`, `del`, `rm`, `cancel`],
+
+    /**
+     * Keywords that route to the "edit" action in message mode.
+     * @type {array}
+     */
+    editAliases: [`edit`, `update`, `change`, `modify`],
+
+    /**
+     * Timeout (ms) for each text prompt in the edit flow.
+     * @type {number}
+     */
+    editPromptTimeout: 60000,
 
     /**
      * Maximum reminders rendered per page on the list view.
@@ -100,6 +123,8 @@ module.exports = {
         }
         //  Route to list view
         if (this.listAliases.includes(action)) return await this.list(client, reply, message, locale, prefix, message.author.id)
+        //  Route to edit flow
+        if (this.editAliases.includes(action)) return await this.edit(client, reply, message, locale, prefix, message.author.id, args.slice(1).join(` `).trim())
         //  Route to delete view
         if (this.deleteAliases.includes(action)) return await this.delete(client, reply, message, locale, prefix, message.author.id, args.slice(1).join(` `).trim())
         //  Otherwise treat the whole input as a new reminder
@@ -109,6 +134,7 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         const subcommand = options.getSubcommand()
         if (subcommand === `list`) return await this.list(client, reply, interaction, locale, `/`, interaction.member.id)
+        if (subcommand === `edit`) return await this.edit(client, reply, interaction, locale, `/`, interaction.member.id, String(options.getInteger(`id`)))
         if (subcommand === `delete`) return await this.delete(client, reply, interaction, locale, `/`, interaction.member.id, String(options.getInteger(`id`)))
         //  Default to creating a reminder
         const reminderMessage = await options.getString(`message`)
@@ -184,11 +210,8 @@ module.exports = {
                 list: this._parseSimplifiedList(reminders)
             }
         })
-        //  Resolve target by 1-based list position, falling back to a full id match
-        const index = parseInt(target, 10)
-        let targetReminder = null
-        if (!isNaN(index) && index >= 1 && index <= reminders.length) targetReminder = reminders[index - 1]
-        if (!targetReminder) targetReminder = reminders.find(reminder => reminder.id === target)
+        //  Resolve the target reminder by 1-based list position or full id match
+        const targetReminder = this._resolveTarget(reminders, target)
         //  Handle if the target reminder can't be found
         if (!targetReminder) return await reply.send(locale(`REMINDER.DELETE_NOT_FOUND`), {
             socket: {
@@ -214,6 +237,133 @@ module.exports = {
                 followUp: true
             })
         })
+    },
+
+    /**
+     * Editing one of the user's active reminders through two sequential prompts
+     * (new message, then new timer), gated behind a confirmation that contrasts
+     * the previous reminder against the new one.
+     * @return {void}
+     */
+    async edit(client, reply, messageRef, locale, prefix, userId, target) {
+        const reminders = await client.reminders.getActiveReminders(userId)
+        //  Handle if there are no active reminders to edit
+        if (reminders.length <= 0) return await reply.send(locale(`REMINDER.EDIT_EMPTY`), {
+            socket: { emoji: await client.getEmoji(`692428969667985458`) }
+        })
+        //  Handle if the user didn't provide an id
+        if (!target || !target.length) return await reply.send(locale(`REMINDER.EDIT_MISSING_ID`), {
+            socket: {
+                emoji: await client.getEmoji(`692428969667985458`),
+                prefix: prefix,
+                list: this._parseSimplifiedList(reminders)
+            }
+        })
+        //  Resolve the target reminder
+        const targetReminder = this._resolveTarget(reminders, target)
+        if (!targetReminder) return await reply.send(locale(`REMINDER.EDIT_NOT_FOUND`), {
+            socket: {
+                emoji: await client.getEmoji(`692428807193493657`),
+                prefix: prefix
+            }
+        })
+        //  Prompt 1: the new message
+        await reply.send(locale(`REMINDER.EDIT_PROMPT_MESSAGE`), {
+            socket: {
+                emoji: await client.getEmoji(`692428692999241771`),
+                message: this._trim(targetReminder.message)
+            }
+        })
+        const newMessage = await this._awaitTextInput(messageRef, userId)
+        if (newMessage === null || newMessage.toLowerCase() === `cancel`) return await reply.send(locale(`REMINDER.EDIT_TIMEOUT`), {
+            socket: {
+                emoji: await client.getEmoji(`692428578683617331`),
+                prefix: prefix
+            }
+        })
+        //  Prompt 2: the new timer
+        await reply.send(locale(`REMINDER.EDIT_PROMPT_TIME`), {
+            socket: { emoji: await client.getEmoji(`692428692999241771`) }
+        })
+        const newDuration = await this._awaitTextInput(messageRef, userId)
+        if (newDuration === null || newDuration.toLowerCase() === `cancel`) return await reply.send(locale(`REMINDER.EDIT_TIMEOUT`), {
+            socket: {
+                emoji: await client.getEmoji(`692428578683617331`),
+                prefix: prefix
+            }
+        })
+        //  Validate the new duration
+        const newRemindAt = client.reminders.getDateFromDuration(newDuration)
+        if (!newRemindAt) return await reply.send(locale(`REMINDER.EDIT_INVALID_TIME`), {
+            socket: { emoji: await client.getEmoji(`790338393015713812`) }
+        })
+        //  Prompt 3: confirmation contrasting old vs new
+        const confirmation = await reply.send(locale(`REMINDER.EDIT_CONFIRMATION`), {
+            socket: {
+                emoji: await client.getEmoji(`692428578683617331`),
+                oldMessage: this._trim(targetReminder.message),
+                oldTime: moment(targetReminder.remindAt.timestamp).fromNow(),
+                newMessage: this._trim(newMessage),
+                newTime: moment(newRemindAt.timestamp).fromNow()
+            }
+        })
+        const c = new Confirmator(messageRef, reply, locale)
+        await c.setup(userId, confirmation)
+        c.onAccept(async () => {
+            await client.reminders.editReminder({
+                id: targetReminder.id,
+                userId: userId,
+                message: newMessage,
+                remindAt: newRemindAt,
+                registeredAt: targetReminder.registeredAt
+            })
+            await reply.send(locale(`REMINDER.EDIT_SUCCESSFUL`), {
+                status: `success`,
+                socket: {
+                    emoji: await client.getEmoji(`789212493096026143`),
+                    time: moment(newRemindAt.timestamp).fromNow()
+                },
+                followUp: true
+            })
+        })
+    },
+
+    /**
+     * Resolving a reminder by its 1-based list position, falling back to a full id match.
+     * @param {array} [reminders=[]] Source reminders (as ordered in the list view).
+     * @param {string} [target=``] The user-supplied id/position.
+     * @return {object|null}
+     */
+    _resolveTarget(reminders = [], target = ``) {
+        const index = parseInt(target, 10)
+        if (!isNaN(index) && index >= 1 && index <= reminders.length) return reminders[index - 1]
+        return reminders.find(reminder => reminder.id === target) || null
+    },
+
+    /**
+     * Awaiting a single line of text input from the user in the current channel.
+     * Used to drive the sequential prompts of the edit flow.
+     * @param {object} messageRef Current message/interaction instance (carries the channel).
+     * @param {string} userId The user we should listen to.
+     * @return {Promise<string|null>} The trimmed content, or null on timeout/no response.
+     */
+    async _awaitTextInput(messageRef, userId) {
+        const channel = messageRef.channel
+        if (!channel || typeof channel.awaitMessages !== `function`) return null
+        try {
+            const collected = await channel.awaitMessages({
+                filter: m => m.author.id === userId,
+                max: 1,
+                time: this.editPromptTimeout,
+                errors: [`time`]
+            })
+            const first = collected.first()
+            return first ? first.content.trim() : null
+        }
+        catch (e) {
+            //  awaitMessages rejects with the partial collection on timeout
+            return null
+        }
     },
 
     /**

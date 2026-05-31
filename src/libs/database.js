@@ -533,6 +533,26 @@ class Reminders extends DatabaseUtils {
 			, `${fn} Deleting reminder with id ${reminderId}`
 		)
 	}
+
+	/**
+	 * Updating an existing reminder's message and trigger date
+	 * @param {string} reminderId the target reminder's id
+	 * @param {string} message the new reminder message
+	 * @param {object} remindAt the new remind date object ({ timestamp, milliseconds })
+	 * @return {QueryResult}
+	 */
+	updateUserReminder(reminderId, message, remindAt) {
+		const fn = this.formatFunctionLog(`updateUserReminder`)
+		if (!reminderId) new TypeError(`${fn} parameter "reminderId" cannot be blank.`)
+		return this._query(`
+			UPDATE user_reminders
+			SET message = $message, remind_at = $remindAt
+			WHERE reminder_id = $reminderId`
+			, `run`
+			, { reminderId: reminderId, message: message, remindAt: JSON.stringify(remindAt) }
+			, `${fn} Updating reminder with id ${reminderId}`
+		)
+	}
 }
 
 class UserUtils extends DatabaseUtils {
