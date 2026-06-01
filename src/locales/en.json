@@ -1074,12 +1074,12 @@
     "TRADE": {
         "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Wants to share something with friends?♡**\nUse **`{{prefix}}trade @user`** and I'll open a trade window for you two!\n╰──────────☆～*:;,．*╯",
         "FETCHING": "{{emoji}} *Hold on-* i'm opening up trade window for you two..",
-        "REQUEST_PROMPT": "{{a}} wants to trade with {{b}}. {{b}}, do you accept? You have **30 seconds** to respond.",
-        "REQUEST_DECLINED": "{{b}} declined the trade request.",
-        "REQUEST_TIMEOUT": "Trade request timed out — no response from {{b}}.",
+        "REQUEST_PROMPT": "**{{a}}** has requested a trade, waiting for **{{b}}'s** confirmation. They have around **30 seconds** to respond before this gets timed out.",
+        "REQUEST_DECLINED": "{{b}} has declined the trade request.",
+        "REQUEST_TIMEOUT": "Boo ~ **{{b}}** didn't respond to your trade request in time.",
         "SELF_TRADE": "You can't trade with yourself, *baka*. {{emoji}}",
         "BOT_TRADE": "Bots are not tradeable trade partners.",
-        "ALREADY_IN_TRADE": "{{user}} is already in another trade — wait for it to finish.",
+        "ALREADY_IN_TRADE": "**{{user}}** is already in another active trade; please wait for them to finish.",
         "ACTIVE_HEADER": "Trade Opens :: {{guildName}}",
         "ACTIVE_HINT": "Use the buttons below to add or remove items, set artcoins, or ready up.",
         "OFFER_LINE": "{{qty}}× {{item}}",
@@ -1125,9 +1125,9 @@
         "EXEC_SUCCESS_FOLLOWUP": "Use **`{{prefix}}tradehistory`** to peek at your transaction history {{emoji}}",
         "EXEC_FAILED_INSUFFICIENT": "Trade rolled back .. {{user}} no longer has enough of an item or balance.",
         "EXEC_FAILED_GENERIC": "Trade failed during execution. Nothing was changed.",
-        "CANCELLED": "**so unfortunate** .. no interesting trade happened {{emoji}} maybe next time??",
+        "CANCELLED": "**So unfortunate** .. no interesting trade happened {{emoji}} maybe next time??",
         "IDLE_TIMEOUT": "Trade window has been closed due to inactivity.",
-        "NOT_PARTICIPANT": "Shush !! only the two trade participants can interact with these !!",
+        "NOT_PARTICIPANT": "Shush !! only the participants can interact with these !!",
         "INVENTORY_EMPTY": "{{user}}'s inventory has nothing tradeable in this server."
     },
     "TRADEHISTORY": {
