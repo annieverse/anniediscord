@@ -383,7 +383,7 @@ module.exports = {
                 id: i + 1,
                 message: this._trim(reminder.message),
                 time: moment(reminder.remindAt.timestamp).fromNow(),
-                date: moment(reminder.remindAt.timestamp).format(`lll`)
+                date: this._discordTimestamp(reminder.remindAt.timestamp)
             })
             count++
             if (count >= this.limitPerPage || i === (reminders.length - 1)) {
@@ -402,6 +402,18 @@ module.exports = {
             emoji: header.emoji
         }) + pages[0]
         return pages
+    },
+
+    /**
+     * Rendering a timestamp through Discord so each viewer sees it in their
+     * own relative timezone.
+     * @param {Date|string|number} timestamp Target date.
+     * @param {string} [style=`f`] Discord timestamp style.
+     * @return {string}
+     */
+    _discordTimestamp(timestamp, style = `f`) {
+        const unix = Math.floor(new Date(timestamp).getTime() / 1000)
+        return Number.isFinite(unix) ? `<t:${unix}:${style}>` : ``
     },
 
     /**

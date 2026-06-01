@@ -321,6 +321,15 @@ describe(`Reminder feature`, () => {
             expect(list).to.contain(`second`)
         })
 
+        it(`_discordTimestamp formats dates for the viewer's Discord timezone`, () => {
+            expect(remindCommand._discordTimestamp(new Date(`2026-05-31T15:00:00.000Z`)))
+                .to.equal(`<t:1780239600:f>`)
+        })
+
+        it(`_discordTimestamp returns an empty string for an invalid date`, () => {
+            expect(remindCommand._discordTimestamp(`not-a-date`)).to.equal(``)
+        })
+
         it(`_parseReminderList paginates when over the page limit`, () => {
             const future = new Date(`2026-05-31T15:00:00.000Z`)
             const reminders = []
@@ -339,6 +348,8 @@ describe(`Reminder feature`, () => {
             expect(pages[1]).to.not.contain(`intro`)
             //  list ids are 1-based positions
             expect(pages[0]).to.contain(`[ID:1]`)
+            //  Discord renders this absolute date in each viewer's timezone.
+            expect(pages[0]).to.contain(`<t:1780239600:f>`)
         })
 
         it(`_parseReminderList keeps everything on one page when under the limit`, () => {
