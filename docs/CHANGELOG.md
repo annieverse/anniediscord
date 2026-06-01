@@ -1,3 +1,52 @@
+# [10.4.0](https://github.com/annieverse/anniediscord/compare/v10.3.2...v10.4.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* **buff:** scope active-buff lookup to current guild ([fe7988d](https://github.com/annieverse/anniediscord/commit/fe7988d141d0baa404a5a8ca94fcec7d63f95162))
+* **database:** guard res.changes log access against swallowed _query ([6f54d1a](https://github.com/annieverse/anniediscord/commit/6f54d1aa423f16293d8ef4a2a3b8aab9ba32c5f9)), closes [#18](https://github.com/annieverse/anniediscord/issues/18)
+* **database:** type-guard pg.Client error listener ([45e5b87](https://github.com/annieverse/anniediscord/commit/45e5b879235a81f9f5f14783a1ee10d70f194ba5)), closes [#18](https://github.com/annieverse/anniediscord/issues/18)
+* **economy,locale:** atomic inventory spend and per-request locale ([0f84dd1](https://github.com/annieverse/anniediscord/commit/0f84dd151978c546bc8c7a6b9abc3d84a6012bac))
+* **interaction:** scope guild-only commands per-interaction to stop global leak ([711c763](https://github.com/annieverse/anniediscord/commit/711c7634f3a79ea1e94f6d5a179729b1efb77aed))
+* **locale:** cleanups ([e473225](https://github.com/annieverse/anniediscord/commit/e4732254b88990cb7cc40ca024bc0b55cd6a238b))
+* **locale:** id strings cleanups. ([e670c63](https://github.com/annieverse/anniediscord/commit/e670c63cd82f82f768b065d088117e630e02f914))
+* **locales:** id cleanups. ([9d322ab](https://github.com/annieverse/anniediscord/commit/9d322abc3b4abfa3eebbbbf5fa9e180ed980c205))
+* **locales:** trade locales ([b4b4d16](https://github.com/annieverse/anniediscord/commit/b4b4d16f0e3d99e92d4f665fdc0a8d19d6268adf))
+* **locales:** use unicode emoji codes from en reference in id ([9ff9afb](https://github.com/annieverse/anniediscord/commit/9ff9afbd74c30dbe2da7a9dcf9f310c896d42ad6))
+* **pixiv:** handle slash-interaction loading message dismissal ([5aaf359](https://github.com/annieverse/anniediscord/commit/5aaf359eb02b61453ef909cba49e9363a98e96c8))
+* **reminder:** use user's relative timezone ([d689a7a](https://github.com/annieverse/anniediscord/commit/d689a7aaf4e1ab385dfb4ac0b53862e2f79095c7))
+* **trade:** call getUserInventory on userUtils, not databaseUtils ([f787625](https://github.com/annieverse/anniediscord/commit/f7876253b1b47a5166e1410e1ad0120d4c761ca7))
+* **trade:** center the avatar pair on the banner ([dcb0f59](https://github.com/annieverse/anniediscord/commit/dcb0f59bccfd0d63c3c8620e66703d8d8c947d11))
+* **trade:** delete ephemeral select+modal after Add lands ([19de12d](https://github.com/annieverse/anniediscord/commit/19de12d4318b07943bc640a8ffbb7a067dbf3616))
+* **trade:** drop avatar border, evenly space the two avatars ([0cbd84b](https://github.com/annieverse/anniediscord/commit/0cbd84b529242e8d39ca81c56cc0742597abb212))
+* **trade:** land both avatars in the trade banner ([283b984](https://github.com/annieverse/anniediscord/commit/283b9847df2aa48536be8e791197c41d037b598e))
+* **trade:** nudge initiator avatar center from x=75 to x=100 ([78fdf16](https://github.com/annieverse/anniediscord/commit/78fdf16016916376c72a9b145dd27d5904686241))
+* **trade:** send active-window embed directly to bypass Response builder ([9373f86](https://github.com/annieverse/anniediscord/commit/9373f86ab0d5ab849ea2f67caef52fb88eea7af8))
+* **trade:** use default palette crimson for the trade embed border ([2155f73](https://github.com/annieverse/anniediscord/commit/2155f73e4a6eed8571adb4aa9062a7eee01c55d9)), closes [#912f46](https://github.com/annieverse/anniediscord/issues/912f46)
+* **trade:** widen banner to 300px with avatars centered at x=75 and x=225 ([f6f64e0](https://github.com/annieverse/anniediscord/commit/f6f64e0879c31b40c1535ff5abdf915c1fc274d8))
+
+
+### Features
+
+* add new Indonesian localization ([56dec09](https://github.com/annieverse/anniediscord/commit/56dec096ea13f37516b436e9221b3c79263cb683))
+* **api:** add GET /api/v1/commands ([6720fc0](https://github.com/annieverse/anniediscord/commit/6720fc0231edbe6096a3926bad2a4406d7a10e9a))
+* **api:** drop developer-tier commands from /api/v1/commands ([26f7fa5](https://github.com/annieverse/anniediscord/commit/26f7fa57b0282e7f3463d3de91f94ac2b55fd209))
+* **remind:** added list and delete addons. ([9371e8f](https://github.com/annieverse/anniediscord/commit/9371e8f0d0f149055005b6d57567fda09b34f068))
+* **trade:** add /trade command with paired confirmation flow ([77905d5](https://github.com/annieverse/anniediscord/commit/77905d562f20f8ed14568e47fb4ad53007e8a4b4))
+* **trade:** add /tradehistory paginated history view ([78a66b8](https://github.com/annieverse/anniediscord/commit/78a66b8d723363ab95476fd961e767ce2a5b1ef7))
+* **trade:** add custom canvas banner with both avatars ([81768b4](https://github.com/annieverse/anniediscord/commit/81768b4dafb05e2594dd75f610bf353a0a10e75a))
+* **trade:** add final-confirm step with two-party requirement ([ce06772](https://github.com/annieverse/anniediscord/commit/ce06772864d6859100aea03c8b172f89d5ee6ce3))
+* **trade:** add NODE_ENV+BYPASS_SELF_TRADE escape hatch for solo testing ([585ec51](https://github.com/annieverse/anniediscord/commit/585ec51d1c11f71b8bc021515f9172b3b94a2b84))
+* **trade:** add trade-system schema, db class, and headless state machine ([eacbbdc](https://github.com/annieverse/anniediscord/commit/eacbbdc34836fd61634a4dad1b5c89fdc12164cf))
+* **trade:** finalized build ([2aac794](https://github.com/annieverse/anniediscord/commit/2aac794317cfbe296d18b87bb74e67e1b71a56a2))
+* **trade:** fold setac into Add and harden ready-revoke against sneak edits ([ea6033b](https://github.com/annieverse/anniediscord/commit/ea6033b0abb17803f0c5758d1728ff10818e388c))
+* **trade:** halfway, require refinement ([ed718cd](https://github.com/annieverse/anniediscord/commit/ed718cd402cbd08e38ef1c80325633fa8ffa2165))
+* **trade:** inline qty errors and surface owned count up front ([48579c5](https://github.com/annieverse/anniediscord/commit/48579c5e423db70eadbeef1170b23ec158d41574))
+* **trade:** pick from inventory via select menu in Add flow ([d608c0c](https://github.com/annieverse/anniediscord/commit/d608c0ca8e1b3099d6675dd9b1713d6e3c5b0039))
+* **trade:** polish active hint, success message, and follow-ups ([8ffdff3](https://github.com/annieverse/anniediscord/commit/8ffdff311daf9909b17711545084a3acb33bd972))
+* **trade:** rename Ready → Lock in user-visible strings ([f30fe84](https://github.com/annieverse/anniediscord/commit/f30fe84c7a4315efe3365b36e486a6206cdd3fd1))
+* **trade:** theme-colored inner border around each avatar ([5b66b77](https://github.com/annieverse/anniediscord/commit/5b66b771d9f9e0301d4ffce12bae8d369347edd4))
+
 ## [10.3.2](https://github.com/annieverse/anniediscord/compare/v10.3.1...v10.3.2) (2026-05-29)
 
 
