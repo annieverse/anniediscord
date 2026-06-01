@@ -6,10 +6,10 @@ const tradeHistory = require(`../../src/commands/user/tradehistory`)
 const enLocales = require(`../../src/locales/en.json`)
 
 /**
- * /tradehistory is a thin paginator over `client.db.trades.getTradeHistory`.
+ * /tradehistory is an inventory-style view over `client.db.trades.getTradeHistory`.
  * The DB shape is exercised in tests/libs/trade.test.js (the recordTradeLog
  * round-trip). What's worth covering here is the rendering layer: the
- * pagination math, the committed vs failed branching, and the offer
+ * framed pagination math, the committed vs failed branching, and the offer
  * compaction since none of that runs through the lib.
  *
  * The fill helper does `{{key}}` substitution on the text returned from
@@ -60,18 +60,18 @@ function failRow(id, partnerId, reason) {
 
 describe(`/tradehistory paging`, () => {
 
-    it(`splits rows into pages of pageSize`, () => {
+    it(`splits rows into pages of limitPerPage`, () => {
         const rows = []
         for (let i = 1; i <= 12; i++) {
             rows.push(commitRow(i, `userB`, { items: [], artcoins: i * 100 }, { items: [], artcoins: 0 }))
         }
         const pages = tradeHistory.buildPages(rows, target, locale, acEmoji)
-        //  pageSize is 5, so 12 rows → 3 pages (5, 5, 2).
-        expect(pages).to.have.lengthOf(3)
-        //  Each page ends with the footer marker resolved from the locale file.
-        const footer = locale(`TRADEHISTORY.PAGE_FOOTER`)
+        //  limitPerPage is 3, so 12 rows → 4 pages.
+        expect(pages).to.have.lengthOf(4)
+        //  Each page uses the same decorative framing as /inventory.
         for (const p of pages) {
-            expect(p.endsWith(footer)).to.equal(true)
+            expect(p.startsWith(`╭*:;,．★ ～☆*───────╮`)).to.equal(true)
+            expect(p.endsWith(`╰────────☆～*:;,．*╯`)).to.equal(true)
         }
     })
 
@@ -88,9 +88,10 @@ describe(`/tradehistory entry rendering`, () => {
         //  Target is user_a, so 'sent' should be a_offer and 'received' b_offer.
         const row = commitRow(7, `userB`, { items: [{ itemId: 99, qty: 2 }], artcoins: 500 }, { items: [{ itemId: 88, qty: 1 }], artcoins: 0 })
         const out = tradeHistory.formatEntry(row, target, locale, acEmoji)
-        expect(out).to.include(`#7`)
-        expect(out).to.include(`<@userB>`)
-        expect(out).to.include(`Alice`)
+        expect(out).to.include(`(ID:7)`)
+        expect(out).to.include(`**userB**`)
+        expect(out).not.to.include(`<@userB>`)
+        expect(out).to.include(locale(`TRADEHISTORY.STATUS_COMMITTED`))
         //  Sent = a_offer (item 99 ×2 + 500 AC). Received = b_offer (item 88 ×1).
         expect(out).to.include(`2× #99`)
         expect(out).to.include(`500`)
@@ -121,9 +122,49 @@ describe(`/tradehistory entry rendering`, () => {
     it(`renders a failed row with status and reason`, () => {
         const row = failRow(9, `userB`, `INSUFFICIENT_ARTCOINS`)
         const out = tradeHistory.formatEntry(row, target, locale, acEmoji)
-        expect(out).to.include(`#9`)
+        expect(out).to.include(`(ID:9)`)
         expect(out).to.include(locale(`TRADEHISTORY.STATUS_FAILED`))
         expect(out).to.include(`INSUFFICIENT_ARTCOINS`)
+    })
+})
+
+describe(`/tradehistory partner labels`, () => {
+
+    it(`uses a cached guild member username`, async () => {
+        const guild = {
+            members: {
+                cache: new Map([[`userB`, { user: { username: `Bob` } }]])
+            }
+        }
+        const labels = await tradeHistory.resolvePartnerLabels([commitRow(1, `userB`, {}, {})], target, guild)
+        expect(labels.userB).to.equal(`Bob`)
+    })
+
+    it(`fetches an uncached guild member username`, async () => {
+        const guild = {
+            members: {
+                cache: new Map(),
+                async fetch(id) {
+                    expect(id).to.equal(`userB`)
+                    return { user: { username: `Bob` } }
+                }
+            }
+        }
+        const labels = await tradeHistory.resolvePartnerLabels([commitRow(1, `userB`, {}, {})], target, guild)
+        expect(labels.userB).to.equal(`Bob`)
+    })
+
+    it(`falls back to the id when the member has left`, async () => {
+        const guild = {
+            members: {
+                cache: new Map(),
+                async fetch() {
+                    throw new Error(`Unknown Member`)
+                }
+            }
+        }
+        const labels = await tradeHistory.resolvePartnerLabels([commitRow(1, `former-user`, {}, {})], target, guild)
+        expect(labels[`former-user`]).to.equal(`former-user`)
     })
 })
 

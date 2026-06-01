@@ -1,24 +1,14 @@
 "use strict"
+const GUI = require(`../../ui/prebuild/ownerHeader`)
 const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 const { ARTCOINS_ITEM_ID } = require(`../../libs/trade`)
 
 /**
- * View a user's recent trade history. Default target is the invoker; an
- * optional User option lets people peek at someone else's record.
- *
- * Backed by `client.db.trades.getTradeHistory(userId, {limit, offset})` which
- * surfaces rows where the user appeared as either party. Renders through the
- * Response paging module so each page is a single self-contained string,
- * mirroring `remind.js` (closest analog in the existing codebase).
- *
- * Failed and cancelled rows are surfaced too, with an italic status note,
- * so users can self-diagnose "I clicked confirm and nothing happened" cases
- * before they file a support ticket.
- *
- * @link docs/trade-system-design.md §3.2, §10
+ * Views a user's recent trade history.
  * @author klerikdust
  */
 module.exports = {
@@ -38,83 +28,110 @@ module.exports = {
         type: ApplicationCommandOptionType.User
     }],
     type: ApplicationCommandType.ChatInput,
-    pageSize: 5,
+    limitPerPage: 3,
     historyLimit: 50,
     ARTCOINS_EMOJI_ID: `758720612087627787`,
-    HEADER_EMOJI_ID: `692428692999241771`,
 
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         const userLib = new User(client, message)
-        let target
-        if (arg) {
-            const lookup = await userLib.lookFor(arg)
-            if (!lookup) return await reply.send(locale(`USER.IS_INVALID`))
-            target = lookup.master || lookup
-        } else {
-            target = message.author
-        }
-        return await this.run(client, reply, locale, target, client.prefix)
+        let targetUser = arg ? await userLib.lookFor(arg) : message.author
+        if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
+        //  Normalize structure
+        targetUser = targetUser.master || targetUser
+        return await this.run(client, reply, message, locale, targetUser, prefix)
     },
 
     async Iexecute(client, reply, interaction, options, locale) {
-        const target = options.getUser(`user`) || interaction.member.user
-        return await this.run(client, reply, locale, target, `/`)
+        return await this.run(client, reply, interaction, locale, options.getUser(`user`) || interaction.member.user, `/`)
     },
 
-    async run(client, reply, locale, target, prefix) {
-        const rows = await client.db.trades.getTradeHistory(target.id, { limit: this.historyLimit, offset: 0 })
-        if (!rows || rows.length === 0) {
-            return await reply.send(locale(`TRADEHISTORY.EMPTY`), {
-                socket: { user: target.username }
+    async run(client, reply, messageRef, locale, user, prefix) {
+        const userLib = new User(client, messageRef)
+        if (!user) return await reply.send(locale(`USER.IS_INVALID`))
+        const targetUserData = await userLib.requestMetadata(user, 2, locale)
+        const rows = await client.db.trades.getTradeHistory(user.id, { limit: this.historyLimit, offset: 0 })
+        const INVALID_HISTORY = userLib.isSelf(user.id) ? locale(`TRADEHISTORY.AUTHOR_EMPTY`) : locale(`TRADEHISTORY.OTHER_USER_EMPTY`)
+        if (!rows || rows.length <= 0) return await reply.send(INVALID_HISTORY, { socket: { user: user.username } })
+        return await reply.send(locale(`TRADEHISTORY.FETCHING`), { socket: { emoji: await client.getEmoji(`AAUloading`) } })
+            .then(async loading => {
+                const partnerLabels = await this.resolvePartnerLabels(rows, user, messageRef.guild)
+                const pages = this.buildPages(rows, user, locale, await client.getEmoji(this.ARTCOINS_EMOJI_ID), partnerLabels)
+                await reply.send(pages, {
+                    prebuffer: true,
+                    image: await new GUI(targetUserData).build(),
+                    paging: true,
+                    customHeader: [`${user.username}'s Trade History!`, user.displayAvatarURL()]
+                })
+                if (userLib.isSelf(user.id)) await reply.send(locale(`TRADEHISTORY.AUTHOR_TIPS`), {
+                    simplified: true,
+                    socket: {
+                        prefix: prefix,
+                        emoji: await client.getEmoji(`848521358236319796`)
+                    }
+                })
+                return isInteractionCallbackResponse(loading) ? loading.resource.message.delete() : loading.delete()
             })
-        }
-        const acEmoji = await client.getEmoji(this.ARTCOINS_EMOJI_ID)
-        const headerEmoji = await client.getEmoji(this.HEADER_EMOJI_ID)
-        const pages = this.buildPages(rows, target, locale, acEmoji)
-        //  Prepend the intro line to the first page so paginator headers stay
-        //  consistent with the rest of the codebase (remind.js does the same).
-        pages[0] = this.fill(locale(`TRADEHISTORY.INTRO`), {
-            emoji: headerEmoji,
-            user: target.username,
-            size: rows.length
-        }) + pages[0]
-        return await reply.send(pages, {
-            paging: true,
-            socket: { prefix: prefix }
-        })
     },
 
     /**
-     * Slice the rows into N-row pages, each rendered as one string.
+     * Slice the rows into inventory-style pages.
      */
-    buildPages(rows, target, locale, acEmoji) {
+    buildPages(rows, user, locale, acEmoji, partnerLabels = {}) {
         const pages = []
-        let buffer = ``
-        let count = 0
+        let str = ``
+        let breakpoint = 0
         for (let i = 0; i < rows.length; i++) {
-            buffer += this.formatEntry(rows[i], target, locale, acEmoji)
-            count++
-            const lastOnPage = count >= this.pageSize || i === rows.length - 1
-            if (lastOnPage) {
-                buffer += locale(`TRADEHISTORY.PAGE_FOOTER`)
-                pages.push(buffer)
-                buffer = ``
-                count = 0
-            } else {
-                buffer += locale(`TRADEHISTORY.ENTRY_DIVIDER`)
+            if (breakpoint < 1) {
+                str += `╭*:;,．★ ～☆*───────╮\n`
+            }
+            breakpoint++
+            str += this.formatEntry(rows[i], user, locale, acEmoji, partnerLabels)
+            if (breakpoint >= this.limitPerPage || i === (rows.length - 1)) {
+                str = str.substring(0, str.length - 1)
+                str += `╰────────☆～*:;,．*╯`
+                breakpoint = 0
+                pages.push(str)
+                str = ``
             }
         }
         return pages
     },
 
     /**
-     * Render a single row. Splits committed vs failed/cancelled because the
-     * data we care to surface differs (offers vs failure_reason).
+     * Resolve active guild members to usernames, falling back to their ids
+     * when they are no longer available in the server.
      */
-    formatEntry(row, target, locale, acEmoji) {
+    async resolvePartnerLabels(rows, user, guild) {
+        const labels = {}
+        const partnerIds = new Set(rows.map(row => {
+            const isTargetUserA = String(row.user_a_id) === String(user.id)
+            return String(isTargetUserA ? row.user_b_id : row.user_a_id)
+        }))
+        await Promise.all([...partnerIds].map(async partnerId => {
+            let member = guild && guild.members && guild.members.cache
+                ? guild.members.cache.get(partnerId)
+                : null
+            if (!member && guild && guild.members && guild.members.fetch) {
+                try {
+                    member = await guild.members.fetch(partnerId)
+                } catch (_) {
+                    member = null
+                }
+            }
+            labels[partnerId] = member && member.user && member.user.username
+                ? member.user.username
+                : partnerId
+        }))
+        return labels
+    },
+
+    /**
+     * Render a single trade from the target user's perspective.
+     */
+    formatEntry(row, user, locale, acEmoji, partnerLabels = {}) {
         const tradeId = row.trade_id
         const when = moment(row.registered_at).fromNow()
-        const isTargetUserA = String(row.user_a_id) === String(target.id)
+        const isTargetUserA = String(row.user_a_id) === String(user.id)
         const partnerId = isTargetUserA ? row.user_b_id : row.user_a_id
         if (row.status === `committed`) {
             const sent = isTargetUserA ? row.a_offer : row.b_offer
@@ -122,8 +139,8 @@ module.exports = {
             return this.fill(locale(`TRADEHISTORY.ENTRY_COMMITTED`), {
                 tradeId: tradeId,
                 when: when,
-                partner: `<@${partnerId}>`,
-                user: target.username,
+                partner: partnerLabels[partnerId] || partnerId,
+                status: locale(`TRADEHISTORY.STATUS_COMMITTED`),
                 sent: this.formatOffer(sent, locale, acEmoji),
                 received: this.formatOffer(received, locale, acEmoji)
             })
@@ -135,16 +152,13 @@ module.exports = {
             tradeId: tradeId,
             when: when,
             status: statusKey,
-            partner: `<@${partnerId}>`,
-            reason: row.failure_reason || `unknown`
+            partner: partnerLabels[partnerId] || partnerId,
+            reason: row.failure_reason || locale(`TRADEHISTORY.UNKNOWN_REASON`)
         })
     },
 
     /**
-     * Compact one offer into a one-line string. Items are listed by id since
-     * names would require a per-row item lookup (50 rows × N lines = lots of
-     * roundtrips on a history view). The trade itself uses names; the log
-     * view trades resolution for speed.
+     * Compact one offer into a one-line string.
      */
     formatOffer(offer, locale, acEmoji) {
         if (!offer) return locale(`TRADEHISTORY.OFFER_NONE`)
@@ -154,7 +168,7 @@ module.exports = {
         if (Array.isArray(parsed.items)) {
             for (const line of parsed.items) {
                 parts.push(this.fill(locale(`TRADEHISTORY.OFFER_ITEM`), {
-                    qty: line.qty,
+                    qty: commanifier(line.qty),
                     itemId: line.itemId
                 }))
             }
@@ -169,8 +183,7 @@ module.exports = {
     },
 
     /**
-     * Local copy of the same `{{key}}` substitution helper `remind.js` uses;
-     * keeps this file standalone without reaching into another command.
+     * Apply socket-style substitutions to a locale string.
      */
     fill(template, data) {
         let out = template

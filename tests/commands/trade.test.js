@@ -303,3 +303,59 @@ describe(`/trade truncate`, () => {
         expect(tradeCommand.truncate(`abcdefghijk`, 10)).to.equal(`abcdefghi…`)
     })
 })
+
+describe(`/trade transient message cleanup`, () => {
+    it(`deletes the active hint message after final confirmation`, async () => {
+        const message = { delete: sinon.stub().resolves() }
+        await tradeCommand.deleteMessage(message)
+        expect(message.delete.calledOnce).to.equal(true)
+    })
+
+    it(`does not interrupt the trade when the hint message is already gone`, async () => {
+        const message = { delete: sinon.stub().rejects(new Error(`Unknown Message`)) }
+        await tradeCommand.deleteMessage(message)
+        expect(message.delete.calledOnce).to.equal(true)
+    })
+
+    it(`accepts an empty hint response when sending the hint failed`, async () => {
+        await tradeCommand.deleteMessage(null)
+    })
+})
+
+describe(`/trade loading animation`, () => {
+    it(`uses the profile loading emoji and removes the loader when window preparation fails`, async () => {
+        const loading = { delete: sinon.stub().resolves() }
+        const reply = { send: sinon.stub().resolves(loading) }
+        const session = { accept: sinon.stub(), cancel: sinon.stub() }
+        const client = buildClient({
+            db: {
+                guildUtils: {
+                    async registerGuild() {}
+                },
+                userUtils: {
+                    async getUser() {
+                        throw new Error(`__metadata_probe__`)
+                    }
+                }
+            }
+        })
+        const messageRef = {
+            guild: { id: `g1` },
+            member: { id: `userA` }
+        }
+        await tradeCommand.runActiveSession(
+            client,
+            reply,
+            key => key,
+            messageRef,
+            session,
+            { id: `userA`, username: `Alice` },
+            { id: `userB`, username: `Bob` }
+        )
+        expect(session.accept.calledOnce).to.equal(true)
+        expect(client.getEmoji.calledWith(`790994076257353779`)).to.equal(true)
+        expect(reply.send.calledWith(`TRADE.FETCHING`, { socket: { emoji: `:emoji:` } })).to.equal(true)
+        expect(session.cancel.calledWith(`metadata_fetch_failed`)).to.equal(true)
+        expect(loading.delete.calledOnce).to.equal(true)
+    })
+})

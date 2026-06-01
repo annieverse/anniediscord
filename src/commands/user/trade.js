@@ -59,6 +59,7 @@ module.exports = {
 
     async execute(client, reply, message, arg, locale) {
         if (!arg) return await reply.send(locale(`TRADE.GUIDE`), {
+            image: `banner_trade`,
             socket: { prefix: client.prefix }
         })
         const userLib = new User(client, message)
@@ -118,6 +119,18 @@ module.exports = {
                 if (!accepted) return
             }
 
+            //  Guarantee both parties have a `users` row before any inventory
+            //  write. The initiator is validated upstream (messageCreate /
+            //  interactionCreate), and the prefix path validates the target via
+            //  User.lookFor — but a slash-command target who has never
+            //  interacted with the bot has no row. Without it, the credit phase
+            //  silently no-ops (updateInventory's INSERT is gated on the user
+            //  existing) while the debit commits, losing the sender's items.
+            //  validateUserEntry is idempotent and Redis-cached, so re-running
+            //  it for an existing user is effectively free.
+            await client.db.databaseUtils.validateUserEntry(initiator.id, initiator.username)
+            await client.db.databaseUtils.validateUserEntry(target.id, target.username)
+
             //  Step 2+ — active session. Owns its own message + collector.
             await this.runActiveSession(client, reply, locale, messageRef, session, initiator, target)
         } finally {
@@ -145,28 +158,30 @@ module.exports = {
         const collector = requestMessage.createMessageComponentCollector({
             componentType: ComponentType.Button,
             time: this.REQUEST_TIMEOUT_MS,
-            filter: i => i.user.id === target.id || i.user.id === initiator.id,
-            max: 1
+            filter: i => i.user.id === target.id || i.user.id === initiator.id
         })
 
         const result = await new Promise(resolve => {
             collector.on(`collect`, async i => {
-                //  Only B is allowed to accept/decline. Filter above lets A
-                //  through too so we can give them feedback rather than the
-                //  silent collector ignore.
+                //  Only B is allowed to accept/decline. The filter admits A too
+                //  so we can nudge them with feedback rather than a silent
+                //  ignore — but an A click must NOT end the collector, so we
+                //  return without stopping it (no `max: 1`, which would let a
+                //  stray A click consume the only slot and hang the promise).
                 if (i.user.id !== target.id) {
-                    return i.reply({ content: locale(`TRADE.NOT_PARTICIPANT`), flags: MessageFlags.Ephemeral })
+                    return i.reply({ content: locale(`TRADE.NOT_PARTICIPANT`), flags: MessageFlags.Ephemeral }).catch(() => {})
                 }
                 if (i.customId === `trade:accept`) {
                     await i.update({ components: [] }).catch(() => {})
+                    collector.stop(`accepted`)
                     return resolve(true)
                 }
                 if (i.customId === `trade:decline`) {
                     await i.update({ components: [] }).catch(() => {})
                     await reply.send(locale(`TRADE.REQUEST_DECLINED`), { socket: { b: target.username } })
+                    collector.stop(`declined`)
                     return resolve(false)
                 }
-                return resolve(false)
             })
             collector.on(`end`, async (_collected, reasonStr) => {
                 if (reasonStr === `time`) {
@@ -186,6 +201,9 @@ module.exports = {
      */
     async runActiveSession(client, reply, locale, messageRef, session, initiator, target) {
         session.accept()
+        const fetching = this.resolveResponseMessage(await reply.send(locale(`TRADE.FETCHING`), {
+            socket: { emoji: await client.getEmoji(`790994076257353779`) }
+        }).catch(() => null))
 
         //  Fetch metadata for both users so the GUI banner can pick up the
         //  initiator's saved theme + cover and pull avatars consistently.
@@ -202,11 +220,13 @@ module.exports = {
         } catch (err) {
             client.logger.warn({ action: `trade_metadata_fetch_failed`, msg: err && err.message })
             session.cancel(`metadata_fetch_failed`)
+            await this.deleteMessage(fetching)
             return
         }
         if (!initiatorMeta || !partnerMeta) {
             client.logger.warn({ action: `trade_metadata_fetch_failed`, msg: `requestMetadata returned null` })
             session.cancel(`metadata_fetch_failed`)
+            await this.deleteMessage(fetching)
             return
         }
 
@@ -229,12 +249,17 @@ module.exports = {
             return { embed, attachment }
         }
 
-        const initial = await renderArtifacts()
-        const tradeMessage = await messageRef.channel.send({
-            embeds: [initial.embed],
-            files: [initial.attachment],
-            components: this.buildButtonRows(session)
-        })
+        let tradeMessage
+        try {
+            const initial = await renderArtifacts()
+            tradeMessage = await messageRef.channel.send({
+                embeds: [initial.embed],
+                files: [initial.attachment],
+                components: this.buildButtonRows(session)
+            })
+        } finally {
+            await this.deleteMessage(fetching)
+        }
         if (!tradeMessage) {
             session.cancel(`render_failed`)
             return
@@ -243,10 +268,10 @@ module.exports = {
         //  trade window so users see it before they start adding items.
         //  Reads more naturally as a follow-up than as part of the main
         //  embed footer, where it tends to get ignored.
-        await reply.send(locale(`TRADE.ACTIVE_HINT_FOLLOWUP`), {
+        const activeHintFollowup = this.resolveResponseMessage(await reply.send(locale(`TRADE.ACTIVE_HINT_FOLLOWUP`), {
             simplified: true,
             socket: { emoji: await client.getEmoji(`692428692999241771`) }
-        }).catch(() => {})
+        }).catch(() => null))
 
         const collector = tradeMessage.createMessageComponentCollector({
             componentType: ComponentType.Button,
@@ -301,7 +326,9 @@ module.exports = {
 
                         case `trade:cancel`:
                             session.cancel(`user_cancel`)
-                            return await finishWith(`TRADE.CANCELLED`)
+                            return await finishWith(`TRADE.CANCELLED`, {
+                                socket: { emoji: await client.getEmoji(`692428578683617331`) }
+                            })
 
                         case `trade:ready`: {
                             session.setReady(side, !session.snapshot().ready[side])
@@ -340,9 +367,11 @@ module.exports = {
                                 return
                             }
                             //  Both confirmed → execute.
+                            await this.deleteMessage(activeHintFollowup)
                             const exec = await session.execute()
                             if (exec.ok) {
                                 await finishWith(`TRADE.EXEC_SUCCESS`, {
+                                    status: `success`,
                                     socket: {
                                         a: initiator.username,
                                         b: target.username,
@@ -350,7 +379,11 @@ module.exports = {
                                     }
                                 })
                                 await reply.send(locale(`TRADE.EXEC_SUCCESS_FOLLOWUP`), {
-                                    socket: { emoji: await client.getEmoji(`692428692999241771`) }
+                                    simplified: true,
+                                    socket: {
+                                        emoji: await client.getEmoji(`848521456543203349`),
+                                        prefix: client.prefix
+                                    }
                                 }).catch(() => {})
                                 return
                             }
@@ -570,6 +603,24 @@ module.exports = {
                 resolve()
             })
         })
+    },
+
+    /**
+     * Resolve Response.send's regular-message and slash-callback return shapes
+     * into the underlying Discord message.
+     */
+    resolveResponseMessage(response) {
+        return isInteractionCallbackResponse(response)
+            ? response.resource && response.resource.message
+            : response
+    },
+
+    /**
+     * Best-effort cleanup for transient trade messages.
+     */
+    async deleteMessage(message) {
+        if (!message || typeof message.delete !== `function`) return
+        try { await message.delete() } catch (_) { /* already gone */ }
     },
 
     /**
