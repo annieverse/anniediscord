@@ -959,7 +959,7 @@
     "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Quelque chose à échanger ?♡**\nDemande-moi avec **`{{prefix}}trade @user`** et j'ouvrirai une fenêtre d'échange pour vous deux !\n╰──────────☆～*:;,．*╯",
     "FETCHING": "{{emoji}} *Un instant-* j'ouvre une fenêtre d'échange pour vous deux..",
     "REQUEST_PROMPT": "**{{a}}** a demandé un échange. **{{b}}** dispose d'environ **30 secondes** pour répondre avant l'expiration de cette demande.",
-    "REQUEST_DECLINED": "{{b}} a refusé la demande d'échange.",
+    "REQUEST_DECLINED": "**{{b}}** a refusé la demande d'échange.",
     "REQUEST_TIMEOUT": "Bouh ~ **{{b}}** n'a pas répondu à ta demande d'échange à temps.",
     "SELF_TRADE": "Tu ne peux pas échanger avec toi-même, *baka*. {{emoji}}",
     "BOT_TRADE": "Les bots ne sont pas des partenaires d'échange valides.",

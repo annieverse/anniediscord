@@ -1075,7 +1075,7 @@
         "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Wants to share something with friends?♡**\nUse **`{{prefix}}trade @user`** and I'll open a trade window for you two!\n╰──────────☆～*:;,．*╯",
         "FETCHING": "{{emoji}} *Hold on-* i'm opening up trade window for you two..",
         "REQUEST_PROMPT": "**{{a}}** has requested a trade, waiting for **{{b}}'s** confirmation. They have around **30 seconds** to respond before this gets timed out.",
-        "REQUEST_DECLINED": "{{b}} has declined the trade request.",
+        "REQUEST_DECLINED": "**{{b}}** has declined the trade request.",
         "REQUEST_TIMEOUT": "Boo ~ **{{b}}** didn't respond to your trade request in time.",
         "SELF_TRADE": "You can't trade with yourself, *baka*. {{emoji}}",
         "BOT_TRADE": "Bots are not tradeable trade partners.",
