@@ -165,6 +165,148 @@ class Reminder {
         }
         return source
     }
+
+    /**
+     * Fetch the user's currently-active reminders, normalized and sorted by the soonest trigger.
+     * Reads straight from the database (the source of truth) so the parsed timestamps stay reliable.
+     * @param {string} [userId=``] the reminder's owner
+     * @return {array}
+     */
+    async getActiveReminders(userId = ``) {
+        const fn = `[Reminder.getActiveReminders]`
+        const reminders = await this.db.reminders.getUserReminders(userId)
+        if (!reminders || reminders.length <= 0) {
+            this.logger.debug(`${fn} no registered reminders for USER_ID:${userId}`)
+            return []
+        }
+        const now = new Date()
+        return reminders
+            .map(node => {
+                let remindAt
+                try {
+                    remindAt = typeof node.remind_at === `string` ? JSON.parse(node.remind_at) : node.remind_at
+                }
+                catch (e) {
+                    this.logger.warn(`${fn} failed to parse remind_at for UUID:${node.reminder_id} > ${e.message}`)
+                    remindAt = { timestamp: node.remind_at, milliseconds: 0 }
+                }
+                return {
+                    registeredAt: node.registered_at,
+                    id: node.reminder_id,
+                    userId: node.user_id,
+                    message: node.message,
+                    remindAt: {
+                        timestamp: new Date(remindAt.timestamp),
+                        milliseconds: remindAt.milliseconds
+                    }
+                }
+            })
+            .filter(node => node.remindAt.timestamp > now)
+            .sort((a, b) => a.remindAt.timestamp - b.remindAt.timestamp)
+    }
+
+    /**
+     * Deleting an active reminder across the shard pool, cache, and database.
+     * The cron job may live on a different shard than the one handling this request,
+     * so the stop is broadcasted to every shard.
+     * @param {string} [userId=``] the reminder's owner
+     * @param {string} [reminderId=``] the target reminder's id
+     * @return {boolean}
+     */
+    async deleteReminder(userId = ``, reminderId = ``) {
+        const fn = `[Reminder.deleteReminder]`
+        const cacheId = `REMINDERS@${userId}`
+        //  Stop the cron job on whichever shard currently holds it
+        try {
+            if (this.client.shard) {
+                await this.client.shard.broadcastEval((c, { id }) => {
+                    if (c.reminders && c.reminders.pool && c.reminders.pool.exists(id)) {
+                        c.reminders.pool.stop(id)
+                        c.reminders.pool.deleteJob(id)
+                        return true
+                    }
+                    return false
+                }, { context: { id: reminderId } })
+            }
+            else if (this.pool.exists(reminderId)) {
+                this.pool.stop(reminderId)
+                this.pool.deleteJob(reminderId)
+            }
+        }
+        catch (e) {
+            this.logger.warn(`${fn} failed to stop cron for ${reminderId} > ${e.message}`)
+        }
+        //  Invalidate cache
+        this.cache.del(cacheId)
+        //  Delete from database
+        await this.db.reminders.deleteUserReminder(reminderId)
+        this.logger.info(`${fn} deleted reminder UUID:${reminderId} for USER_ID:${userId}`)
+        return true
+    }
+
+    /**
+     * Editing an active reminder's message and trigger date.
+     * Re-arms the cron from scratch: stops the old job across the shard pool,
+     * persists the change, clears the cache, then schedules a fresh job on this shard.
+     * @param {object} [context={}] the new reminder context
+     * @param {string} context.id the target reminder's id
+     * @param {string} context.userId the reminder's owner
+     * @param {string} context.message the new message
+     * @param {object} context.remindAt the new remind date ({ timestamp, milliseconds })
+     * @param {string} context.registeredAt the original registration timestamp
+     * @return {boolean}
+     */
+    async editReminder(context = {}) {
+        const fn = `[Reminder.editReminder]`
+        const cacheId = `REMINDERS@${context.userId}`
+        //  Stop the old cron job on whichever shard currently holds it
+        try {
+            if (this.client.shard) {
+                await this.client.shard.broadcastEval((c, { id }) => {
+                    if (c.reminders && c.reminders.pool && c.reminders.pool.exists(id)) {
+                        c.reminders.pool.stop(id)
+                        c.reminders.pool.deleteJob(id)
+                        return true
+                    }
+                    return false
+                }, { context: { id: context.id } })
+            }
+            else if (this.pool.exists(context.id)) {
+                this.pool.stop(context.id)
+                this.pool.deleteJob(context.id)
+            }
+        }
+        catch (e) {
+            this.logger.warn(`${fn} failed to stop cron for ${context.id} > ${e.message}`)
+        }
+        //  Persist the change
+        await this.db.reminders.updateUserReminder(context.id, context.message, context.remindAt)
+        //  Invalidate cache so the next read reflects the update
+        this.cache.del(cacheId)
+        //  Re-arm the cron on this shard
+        this.startReminder({
+            registeredAt: context.registeredAt,
+            id: context.id,
+            userId: context.userId,
+            message: context.message,
+            remindAt: context.remindAt
+        })
+        this.logger.info(`${fn} updated reminder UUID:${context.id} for USER_ID:${context.userId}`)
+        return true
+    }
+
+    /**
+     * Parsing a free-form duration string (e.g. "3 hours", "30m", "2 days") into a remind date.
+     * @param {string} [duration=``] the duration string
+     * @return {object|null} `{ timestamp, milliseconds }` when valid, otherwise null
+     */
+    getDateFromDuration(duration = ``) {
+        if (typeof duration !== `string` || !duration.trim().length) return null
+        const milliseconds = ms(duration.trim())
+        if (milliseconds === undefined || isNaN(milliseconds) || milliseconds <= 0) return null
+        return this.getDate(milliseconds)
+    }
+
     /**
      * Parsing reminder's context from user message
      * @param {string} query

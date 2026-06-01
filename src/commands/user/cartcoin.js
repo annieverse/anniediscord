@@ -95,24 +95,24 @@ module.exports = {
         const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
-            //  Returns if user's artcoins is below the amount of going to be used
-            if (userBalance < amountToUse) {
+            //  Atomic debit. Only credit EXP if the artcoin spend actually
+            //  landed — `experienceLibs.execute` is non-trivial to undo, so
+            //  we never want it to fire on a failed/raced spend.
+            const debit = await client.db.databaseUtils.spendInventory({
+                itemId: 52,
+                value: amountToUse,
+                userId: messageRef.member.id,
+                guildId: messageRef.guild.id
+            })
+            if (!debit.ok) {
                 client.db.databaseUtils.delCache(cacheId)
                 return await reply.send(locale(`CARTCOIN.INSUFFICIENT_AMOUNT`), {
                     socket: {
-                        amount: `${await client.getEmoji(`758720612087627787`)}${commanifier(userBalance)}`,
+                        amount: `${await client.getEmoji(`758720612087627787`)}${commanifier(debit.remaining ?? 0)}`,
                         emoji: await client.getEmoji(`790338393015713812`)
                     }
                 })
             }
-            //	Deduct balance & add new exp
-            client.db.databaseUtils.updateInventory({
-                itemId: 52,
-                value: amountToUse,
-                operation: `-`,
-                userId: messageRef.member.id,
-                guildId: messageRef.guild.id
-            })
             client.experienceLibs(messageRef.member, messageRef.guild, messageRef.channel, locale).execute(totalGainedExp)
             client.db.databaseUtils.delCache(cacheId)
             return await reply.send(locale(`CARTCOIN.SUCCESSFUL`), {

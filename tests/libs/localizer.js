@@ -57,7 +57,8 @@ describe(`Localizer Library`, () => {
     it(`should initialize with correct available locales ids`, () => {
       expect(localizer.availableLocales).to.deep.equal({
         "english": `en`,
-        "french": `fr`
+        "french": `fr`,
+        "indonesian": `id`
       })
     })
 

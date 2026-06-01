@@ -80,9 +80,37 @@ module.exports = {
         //  Timeout in 30 seconds
         client.db.databaseUtils.setCache(instanceId, `1`, { EX: 30 })
         c.onAccept(async () => {
-            //  Deduct balance & deliver lucky tickets
-            await client.db.databaseUtils.updateInventory({ itemId: 52, value: amountToPay, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })
-            await client.db.databaseUtils.updateInventory({ itemId: 71, value: amountToOpen, userId: messageRef.member.id, guildId: messageRef.guild.id })
+            //  Atomic spend-then-credit. The pre-confirm balance check was
+            //  open to a double-confirm race; gating the ticket credit on the
+            //  spend actually landing prevents a free roll.
+            try {
+                await client.db.databaseUtils.transaction(async () => {
+                    const debit = await client.db.databaseUtils.spendInventory({
+                        itemId: 52,
+                        value: amountToPay,
+                        userId: messageRef.member.id,
+                        guildId: messageRef.guild.id
+                    })
+                    if (!debit.ok) throw new Error(`GACHA_INSUFFICIENT_BALANCE`)
+                    await client.db.databaseUtils.updateInventory({
+                        itemId: 71,
+                        value: amountToOpen,
+                        userId: messageRef.member.id,
+                        guildId: messageRef.guild.id
+                    })
+                })
+            } catch (err) {
+                if (err && err.message === `GACHA_INSUFFICIENT_BALANCE`) {
+                    client.db.databaseUtils.delCache(instanceId)
+                    return await reply.send(locale(`GACHA.SUGGEST_TO_GRIND`), {
+                        socket: {
+                            prefix: `/`,
+                            emoji: await client.getEmoji(`692428927620087850`)
+                        }
+                    })
+                }
+                throw err
+            }
             this.startsRoll(client, reply, messageRef, amountToOpen, locale, instanceId, userData)
         })
     },

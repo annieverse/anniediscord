@@ -11,7 +11,8 @@ class Localization {
   #localesPool = new Collection()
   #availableLocales = {
     "english": `en`,
-    "french": `fr`
+    "french": `fr`,
+    "indonesian": `id`
   }
 
   constructor () {
@@ -72,22 +73,34 @@ class Localization {
 
   /**
    * Lookup target localized message.
-   * @param {string=``} key target locale key (e.g. REQUEST_PING)
+   *
+   * Pass `lang` explicitly. Each request captures its own user's locale into
+   * a closure (`(key) => findLocale(key, userData.lang)`) so concurrent
+   * messages from differently-localized users do not race on shared state.
+   *
+   * The legacy `this.#lang` setter still exists for one path — `annie.js`
+   * buff-expiration DMs, which have no per-request locale — and is used as
+   * the fallback when `lang` is omitted. New code MUST pass `lang`.
+   *
+   * @param {string} [key=undefined] target locale key (e.g. REQUEST_PING)
+   * @param {string} [lang] requester's locale (e.g. `en`, `fr`, `id`)
    * @return {string}
    */
-  findLocale(key=undefined) {
+  findLocale(key = undefined, lang = this.#lang) {
     // 1. Target locale key validation
     if (!key || typeof key !== `string`) {
       logger.error({ action: `invalid_locale_key`, type: typeof key, key })
       return this.#placeholderFallback()
     }
 
+    const targetLang = lang || this.#fallback
+
     // 2. Look up the target locale first.
-    let locale = this.#localesPool.get(this.#lang)?.get(key)
+    let locale = this.#localesPool.get(targetLang)?.get(key)
     if (locale) return locale
 
     // 3. If not found, try fallback variant of the locale.
-    logger.warn({ action: `origin_locale_missing`, lang: this.#lang, key })
+    logger.warn({ action: `origin_locale_missing`, lang: targetLang, key })
     locale = this.#localesPool.get(this.#fallback)?.get(key)
     if (locale) return locale
 

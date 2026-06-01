@@ -12,7 +12,11 @@
     "start-beta": "pm2 start index.js --name \"production_beta\" && echo \"Started production_beta\"",
     "dev": "nodemon index.js --ignore logs/ | npx pino-pretty && echo \"Started dev\"",
     "test": "npm run lint:check && npm run unit-test && echo 'Tests finished.'",
-    "loadAppCmds": "node ./loadCommands.js | npx pino-pretty"
+    "loadAppCmds": "node ./loadCommands.js | npx pino-pretty",
+    "db:migrate": "knex --knexfile src/config/knexfile.js migrate:latest",
+    "db:status": "knex --knexfile src/config/knexfile.js migrate:status",
+    "db:rollback": "knex --knexfile src/config/knexfile.js migrate:rollback",
+    "db:make": "knex --knexfile src/config/knexfile.js migrate:make"
   },
   "homepage": "https://github.com/annieverse/anniediscord#readme",
   "engines": {

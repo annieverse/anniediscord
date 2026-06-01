@@ -41,7 +41,13 @@ class Database {
 				process.exit()
 			})
 		this.client.on(`error`, (err) => {
-			logger.error(`Ouch snap! >> ${err.stack}`)
+			//  pg.Client emits 'error' with whatever was thrown — `_query`'s catch
+			//  forwards arbitrary values via `emit('error', e)`, and JS allows
+			//  `throw undefined`/strings/numbers. Type-guard before reading .stack
+			//  so the listener itself doesn't crash mid-log and pull the shard down
+			//  during startup (Reminders.initialize is the first consumer to hit it).
+			const stack = err && err.stack ? err.stack : String(err)
+			logger.error(`Ouch snap! >> ${stack}`)
 		})
 		this.connectRedis()
 		return this
@@ -60,6 +66,7 @@ class Database {
 		this.shop = new Shop(this)
 		this.covers = new Covers(this)
 		this.relationships = new Relationships(this)
+		this.trades = new Trades(this)
 	}
 
 	/**
@@ -371,6 +378,74 @@ class DatabaseUtils {
 	}
 
 	/**
+	 * Atomic conditional debit against `user_inventories`. The `quantity >= $value`
+	 * predicate lives inside the same statement as the decrement, so two concurrent
+	 * spenders against the same row can never both succeed — Postgres serializes
+	 * the row update and only the first sees the predicate hold.
+	 *
+	 * Returns `{ ok: false }` for: insufficient balance, missing row, query error.
+	 * Callers MUST gate any credit/effect on `ok === true`.
+	 *
+	 * @param {object} params
+	 * @param {number|string} params.itemId
+	 * @param {number} params.value Amount to debit. Must be positive.
+	 * @param {string} params.userId
+	 * @param {string} params.guildId
+	 * @returns {Promise<{ok: boolean, remaining: number|null}>}
+	 */
+	async spendInventory({ itemId, value, userId, guildId } = {}) {
+		const fn = this.formatFunctionLog(`spendInventory`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (typeof value !== `number` || !Number.isFinite(value) || value <= 0) {
+			throw new RangeError(`${fn} parameter "value" must be a positive finite number, got ${value}`)
+		}
+		const res = await this._query(`
+			UPDATE user_inventories
+			SET quantity = quantity - $value, updated_at = CURRENT_TIMESTAMP
+			WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId
+			  AND quantity >= $value`
+			, `run`
+			, { itemId: itemId, userId: userId, guildId: guildId, value: value }
+			, `${fn} Conditional debit`
+		)
+		// `_query` returns undefined on error (#18); treat that as failure rather than
+		// silently letting callers think the spend succeeded.
+		if (!res || res.rowCount === 0) return { ok: false, remaining: null }
+		const remaining = res.rows && res.rows[0] ? Number(res.rows[0].quantity) : null
+		return { ok: true, remaining: remaining }
+	}
+
+	/**
+	 * Wraps `fn` in a Postgres transaction (`BEGIN` / `COMMIT` / `ROLLBACK`).
+	 *
+	 * Important: this runs against the singleton `pg.Client` (`Database.client`),
+	 * so concurrent calls do NOT run in parallel — they serialize on the connection.
+	 * That is acceptable for short spend-then-credit pairs and is the same
+	 * concurrency profile every other call already lives with.
+	 *
+	 * `fn` MUST throw on logical failure (e.g. when `spendInventory` returns
+	 * `{ ok: false }`) for the rollback to fire. Returning a falsy value alone
+	 * is not enough.
+	 *
+	 * @param {function(): Promise<*>} fn
+	 * @returns {Promise<*>} resolves with whatever `fn` returns on commit
+	 */
+	async transaction(fn) {
+		if (typeof fn !== `function`) throw new TypeError(`${this.formatFunctionLog(`transaction`)} parameter "fn" must be a function`)
+		await this.client.query(`BEGIN`)
+		try {
+			const result = await fn()
+			await this.client.query(`COMMIT`)
+			return result
+		} catch (err) {
+			try { await this.client.query(`ROLLBACK`) } catch (_) { /* swallow rollback failure; original err is what matters */ }
+			throw err
+		}
+	}
+
+	/**
 	* Pull ID ranking based on given descendant column order.
 	* @param {string} [group] of target category
 	* @param {string} [guildId] of target guild
@@ -531,6 +606,26 @@ class Reminders extends DatabaseUtils {
 			, `run`
 			, { reminderId: reminderId }
 			, `${fn} Deleting reminder with id ${reminderId}`
+		)
+	}
+
+	/**
+	 * Updating an existing reminder's message and trigger date
+	 * @param {string} reminderId the target reminder's id
+	 * @param {string} message the new reminder message
+	 * @param {object} remindAt the new remind date object ({ timestamp, milliseconds })
+	 * @return {QueryResult}
+	 */
+	updateUserReminder(reminderId, message, remindAt) {
+		const fn = this.formatFunctionLog(`updateUserReminder`)
+		if (!reminderId) new TypeError(`${fn} parameter "reminderId" cannot be blank.`)
+		return this._query(`
+			UPDATE user_reminders
+			SET message = $message, remind_at = $remindAt
+			WHERE reminder_id = $reminderId`
+			, `run`
+			, { reminderId: reminderId, message: message, remindAt: JSON.stringify(remindAt) }
+			, `${fn} Updating reminder with id ${reminderId}`
 		)
 	}
 }
@@ -753,8 +848,8 @@ class UserUtils extends DatabaseUtils {
 				, `${fn} inserting reputations record if not exists for user (${userId})`
 			)
 		}
-		//  Refresh cache 
-		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		//  Refresh cache
+		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
 		logger.debug(`${fn}[${type}](${operation}) (REPS:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
 
@@ -827,7 +922,7 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Refresh cache
 		this.delCache(`DAILIES_${userId}@${guildId}`)
-		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
 		logger.debug(`[UPDATE_USER_DAILIES][${type}] (STREAK:${streak} | DAILIES_ID:${userId}@${guildId}`)
 	}
 
@@ -1071,7 +1166,7 @@ class UserUtils extends DatabaseUtils {
 				, `${fn} updating gender preference for USER_ID:${userId}`
 			)
 		}
-		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		const stmtType = res.update?.changes ? `UPDATE` : res.insert?.changes ? `INSERT` : `NO_CHANGES`
 		logger.debug(`${fn} ${stmtType} (GENDER:${gender})(USER_ID:${userId}`)
 	}
 
@@ -1469,7 +1564,7 @@ class GuildUtils extends DatabaseUtils {
 			)
 		}
 
-		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		const type = res.update?.changes ? `UPDATE` : res.insert?.changes ? `INSERT` : `NO_CHANGES`
 		logger.debug(`${fn} ${type} (CONFIG_CODE:${configCode})(CUSTOMIZED_PARAMETER:${customizedParameter}) | (GUILD_ID:${guild.id})(USER_ID:${setByUserId})`)
 		//  Cache result if provided 
 		if (cacheTo) {
@@ -1637,7 +1732,7 @@ class Relationships extends DatabaseUtils {
 			)
 		}
 
-		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		const stmtType = res.update?.changes ? `UPDATE` : res.insert?.changes ? `INSERT` : `NO_CHANGES`
 		logger.debug(`${fn} ${stmtType} (REL_ID:${relationshipId})(USER_A:${userA} WITH USER_B:${userB})`)
 		return true
 	}
@@ -1798,11 +1893,23 @@ class DurationalBuffs extends DatabaseUtils {
 	/**
 	 * Fetch all the saved user's durational buffs.
 	 * @param {string} userId If not provided, will fetch all the available buffs instead.
+	 * @param {string} [guildId] When passed, scope the result to the given guild — buffs are
+	 *   guild-local; without this, callers see every guild's buffs the user has across servers.
 	 * @return {object}
 	 */
-	getSavedUserDurationalBuffs(userId) {
+	getSavedUserDurationalBuffs(userId, guildId) {
 		const fn = this.formatFunctionLog(`getSavedUserDurationalBuffs`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (guildId) {
+			return this._query(`
+            SELECT *
+            FROM user_durational_buffs
+            WHERE user_id = $userId AND guild_id = $guildId`
+				, `all`
+				, { userId: userId, guildId: guildId }
+				, `${fn} fetch durantional buffs for USER_ID:${userId} in GUILD_ID:${guildId}`
+			)
+		}
 		return this._query(`
             SELECT *
             FROM user_durational_buffs
@@ -2613,11 +2720,87 @@ class Quests extends DatabaseUtils {
 		)
 	}
 }
+
+class Trades extends DatabaseUtils {
+	constructor (client) {
+		super(client)
+		this.fnClass = `Trades`
+	}
+
+	/**
+	 * Append one row to `user_trade_log`. Called from inside a `transaction`
+	 * for committed trades (so a log-write failure rolls the trade back),
+	 * and best-effort outside the transaction for failed/cancelled trades.
+	 *
+	 * @param {object} params
+	 * @param {string} params.guildId
+	 * @param {string} params.userAId
+	 * @param {string} params.userBId
+	 * @param {object} params.aOffer  `{ items: [{itemId, qty}], artcoins: N }`
+	 * @param {object} params.bOffer
+	 * @param {('committed'|'cancelled'|'failed')} params.status
+	 * @param {string} [params.failureReason]
+	 * @return {Promise<{tradeId:number}|null>} the new row's id when available
+	 */
+	async recordTradeLog({ guildId, userAId, userBId, aOffer, bOffer, status, failureReason = null } = {}) {
+		const fn = this.formatFunctionLog(`recordTradeLog`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!userAId) throw new TypeError(`${fn} parameter "userAId" cannot be blank.`)
+		if (!userBId) throw new TypeError(`${fn} parameter "userBId" cannot be blank.`)
+		if (!aOffer || !bOffer) throw new TypeError(`${fn} parameters "aOffer" and "bOffer" are required.`)
+		if (![`committed`, `cancelled`, `failed`].includes(status)) {
+			throw new RangeError(`${fn} parameter "status" must be one of committed/cancelled/failed`)
+		}
+		const res = await this._query(`
+            INSERT INTO user_trade_log (guild_id, user_a_id, user_b_id, a_offer, b_offer, status, failure_reason)
+            VALUES ($guildId, $userAId, $userBId, $aOffer, $bOffer, $status, $failureReason)`
+			, `run`
+			, {
+				guildId: guildId,
+				userAId: userAId,
+				userBId: userBId,
+				aOffer: JSON.stringify(aOffer),
+				bOffer: JSON.stringify(bOffer),
+				status: status,
+				failureReason: failureReason
+			}
+			, `${fn} ${status} trade between ${userAId} and ${userBId} in guild ${guildId}`
+		)
+		const row = res && res.rows && res.rows[0]
+		return row ? { tradeId: Number(row.trade_id) } : null
+	}
+
+	/**
+	 * Pull a user's trade history (rows where they were either party).
+	 * Sorted newest-first via the per-user index.
+	 *
+	 * @param {string} userId
+	 * @param {object} [options]
+	 * @param {number} [options.limit=10]
+	 * @param {number} [options.offset=0]
+	 * @return {Promise<object[]>}
+	 */
+	async getTradeHistory(userId, { limit = 10, offset = 0 } = {}) {
+		const fn = this.formatFunctionLog(`getTradeHistory`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		const res = await this._query(`
+            SELECT trade_id, registered_at, guild_id, user_a_id, user_b_id, a_offer, b_offer, status, failure_reason
+            FROM user_trade_log
+            WHERE user_a_id = $userId OR user_b_id = $userId
+            ORDER BY registered_at DESC
+            LIMIT $limit OFFSET $offset`
+			, `all`
+			, { userId: userId, limit: limit, offset: offset }
+			, `${fn} fetching history for ${userId}`
+		)
+		return res || []
+	}
+}
 /* class Template extends DatabaseUtils{
 	constructor(client){
 		super(client)
 	}
-	
+
 } */
 
 module.exports = Database

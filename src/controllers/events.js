@@ -16,8 +16,19 @@ module.exports = function eventsController(annie) {
     annie.once(Events.ClientReady, () => reqEvent(`base`, `ready`)(annie))
     annie.on(Events.Error, (e) => reqEvent(`base`, `error`)(annie, e))
     annie.on(Events.InteractionCreate, runtimeEvent(Events.InteractionCreate, (interaction) => reqEvent(`interaction`, `interactionCreate`)(annie, interaction)))
+    /**
+     * Message Events — messageCreate stays above the dev gate so the prefix
+     * command path (e.g. `>trade`) works in development. The deletion-logging
+     * handlers below are production-only.
+     */
+    annie.on(Events.MessageCreate, runtimeEvent(Events.MessageCreate, (message) => reqEvent(`message`, `messageCreate`)(annie, message)))
     //  Events below this point is only available in the production
     if (annie.dev) return
+    /**
+     * Message deletion logging — production-only (posts to guild log channels).
+     */
+    annie.on(Events.MessageDelete, runtimeEvent(Events.MessageDelete, (message) => reqEvent(`message`, `messageDelete`)(annie, message)))
+    annie.on(Events.MessageBulkDelete, runtimeEvent(Events.MessageBulkDelete, (messages, channel) => reqEvent(`message`, `messageBulkDelete`)(annie, messages, channel)))
     /**
      * Shard Events
      */
@@ -47,12 +58,6 @@ module.exports = function eventsController(annie) {
     annie.on(Events.GuildBanRemove, runtimeEvent(Events.GuildBanRemove, (guild, user) => reqEvent(`guild`, `guildBanRemove`)(annie, guild, user)))
     annie.on(Events.GuildMemberAdd, runtimeEvent(Events.GuildMemberAdd, (member) => reqEvent(`guild`, `guildMemberAdd`)(annie, member)))
     annie.on(Events.GuildMemberUpdate, runtimeEvent(Events.GuildMemberUpdate, (oldMember, newMember) => reqEvent(`guild`, `guildMemberUpdate`)(annie, oldMember, newMember)))
-    /**
-     * Message Events
-     */
-    annie.on(Events.MessageCreate, runtimeEvent(Events.MessageCreate, (message) => reqEvent(`message`, `messageCreate`)(annie, message)))
-    annie.on(Events.MessageDelete, runtimeEvent(Events.MessageDelete, (message) => reqEvent(`message`, `messageDelete`)(annie, message)))
-    annie.on(Events.MessageBulkDelete, runtimeEvent(Events.MessageBulkDelete, (messages, channel) => reqEvent(`message`, `messageBulkDelete`)(annie, messages, channel)))
     /**
      * Role Events
      */

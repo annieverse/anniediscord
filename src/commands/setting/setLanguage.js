@@ -26,23 +26,25 @@ module.exports = {
   }],
   type: ApplicationCommandType.ChatInput,
   async execute(client, reply, message, arg, locale, prefix) {
+    const availableLocales = Object.values(client.localization.availableLocales)
     if (!arg) return await reply.send(locale(`SETLANGUAGE.GUIDE`), {
       image: `banner_setlanguage`,
       socket: {
         prefix: message.guild.configs.get(`PREFIX`).value,
-        languages: `en, fr`,
+        languages: `<${availableLocales.join(`/`)}>`,
         currentLanguage: locale(`lang`)
       }
     })
     return await this.run(client, reply, message, arg, locale)
   },
   async Iexecute(client, reply, interaction, options, locale) {
+    const availableLocales = Object.values(client.localization.availableLocales)
     const arg = options.getString(`language`)
     if (!arg) return await reply.send(locale(`SETLANGUAGE.GUIDE`), {
       image: `banner_setlanguage`,
       socket: {
         prefix: interaction.guild.configs.get(`PREFIX`).value,
-        languages: `<${client.localization.availableLocales.join(`/`)}>`,
+        languages: `<${availableLocales.join(`/`)}>`,
         currentLanguage: locale(`lang`)
       }
     })

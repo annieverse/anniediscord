@@ -110,23 +110,31 @@ module.exports = {
         const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
-            //  Prevent user from selling over the amount of their owned fragments
-            if (amountToSell > userData.inventory.fragments) return await reply.send(locale(`SELLFRAGMENTS.INVALID_AMOUNT`))
-            //  Deliver artcoins to user's inventory
-            client.db.databaseUtils.updateInventory({
-                itemId: 52,
-                userId: messageRef.member.id,
-                guildId: messageRef.guild.id,
-                value: receivedAmount
-            })
-            //  Deduct fragments from user's inventory
-            client.db.databaseUtils.updateInventory({
-                itemId: 51,
-                userId: messageRef.member.id,
-                guildId: messageRef.guild.id,
-                value: amountToSell,
-                operation: `-`
-            })
+            //  Atomic debit-then-credit. The pre-confirm `userData` snapshot is
+            //  no longer load-bearing; the conditional UPDATE inside
+            //  `spendInventory` is what gates over-spend.
+            try {
+                await client.db.databaseUtils.transaction(async () => {
+                    const debit = await client.db.databaseUtils.spendInventory({
+                        itemId: 51,
+                        value: amountToSell,
+                        userId: messageRef.member.id,
+                        guildId: messageRef.guild.id
+                    })
+                    if (!debit.ok) throw new Error(`SELLFRAGMENTS_INVALID_AMOUNT`)
+                    await client.db.databaseUtils.updateInventory({
+                        itemId: 52,
+                        userId: messageRef.member.id,
+                        guildId: messageRef.guild.id,
+                        value: receivedAmount
+                    })
+                })
+            } catch (err) {
+                if (err && err.message === `SELLFRAGMENTS_INVALID_AMOUNT`) {
+                    return await reply.send(locale(`SELLFRAGMENTS.INVALID_AMOUNT`))
+                }
+                throw err
+            }
             return await reply.send(``, {
                 customHeader: [locale(`SELLFRAGMENTS.SUCCESSFUL`), messageRef.member.displayAvatarURL()]
             })

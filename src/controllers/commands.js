@@ -44,7 +44,7 @@ module.exports = async (client = {}, message = {}) => {
         throw error
     }
     client.localization.lang = userData.lang
-    const locale = (key) => client.localization.findLocale(key)
+    const locale = (key) => client.localization.findLocale(key, userData.lang)
     const reply = client.responseLibs(message, false, locale)
 
     // Check Bot's permissions before procceding
