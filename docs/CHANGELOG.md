@@ -1,3 +1,10 @@
+## [10.4.1](https://github.com/annieverse/anniediscord/compare/v10.4.0...v10.4.1) (2026-06-02)
+
+
+### Bug Fixes
+
+* **remind:** slash subcommands break. ([f127099](https://github.com/annieverse/anniediscord/commit/f127099a19faa7c36cc8c019ace617b5511f051a))
+
 # [10.4.0](https://github.com/annieverse/anniediscord/compare/v10.3.2...v10.4.0) (2026-06-01)
 
 
