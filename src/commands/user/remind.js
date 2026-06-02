@@ -132,7 +132,7 @@ module.exports = {
         return await this.run(client, reply, locale, context)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const subcommand = options.getSubcommand()
+        const subcommand = options.getSubcommand(false)
         if (subcommand === `list`) return await this.list(client, reply, interaction, locale, `/`, interaction.member.id)
         if (subcommand === `edit`) return await this.edit(client, reply, interaction, locale, `/`, interaction.member.id, String(options.getInteger(`id`)))
         if (subcommand === `delete`) return await this.delete(client, reply, interaction, locale, `/`, interaction.member.id, String(options.getInteger(`id`)))

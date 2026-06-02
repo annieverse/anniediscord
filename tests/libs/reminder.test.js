@@ -419,6 +419,23 @@ describe(`Reminder feature`, () => {
             expect(client.reminders.getContextFrom.calledOnce).to.be.true
         })
 
+        it(`accepts the legacy flat slash options while subcommand registration propagates`, async () => {
+            const client = buildCommandClient()
+            const reply = buildReplyStub()
+            const interaction = { member: { id: `123` } }
+            const options = {
+                getSubcommand: sinon.stub().callsFake((required = true) => {
+                    if (required) throw new Error(`No subcommand specified for interaction.`)
+                    return null
+                }),
+                getString: sinon.stub().callsFake(name => name === `message` ? `hello` : `minutes`),
+                getInteger: sinon.stub().returns(3)
+            }
+            await remindCommand.Iexecute(client, reply, interaction, options, (k) => k)
+            expect(options.getSubcommand.calledWith(false)).to.be.true
+            expect(client.reminders.getContext.calledWith(`hello`, 3, `minutes`, `123`)).to.be.true
+        })
+
         it(`shows the home guide when no argument is given`, async () => {
             const client = buildCommandClient()
             const reply = buildReplyStub()
