@@ -1,21 +1,21 @@
 {
-    "LOCALE_NOT_FOUND": "**maaf!!** sepertinya ada masalah dengan ketersediaan pesan lokal aku. tolong bantu melaporkan ini ke pengembang aku [di server dukungan.](https://discord.gg/HjPHCyG346) ; ;",
+    "LOCALE_NOT_FOUND": "**maaf!!** sepertinya ada masalah dengan ketersediaan pesan terjemahanku. tolong bantu laporkan ini ke pengembangku [di server dukungan.](https://discord.gg/HjPHCyG346) ; ;",
     "ACTION_CANCELLED": "**Baiklah!** tindakan telah dibatalkan!♡ {{emoji}}",
     "ADDAC": {
-        "CONFIRMATION_SEQ_1": "Kamu akan mengisi ulang **Artcoins {{user}}.** Sekarang coba tentukan jumlah yang ingin kamu hasilkan.",
-        "CONFIRMATION_SEQ_2": "{{emoji}}**+{{amount}}** 🡆 **Saldo {{user}}** ?\nCoba ketik `y` untuk mengonfirmasi",
+        "CONFIRMATION_SEQ_1": "Kamu akan mengisi ulang **Artcoins {{user}}.** Sekarang silakan tentukan jumlah yang ingin kamu tambahkan.",
+        "CONFIRMATION_SEQ_2": "{{emoji}}**+{{amount}}** 🡆 **Saldo {{user}}** ?\nSilakan ketik `y` untuk mengonfirmasi",
         "GUIDE": "Kamu berwenang untuk menggunakan **Artcoins Generator**.",
-        "NEGATIVE_VALUES": "Maaf, kamu tidak dapat memberi nilai negatif.",
-        "NO_NEGATIVE_INPUT": "Coba masukkan jumlah yang valid.",
+        "NEGATIVE_VALUES": "Maaf, kamu tidak bisa memasukkan nilai negatif.",
+        "NO_NEGATIVE_INPUT": "Silakan masukkan jumlah yang valid.",
         "SUCCESSFUL": "Berhasil diisi ulang!"
     },
     "ADDROLE": {
-        "CONFIRMATION_SEQ_1": "Baiklah, aku akan menetapkan peran baru ke **{{user}}.** Sekarang coba tentukan nama peran.",
-        "CONFIRMATION_SEQ_2": "**Peran {{role}}** 🡆 **{{user}}** ?\nCoba ketik `y` untuk mengonfirmasi",
+        "CONFIRMATION_SEQ_1": "Baiklah, aku akan memberikan peran baru kepada **{{user}}.** Sekarang silakan sebutkan nama perannya.",
+        "CONFIRMATION_SEQ_2": "**Peran {{role}}** 🡆 **{{user}}** ?\nSilakan ketik `y` untuk mengonfirmasi",
         "HAS_ROLE_ALREADY": "Maaf, **{{user}}** sudah memiliki peran tersebut.",
-        "MISSING_ARG": "Uhm, bisakah kamu menentukan penggunanya.",
+        "MISSING_ARG": "Uhm, tolong sebutkan penggunanya, ya.",
         "NO_ROLE_FOUND": "Maaf, aku tidak dapat menemukan peran itu. Bisakah kamu mengetiknya lagi?",
-        "ROLE_ADDED": "Berhasil menetapkan peran tersebut!"
+        "ROLE_ADDED": "Berhasil memberikan peran tersebut!"
     },
     "AFFILIATES": {
         "DISPLAY": "**Hai, {{user}}!** di sini kamu dapat melihat semua server yang telah mendukung pengembangan Annie.\n{{list}}",
@@ -26,72 +26,72 @@
         "ANSWERS": [
             "Tentu saja!",
             "Aku tidak tahu.",
-            "TIDAK.",
+            "Tidak.",
             "Tidak yakin.",
             "Yah, mungkin.",
             "Ya.",
             "Kamu"
         ],
-        "SHORT_GUIDE": "Jangan ragu untuk menanyakan apa pun kepada aku!"
+        "SHORT_GUIDE": "Jangan ragu untuk bertanya apa pun kepadaku!"
     },
     "AUTORESPONDER": {
-        "ALREADY_DISABLED": "**Tunggu, modul AR bahkan tidak diaktifkan!** {{emoji}}\n╰─Ketik **`{{prefix}}ar enable`** untuk mengaktifkannya!",
+        "ALREADY_DISABLED": "**Tunggu, modul AR kan belum diaktifkan!** {{emoji}}\n╰─Ketik **`{{prefix}}ar enable`** untuk mengaktifkannya!",
         "ALREADY_ENABLED": "Modul AR telah diaktifkan oleh **{{user}}**, **{{time}}.** {{emoji}}",
-        "DELETE_MISSING_KEYWORD": "╭*:;,．★ ～☆*──────────╮\n**Apakah ada ARs yang ingin kamu hapus?**\nMulailah dengan mengetik **`{{prefix}}ar delete <ID/triggerName>`**\n╰──────────☆～*:;,．*╯\nDi bawah ini adalah ARs yang terdaftar di {{guild}}.\n{{list}}",
-        "DELETE_TARGET_INVALID": "**Apakah AR itu ada??** {{emoji}}\n╰─Pastikan untuk mengecek ARs yang terdaftar terlebih dahulu!",
-        "DISPLAY": "Saat ini terdapat total **{{ars}}** ARs yang terdaftar di **{{guild}}** dimana yang terbaru ditambahkan oleh {{user}}, {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n{{list}}\n╰──────────☆～*:;,．*╯",
-        "EMPTY": "**Ups, ARs kosong.** {{emoji}}\n╰─Coba buat beberapa dengan **`{{prefix}}ar add <trigger> - <response>`**",
-        "GUIDE": "Ini adalah pusat kendali kamu untuk mengelola penjawab otomatis di **{{guild}}!** Untuk memulai, periksa tindakan yang tersedia di bawah. {{emoji}}\n{{statusEmoji}} Modul AR saat ini adalah **{{status}}**.\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}ar enable`**\n> Pertama kali menggunakan modul AR aku? maka tidak perlu mencari lagi, aktifkan modul sebelum melakukan yang lainnya!\n\n**`{{prefix}}ar add <trigger> - <response>`**\n> Ayo tambahkan AR baru! isi <trigger> dengan pesan yang ingin aku dengarkan dan <response> sebagai tanggapan aku!\n__misalnya {{prefix}}ar add welcome - enjoy your stay!__\n\n**`{{prefix}}ar delete <id/trigger>`**\n> Bosan dengan AR? maka saatnya untuk menghapusnya! isi <id/trigger> dengan AR yang ingin kamu hapus.\nmisalnya __{{prefix}}ar delete welcome__\n\n**`{{prefix}}ar info`**\n> Sulit mengingat semua ARs yang baru saja kamu daftarkan? mari kita periksa melalui tindakan ini!\n\n**`{{prefix}}ar reset`**\n> Berapa banyak ARs yang sudah kamu buat?! terlalu banyak? oh baiklah... memulai kembali dari awal akan menjadi pilihan yang lebih baik menurut aku.\n\n**`{{prefix}}ar disable`**\n> ARs sudah tidak seru lagi? ah, jangan khawatir kalau begitu. Kamu dapat menonaktifkan seluruh ARs kapan saja!\n\n╰──────────☆～*:;,．*╯",
+        "DELETE_MISSING_KEYWORD": "╭*:;,．★ ～☆*──────────╮\n**Apakah ada AR yang ingin kamu hapus?**\nMulailah dengan mengetik **`{{prefix}}ar delete <ID/triggerName>`**\n╰──────────☆～*:;,．*╯\nDi bawah ini adalah AR yang terdaftar di {{guild}}.\n{{list}}",
+        "DELETE_TARGET_INVALID": "**Memangnya AR itu ada??** {{emoji}}\n╰─Pastikan untuk mengecek AR yang terdaftar terlebih dahulu!",
+        "DISPLAY": "Saat ini terdapat total **{{ars}}** AR yang terdaftar di **{{guild}}** dan yang terbaru ditambahkan oleh {{user}}, {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n{{list}}\n╰──────────☆～*:;,．*╯",
+        "EMPTY": "**Ups, belum ada AR.** {{emoji}}\n╰─Coba buat beberapa dengan **`{{prefix}}ar add <trigger> - <response>`**",
+        "GUIDE": "Ini adalah pusat kendali kamu untuk mengelola penjawab otomatis di **{{guild}}!** Untuk memulai, periksa tindakan yang tersedia di bawah. {{emoji}}\n{{statusEmoji}} Modul AR saat ini **{{status}}**.\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}ar enable`**\n> Pertama kali menggunakan modul AR-ku? tidak perlu cari ke mana-mana lagi, aktifkan modulnya sebelum melakukan hal lain!\n\n**`{{prefix}}ar add <trigger> - <response>`**\n> Ayo tambahkan AR baru! isi <trigger> dengan pesan yang akan aku tanggapi dan <response> dengan balasanku untuk pesan itu!\n__misalnya {{prefix}}ar add welcome - enjoy your stay!__\n\n**`{{prefix}}ar delete <id/trigger>`**\n> Bosan dengan AR-nya? berarti saatnya menghapusnya! isi <id/trigger> dengan AR yang ingin kamu hapus.\nmisalnya __{{prefix}}ar delete welcome__\n\n**`{{prefix}}ar info`**\n> Sulit mengingat semua AR yang baru saja kamu daftarkan? mari kita periksa melalui tindakan ini!\n\n**`{{prefix}}ar reset`**\n> Sudah berapa banyak AR yang kamu buat?! terlalu banyak? yah... mulai lagi dari awal sepertinya pilihan yang lebih baik, menurutku.\n\n**`{{prefix}}ar disable`**\n> AR sudah tidak seru lagi? aw, kalau begitu jangan khawatir. Kamu dapat menonaktifkan semua AR kapan saja!\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "**Eeh, tindakan apa itu tadi??** {{emoji}}\n╰─Aku hanya menerima {{actions}}.",
-        "REGISTER_CONFIRMATION": "Jadi, apakah kita akan mengikuti AR ini?\n╭*:;,．★ ～☆*──────────╮\n**Apa yang baru saja kamu kirim** → {{trigger}}\n**Aku akan membalas dengan** → {{response}}\n╰──────────☆～*:;,．*╯\nJika ini yang kamu inginkan, coba bereaksi terhadap tombol hijau untuk mengonfirmasinya.",
-        "REGISTER_EMPTY_RESPONSE": "**Apa tanggapan aku yang seharusnya?** {{emoji}}\n╰─coba ketik **`{{prefix}}ar add {{trigger}} <myResponseHere>`**",
+        "REGISTER_CONFIRMATION": "Jadi, kita pakai AR ini?\n╭*:;,．★ ～☆*──────────╮\n**Pesan yang kamu kirim** → {{trigger}}\n**Aku akan membalas dengan** → {{response}}\n╰──────────☆～*:;,．*╯\nJika ini yang kamu inginkan, silakan tekan tombol hijau untuk mengonfirmasinya.",
+        "REGISTER_EMPTY_RESPONSE": "**Terus, aku harus membalas apa?** {{emoji}}\n╰─coba ketik **`{{prefix}}ar add {{trigger}} <myResponseHere>`**",
         "REGISTER_FOOTER_TIP": "Sekarang coba ketik **`{{trigger}}`** {{emoji}}",
-        "REGISTER_MISSING_SEPARATOR": "**Ups, pemisahnya hilang.**\nmisalnya **`{{prefix}}ar add {{trigger}} - <myResponseHere>`**",
+        "REGISTER_MISSING_SEPARATOR": "**Ups, kamu lupa tanda pemisahnya.**\nmisalnya **`{{prefix}}ar add {{trigger}} - <myResponseHere>`**",
         "REGISTER_NO_PARAM": "**Jangan lupa ikuti formatnya!♡**\nmisalnya **`{{prefix}}ar add I'm kawaii - no way, I'm more kawaii.`**",
-        "REGISTER_SUCCESSFUL": "**Hore! Aku telah mempelajari AR baru!♡** {{emoji}}\n╰─Perlu diingat, ada cooldown 15 detik untuk setiap AR untuk menghindari spam.",
-        "RESET_CONFIRMATION": "╭*:;,．★ ～☆*──────────╮\n**Setel ulang ARs dari server ini?** {{emoji}}\nTindakan ini tidak dapat diubah dan **{{totalArs}}** ARs akan dihapus setelah kamu menekan tombol hijau.\n╰──────────☆～*:;,．*╯",
-        "SUCCESSFULLY_DELETED": "**Ya, berhasil dihapus!♡** {{emoji}}\n╰─Aku tidak lagi mendengarkan AR itu.",
+        "REGISTER_SUCCESSFUL": "**Hore! Aku sudah belajar AR baru!♡** {{emoji}}\n╰─Perlu diingat, ada cooldown 15 detik di setiap AR agar tidak terjadi spam.",
+        "RESET_CONFIRMATION": "╭*:;,．★ ～☆*──────────╮\n**Setel ulang semua AR di server ini?** {{emoji}}\nTindakan ini tidak dapat dibatalkan dan **{{totalArs}}** AR akan dihapus setelah kamu menekan tombol hijau.\n╰──────────☆～*:;,．*╯",
+        "SUCCESSFULLY_DELETED": "**Yap, berhasil dihapus!♡** {{emoji}}\n╰─Aku tidak akan menanggapi AR itu lagi.",
         "SUCCESSFULLY_DISABLED": "**Baiklah, selesai!♡** {{emoji}}\n╰─Modul AR telah berhasil dinonaktifkan!",
         "SUCCESSFULLY_ENABLED": "**Hore! AR berhasil diaktifkan!♡** {{emoji}}\n╰─Sekarang saatnya membuat beberapa penjawab otomatis yang lucu!",
-        "SUCCESSFULLY_RESET": "**Baibai ARs aku yang berharga!!**\n╰─{{totalArs}} penjawab otomatis berhasil dihapus dari server ini!"
+        "SUCCESSFULLY_RESET": "**Baibai AR-ku yang berharga!!**\n╰─{{totalArs}} penjawab otomatis berhasil dihapus dari server ini!"
     },
     "AVATAR": {
-        "INITIAL": "*Katakan keju... ♡*"
+        "INITIAL": "*Senyum dulu... ♡*"
     },
     "BADGECARD": {
         "FETCHING": "`Mengambil data lencana {0}. .`",
-        "HEADER": "<:Annie_Smug:523686816545636352>**| Kartu lencana untuk {0}**",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Kartu lencana untuk {0}**",
         "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu.",
-        "LVL_TOO_LOW": "Pengguna harus setidaknya berusia lv **{0}** untuk membuka fitur ini."
+        "LVL_TOO_LOW": "Pengguna harus minimal lv **{0}** untuk membuka fitur ini."
     },
     "BAN": {
-        "MISSING_ARG": "Hai, kamu berwenang untuk menggunakan perintah tersebut. Coba tentukan pengguna yang kamu ingin aku blokir lain kali!",
+        "MISSING_ARG": "Hai, kamu berwenang untuk menggunakan perintah ini. Lain kali, silakan sebutkan pengguna yang ingin kamu ban!",
         "SUCCESSFUL": "Bai bai **{{user}}!** Aku telah mengirimkannya ke kehampaan.",
-        "TARGET_DOESNT_EXISTS": "Eh? di mana mereka? apakah mereka ada?",
-        "TARGET_HAS_ADMIN_PRIVILEGE": "Sulit dikatakan, tapi aku tidak bisa melarang pengguna dengan hak istimewa admin. :("
+        "TARGET_DOESNT_EXISTS": "Eh? di mana mereka? memangnya mereka ada?",
+        "TARGET_HAS_ADMIN_PRIVILEGE": "Berat mengatakannya, tapi aku tidak bisa mem-ban pengguna dengan hak istimewa admin. :("
     },
     "BFD": {
         "ERROR": "Terjadi kesalahan saat menyegarkan statistik BFD.\n```\n{{error}}\n```",
-        "REFRESHED": "Statistik BFD telah diperbarui di {{benchmark}}"
+        "REFRESHED": "Statistik BFD telah diperbarui dalam {{benchmark}}"
     },
     "BOOSTER": {
         "EXP_EXPIRED": "Halo **{0}**, Tiket **{1}** EXP kamu telah habis masa berlakunya hari ini."
     },
     "BUFF": {
-        "DISPLAY": "**Hai, {{user}}!♡** di bawah ini adalah buff kamu yang sedang aktif. Ngobrol selagi masih ada!\n{{list}}",
+        "DISPLAY": "**Hai, {{user}}!♡** di bawah ini adalah buff kamu yang sedang aktif. Ayo ngobrol selagi buff-nya masih aktif!\n{{list}}",
         "NO_ACTIVE_BUFFS": "Kamu tidak memiliki buff aktif saat ini! {{emoji}}"
     },
     "BUY": {
-        "CHECKOUT_LOADING": "`Proses checkout segera...`",
-        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nKamu akan membeli item {{itemType}} ini? lalu, coba bereaksi terhadap tombol untuk mengonfirmasi pembelian.",
-        "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nAyo kita beli\n**{{item}}** untuk {{emoji}}**{{price}}**?\n╰────────☆～*:;,．*╯\nSelesaikan pembelian\ndengan bereaksi terhadap tombol hijau",
+        "CHECKOUT_LOADING": "`Memproses checkout sebentar lagi...`",
+        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nKamu mau membeli item {{itemType}} ini? kalau begitu, silakan tekan tombol untuk mengonfirmasi pembelian.",
+        "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nKita beli\n**{{item}}** seharga {{emoji}}**{{price}}**?\n╰────────☆～*:;,．*╯\nSelesaikan pembelian\ndengan menekan tombol hijau",
         "EMPTY_SHOP": "Tidak ada apa pun yang dapat kamu beli di toko kami saat ini. Kembali lagi nanti!",
         "INSUFFICIENT_BALANCE": "Kamu memerlukan {{emoji}}**{{amount}}** lagi untuk menyelesaikan pembelian.",
         "INVALID_ITEM": "Aku tidak dapat menemukan item apa pun dengan nama/ID itu...",
-        "INVALID_ITEM_AMOUNT": "Coba masukkan jumlah yang benar yang kamu inginkan. {{emoji}}",
+        "INVALID_ITEM_AMOUNT": "Silakan masukkan jumlah yang benar, ya. {{emoji}}",
         "INVALID_ITEM_TIPS": "Mungkin periksa **`{{prefix}}shop`** terlebih dahulu? {{emoji}}",
         "ITEM_AMOUNT": "Berapa banyak **{{item}}** yang ingin kamu beli?",
-        "ITEM_NOTAVAILABLE_IN_THE_GUILD": "**{{item}}** tidak dapat dibeli di guild ini. Minta administrator atau pemilik guild kamu untuk mengaturnya.",
+        "ITEM_NOTAVAILABLE_IN_THE_GUILD": "**{{item}}** tidak dapat dibeli di server ini. Minta administrator atau pemilik server untuk mengaturnya.",
         "NO_DUPLICATE": "Kamu sudah memiliki {{itemType}} itu",
         "NON_PURCHASABLE_ITEM": "Maaf, kamu tidak dapat membeli item ini.",
         "OUT_OF_STOCK": "Ups, **'{{item}}'** saat ini sedang habis. Minta pemilik/admin server untuk mengisi kembali persediaan! {{emoji}}",
@@ -107,28 +107,28 @@
         "ALREADY_IN_PROGRESS": "Maaf, sepertinya kamu sedang mencoba melakukan ini.",
         "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nTekan tombol untuk mengonfirmasi konversi.",
         "DISABLED": "**konversi artcoin dinonaktifkan di server ini.** {{emoji}}\n╰─ minta admin atau pemilik server kamu untuk mengaktifkannya kembali.",
-        "INSUFFICIENT_AMOUNT": "Eehh- saat ini kamu hanya memiliki artcoin **{{amount}}**. Lakukan lebih keras! {{emoji}}",
+        "INSUFFICIENT_AMOUNT": "Eehh- saat ini kamu hanya memiliki **{{amount}}** artcoin. Ayo kumpulkan lebih giat lagi! {{emoji}}",
         "INVALID_AMOUNT": "Kamu harus memasukkan setidaknya **8 artcoin**, *baka!* {{emoji}}",
         "SHORT_GUIDE": "**Mulai ubah artcoin kamu menjadi EXP dengan mengetik\n`{{prefix}}cartcoin <amount/all>`** {{emoji}}",
         "SUCCESSFUL": "Hore! berhasil mengonversi **{{artcoins}}** menjadi **{{exp}}**!"
     },
     "CAT": {
         "RESPONSES": [
-            "*halus~*",
+            "*lembut~*",
             ":cat:",
             "Nyaa~",
-            "Cakar!"
+            "Paw paw!"
         ]
     },
     "CATEXP": {
         "DISPLAY": "**{0} EXP** tersedia untuk diklaim.\nKetik `claim` untuk menggunakan exp.",
-        "SUCCESSFUL": "Enak! **{0}(+{1})** EXP telah diperbarui. Pastikan untuk menepuk kucing kamu!{2}",
+        "SUCCESSFUL": "Enak! **{0}(+{1})** EXP telah diperbarui. Jangan lupa elus kucingmu, ya!{2}",
         "UNAVAILABLE": "Kamu tidak memiliki exp untuk diklaim."
     },
     "CHECKOUT": {
         "CANCEL": "Transaksi dibatalkan.",
         "ERROR": "Uhh, ada yang tidak beres.",
-        "METADATA": "{2}**{3}** 🡆 **{0} {1}** ?\nCoba ketik `y` untuk mengonfirmasi pembelian kamu.",
+        "METADATA": "{2}**{3}** 🡆 **{0} {1}** ?\nSilakan ketik `y` untuk mengonfirmasi pembelian kamu.",
         "SUCCESSFUL": "Pembelian berhasil!"
     },
     "CHOOSE": {
@@ -140,70 +140,70 @@
             "AnnieSmile"
         ],
         "GUIDE": "Aku akan mencoba memilih opsi apa pun yang kamu berikan!",
-        "INVALID_OPTIONS": "Ehh, beri aku banyak pilihan untuk dipilih!",
+        "INVALID_OPTIONS": "Ehh, beri aku lebih dari satu pilihan, dong!",
         "THINKING": [
             "Hmm..",
             "Bagaimana kalau..",
-            "aku akan memilih..."
+            "Aku akan memilih..."
         ]
     },
     "CLI": {
-        "GUIDE": "Polanya mirip dengan dbkits aku, jadi pastikan untuk memasukkan perintah cli di dalam tanda kurung siku.",
-        "MISSING_STMT": "Coba tulis pernyataan perintah di dalam tanda kurung **[]**."
+        "GUIDE": "Polanya mirip dengan dbkits-ku, jadi pastikan untuk memasukkan perintah cli di dalam tanda kurung siku.",
+        "MISSING_STMT": "Silakan tulis pernyataan perintah di dalam tanda kurung **[]**."
     },
     "COMMAND": {
-        "DISABLED": "Aku tidak dapat menjalankan perintah ini! karena **{{command}}** sepertinya dinonaktifkan di guild ini. Coba minta admin kamu untuk mengaktifkannya kembali.",
+        "DISABLED": "Aku tidak bisa menjalankan perintah ini! karena **{{command}}** sepertinya dinonaktifkan di server ini. Coba minta admin kamu untuk mengaktifkannya kembali.",
         "FETCHING": "{{emoji}} `meminta antarmuka {{command}} untuk ID {{user}}...`",
-        "STILL_COOLDOWN": "**Bisakah kita bersantai sebentar, {{user}}?** {{emoji}}\n╰ Kamu memiliki sisa {{timeLeft}} detik hingga perintah berikutnya.",
-        "TITLE": "{{emoji}}**| {{user}} {{command}}**"
+        "STILL_COOLDOWN": "**Bisakah kita bersantai sebentar, {{user}}?** {{emoji}}\n╰ Tunggu {{timeLeft}} detik lagi sebelum perintah berikutnya.",
+        "TITLE": "{{emoji}} **| {{command}} milik {{user}}**"
     },
     "COMPLAINT": {
-        "DISPLAY_RECORD": "Inilah yang aku temukan untuk pengguna **{1}**\n\nTotal pengaduan **{2}** telah dicatat.\nYang terbaru ditambahkan oleh **{3}**\n\nLihat di bawah untuk log terperinci.\n{4}\n\nKetik `+ <reason>` untuk menambahkan keluhan baru. Atau `-` untuk menghapus keluhan terbaru.",
+        "DISPLAY_RECORD": "Ini yang aku temukan untuk pengguna **{1}**\n\nTotal **{2}** keluhan telah dicatat.\nYang terbaru ditambahkan oleh **{3}**\n\nLihat di bawah untuk log terperinci.\n{4}\n\nKetik `+ <reason>` untuk menambahkan keluhan baru. Atau `-` untuk menghapus keluhan terbaru.",
         "ENTRY_DELETE": "Terima kasih **${opt[0]}**! laporan terbaru untuk **{2}** telah dihapus.",
         "ENTRY_REGISTER": "Terima kasih **{1}**! laporan kamu untuk **{2}** telah didaftarkan.",
         "GUIDE": "Kamu berwenang untuk menggunakan **Sistem Pengaduan**\n\nFitur ini digunakan untuk melacak perilaku buruk yang disebabkan oleh anggota di server.",
         "INVALID_TARGET": "Pengguna dengan kata kunci **{1}** tidak dapat ditemukan.",
-        "NULL_RECORD": "Pengguna dengan ID **{1}** belum memiliki catatan keluhan apa pun. Coba ketik +<reason> untuk menambahkan keluhan baru.",
+        "NULL_RECORD": "Pengguna dengan ID **{1}** belum memiliki catatan keluhan apa pun. Silakan ketik + <reason> untuk menambahkan keluhan baru.",
         "UNAUTHORIZED": "Maaf, tingkat otoritas kamu tidak memenuhi persyaratan untuk menggunakan sistem pengaduan."
     },
     "CONFIGURATIONS": {
-        "CONFIRMATION": "Harap berikan nilai yang ingin kamu ubah **{{module}}**. Untuk mengatur ulang pengaturan ketik reset.",
+        "CONFIRMATION": "Silakan masukkan nilai baru untuk **{{module}}**. Untuk mengatur ulang pengaturan, ketik reset.",
         "FOOTER_GUIDE": "Ketik **{{prefix}}config <ModuleName>** untuk mulai mengonfigurasi modul yang dipilih.",
-        "GUIDE_FOR_SETBOOSTERCOLORS": "Coba gunakan **{{prefix}}setboostercolors** untuk memodifikasi modul ini.",
-        "GUIDE_FOR_SETRANKS": "Coba gunakan **{{prefix}}setranks** untuk memodifikasi modul ini.",
-        "GUIDE_FOR_WELCOMETEXT": "**Sekarang coba ketik pesan selamat datang yang baru!**",
-        "GUIDE_FOR_WELCOMETEXT_FOOTER": "Tips: Gunakan {{guild}} untuk menampilkan nama guild dan {{user}} untuk menampilkan pengguna yang bergabung. Untuk mengatur ulang pengaturan, ketik reset.",
-        "HEADER": "**Hai, {{user}}!** {{emoji}}\n\n Ini adalah pusat kendali kamu dalam mengelola konfigurasi aku untuk guild ini.\nDi bawah ini adalah modul yang tersedia:",
+        "GUIDE_FOR_SETBOOSTERCOLORS": "Silakan gunakan **{{prefix}}setboostercolors** untuk mengubah modul ini.",
+        "GUIDE_FOR_SETRANKS": "Silakan gunakan **{{prefix}}setranks** untuk mengubah modul ini.",
+        "GUIDE_FOR_WELCOMETEXT": "**Sekarang silakan ketik pesan sambutan yang baru!**",
+        "GUIDE_FOR_WELCOMETEXT_FOOTER": "Tips: Gunakan {{guild}} untuk menampilkan nama server dan {{user}} untuk menampilkan pengguna yang bergabung. Untuk mengatur ulang pengaturan, ketik reset.",
+        "HEADER": "**Hai, {{user}}!** {{emoji}}\n\n Ini adalah pusat kendali kamu untuk mengelola konfigurasiku di server ini.\nDi bawah ini adalah modul yang tersedia:\n",
         "INVALID_MODULE": "Maaf, aku tidak dapat menemukan modul apa pun dengan nama itu.",
         "NONE_TO_REMOVE": "Maaf, nilai yang dipilih ditolak karena belum ada.",
         "REJECTED": "Maaf, tetapi nilai yang dipilih ditolak.",
-        "SUCCESSFUL": "Modul **{{module}}** untuk guild ini telah berhasil diperbarui!",
-        "WRONG_FORMAT": "Kamu memberi aku format yang salah, harap format entri kamu seperti ini:\n{{format}}"
+        "SUCCESSFUL": "Modul **{{module}}** untuk server ini telah berhasil diperbarui!",
+        "WRONG_FORMAT": "Format yang kamu berikan salah, silakan tulis entrimu dengan format seperti ini:\n{{format}}"
     },
     "CRAFT": {
-        "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nCoba ketik `y` untuk melanjutkan pembuatan.",
+        "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nSilakan ketik `y` untuk melanjutkan crafting.",
         "DUPLICATES": "Kamu tidak dapat membuat duplikat!",
-        "INSUFFICIENT_MATERIALS": "Bahan yang hilang.",
-        "LVL_TOO_LOW": "Maaf, kamu harus minimal lv **5** untuk menggunakan fitur kerajinan.",
+        "INSUFFICIENT_MATERIALS": "Bahannya tidak cukup.",
+        "LVL_TOO_LOW": "Maaf, kamu harus minimal lv **5** untuk menggunakan fitur crafting.",
         "SUCCESSFUL": "**{0}** telah berhasil membuat {1}**{2}** !"
     },
     "DAILIES": {
-        "AUTHOR_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nHarian kamu akan tersedia\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯\nGunakan **`{{prefix}}vote`** untuk mendapatkan 5.000 artcoin!",
-        "CLAIMED": "╭*:;,．★ ～☆*────────╮\nHai, {{user}}! ini milikmu\n**Koin seni {{amount}}!**\n╰────────☆～*:;,．*╯\n{{praise}}",
-        "OTHERS_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nHarian mereka akan tersedia\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯",
-        "STREAK_INCREASING": "Lanjutkan kerja baikmu!",
-        "STREAKS": "{{user}} juga telah mencapai **{{streaks}}** hari berturut-turut. {{extension}}",
+        "AUTHOR_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nHadiah harian kamu akan tersedia\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯\nGunakan **`{{prefix}}vote`** untuk mendapatkan 5.000 artcoin!",
+        "CLAIMED": "╭*:;,．★ ～☆*────────╮\nHai, {{user}}! ini dia\n**{{amount}} artcoin** kamu!\n╰────────☆～*:;,．*╯\n{{praise}}",
+        "OTHERS_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nHadiah harian mereka akan tersedia\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯",
+        "STREAK_INCREASING": "Pertahankan terus!",
+        "STREAKS": "{{user}} juga telah mencapai streak **{{streaks}}** hari. {{extension}}",
         "THANKS_HELP": "Terima kasih atas bantuannya!",
-        "TO_REMIND": "Tidak ingin kalah beruntun? gunakan perintah **`{{prefix}}remind`** aku yang baru!"
+        "TO_REMIND": "Tidak ingin streak-mu putus? gunakan perintah baruku **`{{prefix}}remind`**!"
     },
     "DBKITS": {
-        "AUTHORIZED": "Selamat malam, **{{user}}**. Kamu dapat mengakses modul kueri db aku.",
-        "MISSING_FLAG": "Hei, kamu lupa kode benderanya. Cobalah salah satu dari ini,.\n\n`--get` Menarik satu baris.\n`--all` Menarik beberapa baris\n`--run` Menjalankan kueri seperti pembaruan.",
+        "AUTHORIZED": "Selamat malam, **{{user}}**. Kamu dapat mengakses modul kueri db-ku.",
+        "MISSING_FLAG": "Hei, kamu lupa kode flag-nya. Coba salah satu dari ini,.\n\n`--get` Mengambil satu baris.\n`--all` Mengambil beberapa baris\n`--run` Menjalankan kueri sejenis update.",
         "MISSING_STMT": "Pastikan untuk menulis pernyataan di dalam tanda kurung **[]**."
     },
-    "DISPLAY_BALANCE": "╭:;,．★ ～☆──────╮\nDimiliki Artcoins\n{{emoji}} **{{amount}}**\n╰──────☆～:;,．╯\n{{tips}}",
+    "DISPLAY_BALANCE": "╭:;,．★ ～☆──────╮\nArtcoins yang Dimiliki\n{{emoji}} **{{amount}}**\n╰──────☆～:;,．╯\n{{tips}}",
     "DISTREWARD": {
-        "CONFIRMATION": "🎁 🡆 **Inventaris {0}** ?\nCoba ketikkan peringkat hadiahnya",
+        "CONFIRMATION": "🎁 🡆 **Inventaris {0}** ?\nSilakan ketik peringkat hadiahnya",
         "INVALID_REWARD": "Maaf, aku tidak dapat menemukan paket apa pun untuk peringkat itu.",
         "SHORT_GUIDE": "Kamu dapat mulai membagikan hadiah acara dengan mengetik `>sendreward <user>`",
         "SUCCESSFUL": "**{0}** telah berhasil menerima paket **{1}**!"
@@ -212,67 +212,67 @@
         "COOLING_DOWN": "Kamu dapat melakukan perubahan lagi dalam 5 detik.",
         "ERROR": "Ada yang tidak beres..",
         "NOTIFICATION_DISABLED": "Pengaturan kamu telah disimpan. Kamu tidak akan menerima pemberitahuan apa pun lagi di masa mendatang.",
-        "NOTIFICATION_ENABLED": "Pengaturan kamu telah disimpan. Aku akan terus mengabari kamu tentang keterlibatan postingan kamu!",
+        "NOTIFICATION_ENABLED": "Pengaturan kamu telah disimpan. Aku akan terus mengabari kamu tentang interaksi di postinganmu!",
         "UNAVAILABLE_OPTION": "Maaf, aku tidak dapat menemukan konfigurasi apa pun untuk itu."
     },
-    "DONATE": "Coba bertanya di server dukungan kami bagaimana kamu dapat mendukung kami.",
+    "DONATE": "Silakan tanyakan di server dukungan kami bagaimana cara kamu bisa mendukung kami.",
     "EAT_POWERCAPSULE": {
-        "CONFIRMATION": "{{emoji}} **{{powerCapsuleAmount}} 🡆 {{gainedExp}} EXP ?**\nCoba ketik `y` untuk mengonfirmasi tindakan.",
-        "INSUFFICIENT_AMOUNT": "Kamu hanya memiliki {{emoji}} **{{amount}} Power Capsules.**",
+        "CONFIRMATION": "{{emoji}} **{{powerCapsuleAmount}} 🡆 {{gainedExp}} EXP ?**\nSilakan ketik `y` untuk mengonfirmasi tindakan.",
+        "INSUFFICIENT_AMOUNT": "Kamu hanya memiliki {{emoji}} **{{amount}} Power Capsule.**",
         "INVALID_AMOUNT": "Tampaknya itu bukan nilai yang benar. :/",
         "MISSING_ARG": "Harap jangan lupa untuk menentukan jumlah yang ingin kamu gunakan lain kali.",
-        "SHORT_GUIDE": "Kamu dapat menggunakan kapsul kekuatan kamu dan mendapatkan exp dengan mengetik `>eat <amount>`.",
-        "SUCCESSFUL": "Berhasil makan **{{amount}} Power Capsules!**",
-        "UNAVAILABLE": "Kamu tidak memiliki kapsul kekuatan yang tersisa."
+        "SHORT_GUIDE": "Kamu dapat menggunakan Power Capsule kamu dan mendapatkan exp dengan mengetik `>eat <amount>`.",
+        "SUCCESSFUL": "Berhasil memakan **{{amount}} Power Capsule!**",
+        "UNAVAILABLE": "Kamu sudah tidak punya Power Capsule lagi."
     },
     "ERR": {
-        "MISSING_ARG": "Jangan lupa tentukan jumlah power kapsul yang ingin kamu gunakan.",
+        "MISSING_ARG": "Jangan lupa tentukan jumlah Power Capsule yang ingin kamu gunakan.",
         "NEGATIVE_INPUT": "Kamu tidak dapat menggunakan nilai negatif.",
         "UNABLE_TO_FIND_USER": "Maaf, aku tidak dapat menemukan pengguna itu!"
     },
     "ERROR": "Ups, ada yang tidak beres.\n```diff\n- {{error}}\n```",
-    "ERROR_MISSING_PERMISSION": "**Aduh, apakah aku punya izinnya?**\n╰ Izin peran aku sepertinya tidak benar, bisakah kamu memeriksanya untuk aku? [Tanya Jawab](<https://discord.com/channels/577121315480272908/814741342881185802/1074060930423455764>) {{emoji}}",
+    "ERROR_MISSING_PERMISSION": "**Aduh, apakah aku punya izinnya?**\n╰ Izin peranku sepertinya tidak benar, bisakah kamu memeriksanya untukku? [FAQ](<https://discord.com/channels/577121315480272908/814741342881185802/1074060930423455764>) {{emoji}} ",
     "ERROR_ON_DEV": "Hmm, tidak berfungsi seperti yang diharapkan. {{emoji}}\n```diff\n- {{error}}\n```",
-    "ERROR_ON_PRODUCTION": "**Ups, aku baru saja tertabrak sesuatu...** {{emoji}}\n╰ Maaf atas ketidaknyamanan ini; Aku akan meneruskannya ke pengembang aku.",
-    "ERROR_UNSUPPORTED_FILE_TYPE": "**Ah, jepret!** {{emoji}}\n╰ Coba gunakan tautan gambar atau lampiran gambar yang valid!",
+    "ERROR_ON_PRODUCTION": "**Ups, aku baru saja tertabrak sesuatu...** {{emoji}}\n╰ Maaf atas ketidaknyamanan ini; aku akan meneruskannya ke pengembangku.",
+    "ERROR_UNSUPPORTED_FILE_TYPE": "**Yah, gawat!** {{emoji}}\n╰ Silakan gunakan tautan gambar atau lampiran gambar yang valid!",
     "EVAL": {
         "UNKNOWN_AUTHOR": "**<!> Kamu tidak berwenang mengakses fitur ini.**"
     },
     "EVENT": {
-        "END": "Oke! sisa tiket peserta **{0}** telah diturunkan.",
+        "END": "Oke! sisa tiket **{0}** peserta telah dihapus.",
         "END_NOPARTICIPANTLEFT": "Semua peserta telah berhasil berpartisipasi dalam acara tersebut! Kerja bagus **{0}**!"
     },
     "EVENT_MANAGER": {
-        "PUBLIC_SHORT_GUIDE": "Kamu dapat mencari acara dengan melakukan\n`lookup <event>`\n`lookup-all`",
-        "SHORT_GUIDE": "Kamu dapat menambah, menghapus, memperbarui, mengakhiri acara dengan melakukan\n`add`\n`remove <Event Name>`\n`update `\n`end <Event Name>`\n`lookup <event>`\n`lookup-all`",
-        "WRONG_FORMAT": "Kamu memberi aku format yang salah, harap format entri kamu seperti ini:\n{0}"
+        "PUBLIC_SHORT_GUIDE": "Kamu dapat mencari acara dengan mengetik\n`lookup <event>`\n`lookup-all`",
+        "SHORT_GUIDE": "Kamu dapat menambah, menghapus, memperbarui, atau mengakhiri acara dengan mengetik\n`add`\n`remove <Event Name>`\n`update `\n`end <Event Name>`\n`lookup <event>`\n`lookup-all`",
+        "WRONG_FORMAT": "Format yang kamu berikan salah, silakan tulis entrimu dengan format seperti ini:\n{0}"
     },
     "EVENT_SUBMISSION": {
-        "DEFAULT": "**{0}** telah mengirimkan beberapa pekerjaan! {1}",
-        "FOXIE_ENVELOPE": "Hore, **{0}** telah mengirimkan beberapa pekerjaan! {1}\nBeri mereka cinta!"
+        "DEFAULT": "**{0}** telah mengirimkan karyanya! {1}",
+        "FOXIE_ENVELOPE": "Hore, **{0}** telah mengirimkan karyanya! {1}\nBeri mereka apresiasi, ya!"
     },
     "EVENTMANAGER_UNAUTHORIZED_ACCESS": "Kamu tidak berwenang menggunakan fitur pengelola acara.",
     "EVENTMEMBER_UNAUTHORIZED_ACCESS": "Kamu tidak berwenang menggunakan fitur anggota acara.",
     "EVJOIN": {
         "ALREADY_HAS": "**{{user}}** kamu memiliki tiket yang belum terpakai, kirimkan karya seni kamu sekarang!",
         "FOXIES_BLESSING": "Tidak ada biaya yang dikenakan untuk Foxie's Blessing.",
-        "INSUFFICIENT_BALANCE": "Kamu tidak memiliki cukup artcoin untuk berpartisipasi dalam acara saat ini. Ambil harian kamu jika kamu belum melakukannya!",
-        "ROLE_NOT_SET_UP": "Maaf, sepertinya peran acara kamu di server ini belum disiapkan.",
+        "INSUFFICIENT_BALANCE": "Kamu tidak memiliki cukup artcoin untuk berpartisipasi dalam acara saat ini. Ambil hadiah harian kamu dulu kalau belum!",
+        "ROLE_NOT_SET_UP": "Maaf, sepertinya peran acara di server ini belum diatur.",
         "SUCCESSFUL": "**{{user}}** telah bergabung dalam acara tersebut.\n{{foxieMessage}}{{emoji}}"
     },
-    "EXEC_CODE": "Perintah dijalankan di **{{time}}**\n```json\n{{result}}\n```",
+    "EXEC_CODE": "Perintah dijalankan dalam **{{time}}**\n```json\n{{result}}\n```",
     "FACEGEN": {
-        "FETCHING": "{{emoji}} `Menghasilkan wajah anime segar yang belum pernah kamu lihat sebelumnya ...`",
+        "FETCHING": "{{emoji}} `Membuat wajah anime baru yang belum pernah kamu lihat sebelumnya ...`",
         "HEADER": "Karakter Buatan AI disediakan oleh [Gwern@TWDNE](https://www.gwern.net/index)"
     },
     "FEATURED": {
         "FIRST_LIKE": "**{reactor}** menyukai postingan kamu.",
         "LIKED": "**{{reactor}}** dan **{{amount}} lainnya** menyukai postingan kamu.",
-        "SUCCESSFUL": "Selamat, **{{0}}**!\npostingan kamu di {{channel}} telah ditampilkan!"
+        "SUCCESSFUL": "Selamat, **{{0}}**!\npostingan kamu di {{channel}} telah dijadikan unggulan!"
     },
     "FLIPCOIN": {
         "RESPONSES": [
-            "Seperti yang kuharapkan! mendarat di **{{result}}!**",
+            "Sudah kuduga! Hasilnya **{{result}}!**",
             "Mendarat di **{{result}}!** Hore!",
             "Koin telah mendarat di **{{result}}.**",
             "Wah! **{{result}}!**"
@@ -281,15 +281,15 @@
     "FOX": {
         "RESPONSES": [
             ":fox:",
-            "Aduh",
+            "Awooo",
             "Jangan terlalu dekat, aku mungkin akan menggigitmu.",
-            "Halus~"
+            "Lembut~"
         ]
     },
     "GACHA": {
-        "AMOUNT_OUTOFRANGE": "Kamu hanya dapat melakukan tarikan **1** atau **10**, *baka*. {{emoji}}",
-        "HEADER": "Dan dapatkan item berikut ::\n{{items}}",
-        "INSUFFICIENT_TICKET": "Operasi {{emoji}}, kamu tidak punya cukup **Annie's Pandora Box!**",
+        "AMOUNT_OUTOFRANGE": "Kamu hanya bisa melakukan **1** atau **10** tarikan, *baka*. {{emoji}}",
+        "HEADER": "Dan mendapatkan item berikut::\n{{items}}",
+        "INSUFFICIENT_TICKET": "{{emoji}} Ups, kamu tidak punya cukup **Annie's Pandora Box!**",
         "INVALID_AMOUNT": "{{emoji}} Aku hanya bisa membuka **1** atau **10** kotak sekaligus.",
         "OPENING_WORDS": [
             "{{emoji}} *{{user}} membuka gerbang menuju lautan keputusasaan*",
@@ -298,80 +298,80 @@
             "{{emoji}} *{{user}}, semoga RNG memberkati kamu*"
         ],
         "SESSION_STILL_ACTIVE": "Hei, kamu hanya bisa membuka satu sesi gacha dalam satu waktu!",
-        "SUGGEST_TO_BUY": "Tertarik untuk membeli **{{amount}}pcs dari Annie's Pandora Box**?",
+        "SUGGEST_TO_BUY": "Tertarik untuk membeli **{{amount}}pcs Annie's Pandora Box**?",
         "SUGGEST_TO_GRIND": "Kamu bahkan tidak memiliki cukup artcoin untuk membeli kotak itu! Tapi jangan khawatir, kamu bisa melakukan **`{{prefix}}quest`**, **`{{prefix}}daily`** atau **`{{prefix}}vote`** untuk mendapatkan lebih banyak artcoin. {{emoji}}",
-        "UNAVAILABLE_REWARDS": "Ah, saat ini aku tidak punya apa pun untuk ditawarkan di gacha. Coba kembali lagi nanti!",
-        "UPON_PURCHASE_WARN": "Kotak akan terbuka secara otomatis saat pembelian"
+        "UNAVAILABLE_REWARDS": "Ah, saat ini aku tidak punya apa pun untuk ditawarkan di gacha. Silakan kembali lagi nanti, ya!",
+        "UPON_PURCHASE_WARN": "Kotak akan otomatis dibuka setelah dibeli"
     },
-    "GENERATE_AFFILIATE_INVITE": "Jangan lupa untuk memeriksa server afiliasi aku juga! {{emoji}}\n{{affiliateLink}}",
+    "GENERATE_AFFILIATE_INVITE": "Jangan lupa cek server afiliasiku juga! {{emoji}}\n{{affiliateLink}}",
     "GENERATE_BOT_INVITE": "Sepertinya kamu tertarik padaku. [Ayo tambahkan aku ke server kamu!]({{botInviteLink}})!",
-    "GENERATE_SERVER_INVITE": "Kunjungi rumah aku! {{emoji}}\n{{serverLink}}",
+    "GENERATE_SERVER_INVITE": "Mampir ke rumahku, yuk! {{emoji}}\n{{serverLink}}",
     "GETLOG": {
         "ERR": "Ups, ada yang tidak beres,..",
-        "NULL": "Maaf **{{user}}** ... Aku tidak dapat menemukan log tersimpan di direktori aku. {{emoji}}",
-        "RETURNING": "Hai **{{user}}**!, ini log sistem aku. {{emoji}}",
-        "UNAUTHORIZED": "Maaf, kamu tidak berwenang mengakses bidang ini."
+        "NULL": "Maaf **{{user}}** ... Aku tidak dapat menemukan log tersimpan di direktoriku. {{emoji}}",
+        "RETURNING": "Hai **{{user}}**!, ini log sistemku. {{emoji}}",
+        "UNAUTHORIZED": "Maaf, kamu tidak punya izin untuk mengakses bagian ini."
     },
     "GIFT": {
-        "CONFIRMATION": "Hadiah **{{user}}** dengan **{{gift}}**?\n──────────────────☆～:;,．\nSetelah bereaksi, hadiah akan diubah menjadi poin rep {{amount}}+ untuk mereka.",
+        "CONFIRMATION": "Berikan **{{gift}}** kepada **{{user}}**?\n──────────────────☆～:;,．\nSetelah kamu memberi reaksi, hadiah akan diubah menjadi {{amount}}+ poin rep untuk mereka.",
         "DISPLAYGIFT_HEADER": "Hadiahmu",
         "GUIDE_TO_PICK_GIFT": "Ketik `<amount> <giftname>` untuk mulai mengirim hadiah.",
         "HEADER": "telah menerima hadiahmu!♡",
         "INSUFFICIENT_AMOUNT": "Kamu hanya memiliki **{{gift}}**, *baka*. {{emoji}}",
-        "INVALID_AMOUNT": "Coba ketik jumlah yang ingin kamu kirim!\n{{example}}",
+        "INVALID_AMOUNT": "Silakan ketik jumlah yang ingin kamu kirim!\n{{example}}",
         "MISSING_ITEM": "Jangan lupa tentukan hadiah yang ingin kamu kirim!\n{{example}}",
         "RENDERING_AVAILABLE_GIFTS": "{{emoji}} **`mengumpulkan hadiahmu..`**",
-        "SELF_TARGETING": "**Boo, kamu tidak bisa menghadiahkan kamu sendiri.** {{emoji}}",
+        "SELF_TARGETING": "**Boo, kamu tidak bisa memberi hadiah ke dirimu sendiri.** {{emoji}}",
         "SHORT_GUIDE": "╭*:;,．★ ～☆*───────────────╮\n**Siapa yang akan menerima hadiah darimu hari ini?♡**\nmisalnya **`{{prefix}}gift @crush 10 {{referenceItem}}`**\n╰────────────☆～*:;,．*╯\n～*Di bawah ini adalah hadiah yang dapat kamu kirimkan!\n{{items}}",
-        "SUCCESSFUL": "╭*:;,．★ ～☆*───────╮\n{{user}} telah diterima\n**{{gift}}**\n╰─────☆～*:;,．*╯\nTerima kasih atas hadiahnya!♡♡",
-        "UNAVAILABLE": "**Ah, kamu tidak punya hadiah apa pun saat ini!**\nTapi jangan khawatir- Kamu bisa mendapatkannya dari **`{{prefix}}gacha`** dan **`{{prefix}}shop`** aku!♡ {{emoji}}"
+        "SUCCESSFUL": "╭*:;,．★ ～☆*───────╮\n{{user}} telah menerima\n**{{gift}}**\n╰─────☆～*:;,．*╯\nTerima kasih atas hadiahnya!♡♡",
+        "UNAVAILABLE": "**Ah, kamu tidak punya hadiah apa pun saat ini!**\nTapi jangan khawatir- kamu bisa mendapatkannya dari **`{{prefix}}gacha`** dan **`{{prefix}}shop`** milikku!♡ {{emoji}}"
     },
     "GIVE_REPUTATION": {
-        "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nPerwakilan kamu akan tersedia\n:clock1: **{{time}}**\n╰────────☆～*:;,．*",
-        "SELF_TARGETING": "Kamu tidak bisa membohongi kamu sendiri, *baka*. {{emoji}}",
-        "SHORT_GUIDE": "**Tampilkan perwakilan seseorang yang kamu kagumi!** {{emoji}}\nmisalnya **`{{prefix}}rep @friend`**",
-        "SUCCESSFUL": "╭*:;,．★ ～☆*────────╮\n{{user}} telah diterima\n**+1 poin reputasi!**\n╰────────☆～*:;,．*╯\nBetapa murah hati~♡"
+        "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nRep kamu akan tersedia lagi\n:clock1: **{{time}}**\n╰────────☆～*:;,．*",
+        "SELF_TARGETING": "Kamu tidak bisa memberi rep ke dirimu sendiri, *baka*. {{emoji}}",
+        "SHORT_GUIDE": "**Beri rep ke seseorang yang kamu kagumi!** {{emoji}}\nmisalnya **`{{prefix}}rep @friend`**",
+        "SUCCESSFUL": "╭*:;,．★ ～☆*────────╮\n{{user}} telah menerima\n**+1 poin reputasi!**\n╰────────☆～*:;,．*╯\nBetapa murah hati~♡"
     },
     "HELP": {
         "CATEGORY": "{{category}}`\n**ini daftarnya!**\n{{commands}}",
         "CATEGORY_DESC": {
-            "ARTSY": "Barang seni aku yang akan membantu proses kreatif kamu!",
+            "ARTSY": "Fitur-fitur seniku yang akan membantu proses kreatifmu!",
             "CUSTOM": "Fungsi khusus untuk server tertentu.",
             "FUN": "Ingin bersenang-senang dengan temanmu?!",
-            "SETTING": "Modul konfigurasi yang mungkin kamu perlukan untuk menyiapkan guild dan profil khusus kamu!",
+            "SETTING": "Modul konfigurasi yang mungkin kamu perlukan untuk mengatur server dan profil kustommu!",
             "SYSTEM": "Perintah lain-lain untuk memeriksa status Annie.",
-            "USER": "Semua yang kamu butuhkan ada di sini. Sangat halus, hanya untuk kamu."
+            "USER": "Semua yang kamu butuhkan ada di sini. Tersusun rapi, khusus untukmu."
         },
         "CATEGORY_HEADER": {
-            "END": "perintah!",
-            "START": "itu"
+            "END": "!",
+            "START": "perintah "
         },
         "CATEGORY_HEADER_DESC": {
-            "ARTSY": "Ini adalah daftar perintah seni aku yang tujuannya membantu melengkapi ide seni kamu dan menghibur kamu saat mendapatkan artblock.",
-            "CUSTOM": "Ini adalah daftar perintah khusus aku, fungsi khusus untuk server tertentu.",
-            "DEVELOPER": "Ini adalah daftar antarmuka khusus pengembang aku. Itu hanyalah alat yang membosankan~",
-            "FUN": "Ini adalah daftar perintah aku yang membantu kamu dan teman kamu tetap terhibur! Perintahnya mungkin tidak sebanyak yang lain, tapi aku akan melakukan yang terbaik.",
-            "MODERATION": "Ini adalah daftar alat manajemen server aku yang akan membantu menyelesaikan tugas server kamu.",
-            "SETTING": "Ini adalah daftar perintah konfigurasi yang memungkinkan kamu mengedit perilaku aku di server ini. Aku juga dapat membantu mengonfigurasi profil kamu jika kamu mau.",
-            "SYSTEM": "Ini adalah daftar perintah sistem aku yang tujuannya untuk memeriksa dan memantau status sumber daya aku.",
-            "USER": "Ini adalah daftar perintah pengguna aku dan yah .. secara umum, sebagian besar perintah yang akan kamu gunakan ada dalam kategori ini."
+            "ARTSY": "Ini daftar perintah seniku yang bertujuan membantu mengembangkan ide senimu dan menghiburmu saat sedang artblock.",
+            "CUSTOM": "Ini daftar perintah kustomku, fungsi khusus untuk server tertentu.",
+            "DEVELOPER": "Ini daftar antarmukaku yang khusus untuk pengembang. Isinya cuma alat-alat yang membosankan~",
+            "FUN": "Ini daftar perintahku yang bisa membuat kamu dan teman-temanmu tetap terhibur! Perintahnya mungkin tidak sebanyak yang lain, tapi aku akan berusaha sebaik mungkin.",
+            "MODERATION": "Ini daftar alat manajemen serverku yang akan membantu menyelesaikan urusan servermu.",
+            "SETTING": "Ini daftar perintah konfigurasi yang memungkinkan kamu mengatur perilakuku di server ini. Aku juga bisa membantu mengatur profilmu kalau kamu mau.",
+            "SYSTEM": "Ini daftar perintah sistemku yang bertujuan untuk memeriksa dan memantau status sumber dayaku.",
+            "USER": "Ini daftar perintah untuk pengguna dan yah .. secara umum, sebagian besar perintah yang akan kamu gunakan ada di kategori ini."
         },
         "COMMANDPEDIA": {
-            "HEADER": "{{commandList}}\n**Tidak dapat menemukan apa yang kamu cari?**\njangan khawatir! ketik `{{prefix}}help <command>` (/bantuan cari <command>) untuk mendapatkan informasi tentang perintah\n\nAtau untuk bantuan lebih lanjut, coba ajukan beberapa pertanyaan di server dukungan aku dan pengembang aku akan segera menjawabnya!\n{{serverLink}} | {{botInviteLink}}\n-# Untuk melihat perintah Aplikasi (garis miring), coba gunakan menu bantuan bawaan Discord. Di bilah pesan ketik '/' lalu pilih Annie dan kamu dapat menelusuri semua perintah yang tersedia.",
+            "HEADER": "{{commandList}}\n**Tidak dapat menemukan apa yang kamu cari?**\njangan khawatir! ketik `{{prefix}}help <command>` (/help search <command>) untuk mendapatkan informasi tentang perintah tersebut\n\nAtau untuk bantuan lebih lanjut, coba ajukan beberapa pertanyaan di server dukunganku dan pengembangku akan segera menjawabnya!\n{{serverLink}} | {{botInviteLink}}\n-# Untuk melihat perintah Aplikasi (slash), silakan gunakan menu bantuan bawaan Discord. Di bilah pesan ketik '/' lalu pilih Annie dan kamu dapat menelusuri semua perintah yang tersedia.",
             "USAGE_EXAMPLES": "Gunakan **{{prefix}}help <name/category>** untuk mendapatkan informasi tentang perintah atau kategori."
         },
-        "LANDING": "Apakah kamu mencari permulaan yang cepat?{{emoji}}\n╭*:;,．★ ～☆*────────╮\n**`{{prefix}}level`**\n> Periksa berapa banyak exp yang kamu dapatkan setelah ngobrol selama berjam-jam. Aku dapat melihat betapa cerewetnya kamu hanya dari ini. ;)\n\n**`{{prefix}}bal`**\n> Pernahkah kamu bertanya-tanya, berapa banyak artcoin yang kamu miliki saat ini di akun kamu? Ini penting untuk dilakukan agar temanmu terkesan, tehee.\n\n**`{{prefix}}daily`**\n> Apakah kamu mendengar 'gratisan'? ya, aku menghadiahi kamu 250 artcoin gratis untuk setiap 23 jam! Jadi pastikan untuk tidak melewatkannya ya!?\n\n**`{{prefix}}leaderboard`**\n> Penasaran siapa yang mendapat exp, artcoin, dan fame point tertinggi di server kamu? Sekarang saatnya untuk mengambil takhta kamu.\n\n**`{{prefix}}profile`**\n> Di sini kamu akan dapat melihat peringkat, level, artcoin, dan poin ketenaran kamu saat ini secara sekilas. Ini mungkin terlihat jelas pada awalnya, tapi hei; kita akan mendekorasinya bersama!\n╰──────────☆～*:;,．*╯\nUntuk daftar lengkapnya, lihat Commandpedia dengan menekan tombol :book: pada pesan ini.",
-        "UNABLE_TO_FIND_COMMAND": "**Tunggu, apa itu tadi?**\n╰─ Aku tidak ingat apakah aku pernah mendapat perintah seperti ini. {{emoji}}",
+        "LANDING": "Lagi cari cara cepat untuk memulai?{{emoji}}\n╭*:;,．★ ～☆*────────╮\n**`{{prefix}}level`**\n> Periksa berapa banyak exp yang kamu dapatkan setelah ngobrol selama berjam-jam. Aku bisa melihat betapa cerewetnya kamu hanya dari ini. ;)\n\n**`{{prefix}}bal`**\n> Pernahkah kamu bertanya-tanya, berapa banyak artcoin yang kamu miliki di akunmu saat ini? Ini penting untuk dilakukan agar temanmu terkesan, tehee.\n\n**`{{prefix}}daily`**\n> Apakah kamu mendengar 'gratisan'? ya, aku menghadiahimu 250 artcoin gratis setiap 23 jam! Jadi pastikan untuk tidak melewatkannya ya!?\n\n**`{{prefix}}leaderboard`**\n> Penasaran siapa yang punya exp, artcoin, dan poin ketenaran tertinggi di servermu? Sekarang saatnya merebut takhtamu.\n\n**`{{prefix}}profile`**\n> Di sini kamu bisa melihat rank, level, artcoin, dan poin ketenaranmu saat ini secara sekilas. Mungkin terlihat polos pada awalnya, tapi hei; kita akan menghiasnya bersama!\n╰──────────☆～*:;,．*╯\nUntuk daftar lengkapnya, lihat Commandpedia dengan menekan tombol :book: pada pesan ini.",
+        "UNABLE_TO_FIND_COMMAND": "**Tunggu, apa itu tadi?**\n╰─ Aku tidak ingat pernah punya perintah seperti ini. {{emoji}}",
         "USAGE_FOOTER": "```javascript\nUSAGE: {{prefix}}{{usage}}\nPERM_LVL: {{permLvl}} or equivalent to {{permName}} privileges```"
     },
     "HUG": {
-        "INVALID_TARGET": "Apakah kamu mencoba memeluk udara yang tipis? {{emoji}}",
-        "OTHER_USER": "**{{user}}** sedang berpelukan **{{targetUser}}** <3",
-        "THEMSELVES": "**{{user}}** sedang berada di udara tipis. :<"
+        "INVALID_TARGET": "Kamu mencoba memeluk udara kosong, ya? {{emoji}}",
+        "OTHER_USER": "**{{user}}** sedang memeluk **{{targetUser}}** <3",
+        "THEMSELVES": "**{{user}}** sedang memeluk udara kosong. :<"
     },
     "INFINITY": {
         "ERROR": "Terjadi kesalahan saat menyegarkan statistik infinitybots.gg.\n```\n{{error}}\n```",
-        "REFRESHED": "Statistik infinitybots.gg telah diperbarui di {{benchmark}}"
+        "REFRESHED": "Statistik infinitybots.gg telah diperbarui dalam {{benchmark}}"
     },
     "INTERNAL_SYSTEM": {
         "COMMANDS_REGISTERED": "Perintah telah berhasil didaftarkan",
@@ -379,71 +379,71 @@
     },
     "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu.",
     "INVENTORY": {
-        "AUTHOR_EMPTY": "Kamu tidak memiliki barang apa pun di tas kamu.",
+        "AUTHOR_EMPTY": "Kamu tidak punya item apa pun di tasmu.",
         "AUTHOR_TIPS": "Gunakan item dengan mengetik **`{{prefix}}use <id/name>`** {{emoji}}",
-        "FETCHING": "{{emoji}} *Merapikan tas inventory...*",
-        "OTHER_USER_EMPTY": "**{{user}}** tidak memiliki barang apa pun di tasnya."
+        "FETCHING": "{{emoji}} *Merapikan tas inventaris...*",
+        "OTHER_USER_EMPTY": "**{{user}}** tidak punya item apa pun di tasnya."
     },
     "INVITE_ANNIE": "Undang Annie",
     "INVITE_LINK_SENT": "{{emoji}} **Aku sudah mengirimkan link undangan ke DM kamu!**",
-    "JOIN_SUPPORT_SERVER": "Bergabunglah dengan Server Dukungan",
+    "JOIN_SUPPORT_SERVER": "Gabung Server Dukungan",
     "lang": "id",
     "LEADERBOARD": {
         "AUTHOR_RANK": "Kamu saat ini **#{{rank}}** dengan total **{{points}}** {{emoji}}",
-        "GUIDE": "Tahukah kamu bahwa guild ini memiliki papan peringkat peringkatnya sendiri? lihat perintah di bawah ini! {{emoji}}\n\n**`{{prefix}}lb exp`**\n> Daftar pengguna dengan poin & level pengalaman tertinggi. Obrolan berjam-jam mereka membuahkan hasil.\n\n**`{{prefix}}lb bal`**\n> Daftar pengguna kaya dengan akun saldo tertinggi. Mereka berasal dari keluarga kaya atau mendedikasikan waktunya untuk menggiling koin.\n\n**`{{prefix}}lb fame`**\n> Daftar pengguna yang paling disukai dengan popularitas poin ketenaran tertinggi. Mereka terlalu luar biasa untuk seleraku.",
+        "GUIDE": "Tahukah kamu bahwa server ini punya papan peringkatnya sendiri? lihat perintah di bawah ini! {{emoji}}\n\n**`{{prefix}}lb exp`**\n> Daftar pengguna dengan poin pengalaman & level tertinggi. Obrolan berjam-jam mereka benar-benar membuahkan hasil.\n\n**`{{prefix}}lb bal`**\n> Daftar pengguna kaya dengan saldo tertinggi. Mereka entah berasal dari keluarga kaya atau mendedikasikan waktunya untuk farming koin.\n\n**`{{prefix}}lb fame`**\n> Daftar pengguna paling disukai dengan poin ketenaran tertinggi. Mereka terlalu luar biasa untuk seleraku.",
         "HEADER": ":trophy: **| Pemimpin {{leaders}}**\nPeringkat {{guildName}}",
         "INVALID_CATEGORY": "**Maaf- tapi belum ada papan peringkat untuk kategori itu.** {{emoji}}",
         "NO_DATA": "Belum ada data peringkat yang ditemukan untuk **Papan Peringkat {{category}}.** Kembali lagi nanti!",
         "UNRANKED": "Kamu tidak memiliki peringkat."
     },
     "LEVELCARD": {
-        "HEADER": "<:Annie_Smug:523686816545636352>**| Kartu level untuk {0}**",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Kartu level untuk {0}**",
         "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu."
     },
     "LEVELUP": {
         "DEFAULT_RESPONSES": [
-            "**{{user}} yang luar biasa!♡**",
+            "**Luar biasa, {{user}}!♡**",
             "**Selamat, {{user}}!♡**",
             "**GG, {{user}}!♡**",
             "**Bagus, {{user}}!♡**",
-            "**uwu {{user}} baru saja mencapai level lain♡**"
+            "**uwu {{user}} baru saja naik level lagi♡**"
         ],
         "JUMPING": "**{{user}}** telah naik level menjadi **LV{{gainedLevel}}**, luar biasa!\n inilah hadiah {{emoji}} **{{gainedReward}}** kamu.",
         "REGULAR": "**{{user}}** telah naik level menjadi **LV{{gainedLevel}}**!\ninilah hadiah {{emoji}} **{{gainedReward}}** kamu."
     },
-    "LOCALIZATION_ERROR": "**Aku mengalami kesalahan pelokalan. T_T\nTolong bantu aku melaporkan hal ini kepada pengembang aku sehingga aku dapat melayani kamu dengan lebih baik!**",
+    "LOCALIZATION_ERROR": "**Aku mengalami kesalahan pelokalan. T_T\nTolong bantu aku melaporkan hal ini kepada pengembangku supaya aku bisa melayanimu dengan lebih baik!**",
     "LOGS": {
-        "CHANNEL_CREATE": "Hore! saluran lain untuk aku hangout! {{emoji}}",
-        "CHANNEL_DELETE": "Ups, aku melihat saluran bernama **#{{channel}}** ini baru saja dihapus. Periksa log audit untuk melihat siapa yang melakukannya. {{emoji}}",
-        "CHANNEL_UPDATE": "Hai- Aku perhatikan saluran ini bernama **#{{oldChannel}}** baru saja diperbarui menjadi **{{newChannel}}!** dan sekarang terlihat cukup keren! {{emoji}}",
+        "CHANNEL_CREATE": "Hore! Ada channel baru untuk tempatku nongkrong! {{emoji}}",
+        "CHANNEL_DELETE": "Ups, aku melihat channel bernama **#{{channel}}** baru saja dihapus. Periksa log audit untuk melihat siapa yang melakukannya. {{emoji}}",
+        "CHANNEL_UPDATE": "Hai- Aku lihat channel bernama **#{{oldChannel}}** baru saja diubah menjadi **{{newChannel}}!** sekarang terlihat cukup keren! {{emoji}}",
         "EMOJI_CREATE": "Hai! emoji baru sedang dibuat!",
-        "EMOJI_DELETE": "Ups, aku melihat emoji bernama **{{emoji}}** baru saja dihapus dari guild. Kamu dapat mencoba memeriksa log audit guild untuk melihat siapa yang melakukannya.",
+        "EMOJI_DELETE": "Ups, aku melihat emoji bernama **{{emoji}}** baru saja dihapus dari server. Kamu bisa coba memeriksa log audit server untuk melihat siapa yang melakukannya.",
         "EMOJI_UPDATE": "Hai- emoji lama bernama **{{oldEmoji}}** baru saja diperbarui menjadi **{{newEmoji}}!**",
-        "GUILD_BAN_ADD": "Ini saat yang menyenangkan, **{{user}}**. Tapi aku harus melakukan pekerjaanku. {{emoji}}",
-        "GUILD_BAN_REMOVE": "Tahukah kamu, saat laranganmu dicabut.. itu berarti kami masih peduli padamu! jadi bersyukurlah **{{user}}**! {{emoji}}",
-        "GUILD_DELETE": "Mereka telah mengusir aku dari rumah mereka... {{emoji}}",
-        "GUILD_MEMBER_ADD": "Mari kita sambut teman baru kita, **{{user}}**! Aku harap kita bisa rukun dengan baik. {{emoji}}",
-        "GUILD_MEMBER_REMOVE": "Senang mengenal kamu, **{{user}}**. Aku berharap kita bisa menghabiskan waktu bersama lebih lama lagi, tapi apa yang bisa kita lakukan? kita tidak bisa menyangkal nasib kita. {{emoji}}",
+        "GUILD_BAN_ADD": "Senang pernah bersamamu, **{{user}}**. Tapi aku harus menjalankan tugasku. {{emoji}}",
+        "GUILD_BAN_REMOVE": "Asal kamu tahu, saat ban-mu dicabut.. itu berarti kami masih peduli padamu! jadi bersyukurlah **{{user}}**! {{emoji}}",
+        "GUILD_DELETE": "Mereka telah mengusirku dari rumah mereka... {{emoji}}",
+        "GUILD_MEMBER_ADD": "Mari kita sambut teman baru kita, **{{user}}**! Aku harap kita bisa akrab, ya. {{emoji}}",
+        "GUILD_MEMBER_REMOVE": "Senang mengenal kamu, **{{user}}**. Aku berharap kita bisa menghabiskan waktu bersama lebih lama lagi, tapi apa yang bisa kita lakukan? kita tidak bisa melawan takdir. {{emoji}}",
         "GUILD_UPDATE_NAME": "Kami baru saja mengganti nama rumah kami dari **{{oldGuild}}** menjadi **{{newGuild}}.** Semoga ini menjadi awal yang baik! {{emoji}}",
         "GUILD_UPDATE_REGION": "Mari kita lihat apa yang mereka miliki di wilayah ini. {{emoji}}",
         "GUILDCREATE": {
-            "AFTER_INVITATION": "**Hai, terima kasih telah mengundang aku ke guild kamu!** {{emoji}}\nUntuk memulai, ketik **`{{prefix}}help`** di server kamu untuk melihat semua perintah aku yang tersedia.\n\nUntuk informasi lebih lanjut, kamu dapat mencoba menanyakannya langsung kepada pengembang aku di tautan di bawah.\n[Bergabunglah dengan Server Dukungan aku!]({{supportServer}})",
+            "AFTER_INVITATION": "**Hai, terima kasih telah mengundangku ke server kamu!** {{emoji}}\nUntuk memulai, ketik **`{{prefix}}help`** di server kamu untuk melihat semua perintahku yang tersedia.\n\nUntuk informasi lebih lanjut, kamu bisa langsung bertanya kepada pengembangku di tautan di bawah.\n[Gabung ke Server Dukunganku!]({{supportServer}}) ",
             "INTERNAL_LOG": "Hm?! Aku diundang ke **{{guildCode}}**! Aku harap aku tidak mengecewakan mereka kali ini. {{emoji}}"
         },
-        "MESSAGE_DELETE": "Hai! Aku baru saja melihat satu pesan dihapus oleh **{{user}}** di saluran ini yang disebut **{{channel}}**. Kalau aku ingat, isinya kira-kira seperti ini:\n\n> {{content}}",
-        "MESSAGE_DELETE_BULK": "Hai hai! Aku melihat **pesan {{messages}}** dihapus secara massal di **{{channel}}.**",
-        "MESSAGE_UPDATE": "Hai- Aku baru saja melihat pesan diedit oleh **{{user}}** di saluran **{{channel}}**. Jika ingin melihat perbedaannya, lihat dibawah ini. {{emoji}}\n\n**Ini pesan lama:**\n> {{oldMessage}}\n\n**Dibandingkan dengan yang baru:**\n> {{newMessage}}",
-        "ROLE_CREATE": "Hai! Aku memperhatikan peran baru dalam pembuatannya! {{emoji}}",
-        "ROLE_DELETE": "Hai! Aku baru saja melihat peran bernama **{{role}}** dihapus. Jika kamu ingin tahu siapa yang melakukannya, periksa log audit guild ini! {{emoji}}",
+        "MESSAGE_DELETE": "Hai! Aku baru saja melihat satu pesan dihapus oleh **{{user}}** di channel **{{channel}}**. Kalau tidak salah ingat, isinya kira-kira seperti ini:\n\n> {{content}}",
+        "MESSAGE_DELETE_BULK": "Hai hai! Aku melihat **{{messages}} pesan** dihapus secara massal di **{{channel}}.**",
+        "MESSAGE_UPDATE": "Hai- Aku baru saja melihat pesan diedit oleh **{{user}}** di channel **{{channel}}**. Jika ingin melihat perbedaannya, lihat di bawah ini. {{emoji}}\n\n**Ini pesan lama:**\n> {{oldMessage}}\n\n**Dibandingkan dengan yang baru:**\n> {{newMessage}}",
+        "ROLE_CREATE": "Hai! Aku lihat ada peran baru yang sedang dibuat! {{emoji}}",
+        "ROLE_DELETE": "Hai! Aku baru saja melihat peran bernama **{{role}}** dihapus. Jika kamu ingin tahu siapa yang melakukannya, periksa log audit server ini! {{emoji}}",
         "ROLE_UPDATE": "Hei hei! **{{oldRole}}** baru saja diperbarui menjadi **{{newRole}}!** terlihat mewah bukan?! itu juga menggunakan **{{color}}** sebagai warnanya."
     },
     "MAIL": {
         "CONFIRMATION": "Aku akan mencoba mengirim ke **{{user}}** dengan pesan berikut\n{{content}}.",
-        "INVALID_CONTENT_LENGTH": "'Mana pesannya? {{emoji}}",
+        "INVALID_CONTENT_LENGTH": "`Mana pesannya? {{emoji}}",
         "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu.",
-        "PROMPT": "Pesan akan dikirim ke **{{user}}**. Sekarang silahkan ketikkan isi pesannya.",
-        "SHORT_GUIDE": "Ingin menggunakan layanan email aku? jangan lupa untuk menyertakan pengguna lain kali!",
-        "SUCCESSFUL": "Mengerti! pesan telah berhasil dikirim ke **{{user}}** dengan pesan berikut\n{{content}}.",
+        "PROMPT": "Pesan akan dikirim ke **{{user}}**. Sekarang silakan ketik isi pesannya.",
+        "SHORT_GUIDE": "Ingin menggunakan layanan suratku? jangan lupa sebutkan penggunanya lain kali!",
+        "SUCCESSFUL": "Beres! pesan telah berhasil dikirim ke **{{user}}** dengan pesan berikut\n{{content}}.",
         "UNSUCCESSFUL": "Ah, sayangnya pengguna sepertinya mengunci pesan langsungnya. {{emoji}}"
     },
     "MAKEREWARD": {
@@ -455,94 +455,94 @@
         "DELETE_FAIL": "Paket kamu belum dihapus",
         "DELETE_SUCCESS": "Paket kamu telah dihapus",
         "IGNORE": "Maaf, hanya pengguna yang mengirimkan pesan ini yang dapat berinteraksi dengannya.",
-        "ITEM_ADD_ANOTHER": "Coba Tekan tombol Item untuk menambahkan item lainnya",
-        "ITEM_ADD_TRY": "Coba Tekan tombol Item untuk mencoba lagi",
-        "ITEM_CANCEL": "Tidak, itu bukan barangnya",
-        "ITEM_CREATION_TITLE": "Pembuatan barang",
+        "ITEM_ADD_ANOTHER": "Silakan tekan tombol Item untuk menambahkan item lainnya",
+        "ITEM_ADD_TRY": "Silakan tekan tombol Item untuk mencoba lagi",
+        "ITEM_CANCEL": "Tidak, itu bukan itemnya",
+        "ITEM_CREATION_TITLE": "Pembuatan item",
         "ITEM_FOUND": "Item yang aku temukan adalah: {{itemName}}, apakah ini benar?",
-        "ITEM_NAME": "Apa nama barangnya?",
+        "ITEM_NAME": "Apa nama itemnya?",
         "ITEM_QUANTITY": "Berapa jumlah yang harus diberikan?",
         "ITEMS_SELECTED": "item yang dipilih",
         "LIST_PKG_HEADER": "Paket hadiah khusus untuk",
-        "MAX_PACKAGES": "Maaf, kamu telah mencapai jumlah maksimal paket. Coba hapus satu jika kamu ingin membuat yang lain.",
+        "MAX_PACKAGES": "Maaf, kamu telah mencapai jumlah maksimal paket. Silakan hapus salah satu jika kamu ingin membuat yang lain.",
         "NAME_EXISTS": "Maaf, kamu sudah memiliki paket dengan nama itu",
         "NAN_QUANTITY": "Maaf jumlah yang kamu ketikkan bukan angka. Aku akan menetapkan jumlah default menjadi 1",
         "NO_ITEMS_ADDED": "Tidak ada item yang ditambahkan",
-        "NO_ITEMS_ATTEMPT_START": "Tidak ada item yang ditemukan, coba coba lagi. Setelah percobaan ketiga, peran tersebut akan secara otomatis disetel ke peran yang kamu buat saat ini atau disetel ke nol peran. Ini milikmu",
+        "NO_ITEMS_ATTEMPT_START": "Tidak ada item yang ditemukan, silakan coba lagi. Setelah percobaan ketiga, pilihan akan otomatis disetel ke item yang sudah kamu pilih atau ke nol item. Kamu sudah mencoba",
         "NO_ITEMS_AVAIL": "Maaf kamu tidak memiliki item apa pun untuk aku berikan, coba tambahkan dengan /setshop add.",
         "NO_ITEMS_MENU": "(0/0) item dipilih, Tidak ada item yang tersedia untuk ditambahkan",
         "NO_PACKAGES": "Maaf, sepertinya kamu tidak memiliki paket apa pun. coba buat satu dengan /makereward create",
-        "NO_ROLES": "Maaf kamu tidak memiliki peran apa pun untuk aku berikan, coba naikkan peran aku lebih tinggi.",
+        "NO_ROLES": "Maaf kamu tidak memiliki peran apa pun untuk aku berikan, coba naikkan posisi peranku.",
         "NO_ROLES_ADDED": "Tidak ada peran yang ditambahkan",
-        "NO_ROLES_ATTEMPT_START": "Tidak ada peran yang ditemukan, coba coba lagi. Setelah percobaan ketiga, peran tersebut akan secara otomatis disetel ke peran yang kamu buat saat ini atau disetel ke nol peran. Ini milikmu",
+        "NO_ROLES_ATTEMPT_START": "Tidak ada peran yang ditemukan, silakan coba lagi. Setelah percobaan ketiga, pilihan akan otomatis disetel ke peran yang sudah kamu pilih atau ke nol peran. Kamu sudah mencoba",
         "NO_ROLES_MENU": "(0/0) peran dipilih, Tidak ada peran yang dapat ditambahkan",
-        "NO_ROLES_OR_ITEMS_ATTEMPT_END": "percobaan.",
-        "OTHER_OPTION": "Maaf harus memilih salah satu opsi lainnya",
-        "ROLE_ATTEMPT": "harap selesaikan peran percobaan saat ini terlebih dahulu lalu lanjutkan.",
+        "NO_ROLES_OR_ITEMS_ATTEMPT_END": "kali.",
+        "OTHER_OPTION": "Maaf, kamu harus memilih salah satu opsi lainnya",
+        "ROLE_ATTEMPT": "Silakan selesaikan dulu percobaan peran yang sedang berjalan, lalu lanjutkan.",
         "ROLE_CANCEL": "Tidak, bukan itu perannya",
         "ROLE_FOUND": "Peran yang aku temukan adalah: {{roleName}}, apakah ini benar?",
         "ROLE_ID_NAME": "Apa nama atau id peran tersebut?",
-        "ROLE_TRY_AGAIN": "Coba Tekan tombol peran untuk mencoba lagi",
+        "ROLE_TRY_AGAIN": "Silakan tekan tombol Role untuk mencoba lagi",
         "ROLES_SELECTED": "peran yang dipilih",
         "SESSION_STILL_ACTIVE": "Maaf, sesi pembuatan paket kamu masih aktif, harap tunggu beberapa saat sebelum mencoba lagi",
-        "SUBMIT_CANCEL": "Paket belum ditambahkan, coba jalankan kembali perintah tersebut jika ingin menambahkan paket.",
+        "SUBMIT_CANCEL": "Paket belum ditambahkan, silakan jalankan kembali perintah tersebut jika ingin menambahkan paket.",
         "SUCCESSFUL": "Paket kamu telah ditambahkan, kamu dapat melihat paket dengan '/makereward list'",
         "TIME_EXPIRED": "Waktu kamu telah habis, jangan khawatir, jalankan saja perintah makereward lagi untuk menambahkan paket",
         "TRACK_MSG_START": "Paket yang kamu buat diberi nama",
-        "TRANSACTION_CANCEL": "Coba tekan tombol untuk konfirmasi transaksi atau batal untuk menghentikan transaksi"
+        "TRANSACTION_CANCEL": "Silakan tekan tombol Confirm untuk mengonfirmasi transaksi atau Cancel untuk menghentikan transaksi"
     },
     "MANAGE_PROFILE": {
         "ALREADY_DIPLAYED": "Maaf, tetapi kamu sudah menampilkan {0} itu",
-        "BADGE_MENU": "Lencana kamu saat ini adalah:\n{0}\nLencana kamu yang tersedia adalah:\n{1}\nHarap tunjukkan ruang lencana dan lencana apa yang ingin kamu tampilkan; Seperti `1 Alpaca Api` ini",
+        "BADGE_MENU": "Lencana kamu saat ini adalah:\n{0}\nLencana kamu yang tersedia adalah:\n{1}\nSilakan sebutkan slot lencana dan lencana yang ingin kamu tampilkan, seperti ini: `1 Fire Alpaca`",
         "DONT_OWN_ITEM": "Maaf tetapi kamu tidak memiliki {0} ini, {1}",
         "INVALID_SLOT": "Maaf, slot {0} tidak tersedia, {1}",
         "ITEM_UPDATED": "{0} kamu telah diperbarui menjadi: {1}",
-        "MAIN_MENU": "Coba balas dengan {0} \n Atau \"batal\" atau \"keluar\" atau \"keluar\" untuk keluar dari menu pilihan",
-        "MENU": "{0}\n\nCoba ketik nama {1} yang ingin kamu ubah.\nMasukkan \"batal\" atau \"keluar\" atau \"keluar\" untuk keluar dari menu pilihan",
+        "MAIN_MENU": "Silakan balas dengan {0} \n Atau \"cancel\" atau \"exit\" atau \"quit\" untuk keluar dari menu pilihan",
+        "MENU": "{0}\n\nSilakan ketik nama {1} yang ingin kamu pakai.\nKetik \"cancel\" atau \"exit\" atau \"quit\" untuk keluar dari menu pilihan",
         "MENU_CLOSED": "Menu pilihan ditutup.",
-        "NO_ITEM_SUPPLIED": "Maaf, tetapi kamu tidak memberikan item untuk ditampilkan",
+        "NO_ITEM_SUPPLIED": "Maaf, tetapi kamu tidak memberikan item untuk ditampilkan\n",
         "NO_ITEMS": "Maaf, kamu tidak memiliki {0}"
     },
     "MUTE": {
-        "DURATION": "Oke, sekarang silahkan ketikkan durasi mutenya.",
+        "DURATION": "Oke, sekarang silakan ketik durasi mute-nya.",
         "INVALID_DATE": "Aku tidak yakin apakah itu tanggal yang benar. :0",
-        "MISSING_ARG": "Kamu berwenang untuk menggunakan **Sistem Bisu**. Coba tentukan pengguna target lain kali!",
-        "SUCCESSFUL": "Berhasil menonaktifkan **{{user}}** untuk **{{duration}}**! {{emoji}}",
+        "MISSING_ARG": "Kamu berwenang untuk menggunakan **Sistem Mute**. Lain kali, tolong sebutkan pengguna targetnya, ya!",
+        "SUCCESSFUL": "Berhasil membisukan **{{user}}** selama **{{duration}}**! {{emoji}}",
         "USER_HAS_ROLE": "Maaf, {{user}}, saat ini sudah dibisukan."
     },
-    "NON_COMMAND_CHANNEL": "**Tidak, {{user}}.** Kamu tidak dapat menggunakan perintah aku di sini. {{emoji}}",
+    "NON_COMMAND_CHANNEL": "**Tidak, {{user}}.** Kamu tidak dapat menggunakan perintahku di sini. {{emoji}}",
     "PANDA": {
         "RESPONSES": [
             ":panda:",
             "Menggemaskan sekali!",
-            "Lihatlah gumpalan malas ini!",
+            "Lihat si gembul pemalas ini!",
             "Imut-imut sekali!"
         ]
     },
     "PAT": {
         "INVALID_TARGET": "Siapa itu? hantu? {{emoji}}",
-        "OTHER_USER": "**{{user}}** sedang menepuk **{{targetUser}}**, sungguh menggemaskan!",
-        "THEMSELVES": "**{{user}}** sedang menepuk dirinya sendiri... </3"
+        "OTHER_USER": "**{{user}}** sedang mengelus-elus kepala **{{targetUser}}**, gemas sekali!",
+        "THEMSELVES": "**{{user}}** sedang mengelus-elus kepalanya sendiri... </3"
     },
     "PAY": {
-        "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **Saldo {{user}}**?\nketik `y` untuk mengkonfirmasi transaksi kamu.",
+        "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **Saldo {{user}}**?\nketik `y` untuk mengonfirmasi transaksimu.",
         "EXCEEDING_LIMIT": "Kamu hanya dapat mentransfer maksimal **{{limit}}** per transaksi.",
         "INSUFFICIENT_BALANCE": "Kamu tidak memiliki cukup saldo untuk melanjutkan transaksi ini.",
         "INVALID_AMOUNT": "Jangan lupa tentukan jumlah yang ingin kamu kirim!",
-        "INVALID_NUMBER": "Coba masukkan jumlah valid yang ingin kamu kirim.",
-        "LVL_TOO_LOW": "Kamu harus setidaknya **LV {{level}}** untuk menggunakan fitur ini.",
+        "INVALID_NUMBER": "Tolong masukkan jumlah yang valid untuk dikirim.",
+        "LVL_TOO_LOW": "Kamu harus mencapai setidaknya **LV {{level}}** untuk menggunakan fitur ini.",
         "RECEIVED": "telah menerima artcoin kamu!♡",
-        "SELF_TARGETING": "Kamu tidak bisa membayar kamu sendiri, Baka. {{emoji}}",
+        "SELF_TARGETING": "Kamu tidak bisa membayar dirimu sendiri, baka. {{emoji}}",
         "SESSION_STILL_RUNNING": "**Sesi pembayaran kamu masih aktif!** {{emoji}}",
         "SHORT_GUIDE": "**Sistem Pembayaran** ini memungkinkan kamu membagikan artcoin kamu dengan pengguna lain! Kamu dapat memulai hanya dengan mengetik `{{prefix}}pay <user> <amount>`\n\nPerlu diingat, ada **biaya pajak 2%** untuk setiap transaksi yang kamu lakukan.",
         "SUCCESSFUL": "**{{target}}** telah menerima artcoin kamu!♡",
         "TARGET_NOTIFICATION": "**{0}** telah mengirimi kamu {1}**{2}**",
-        "USER_CONFIRMATION": "Mentransfer **{{amount}} (termasuk pajak 2%)** ke akun **{{user}}**?\n──────────────────☆～:;,．\nBereaksi terhadap tombol untuk mengonfirmasi transaksi."
+        "USER_CONFIRMATION": "Mentransfer **{{amount}} (termasuk pajak 2%)** ke akun **{{user}}**?\n──────────────────☆～:;,．\nTekan tombolnya untuk mengonfirmasi transaksi."
     },
     "PIXIV": {
         "DISPLAY_CUSTOM_SEARCH": "{{emoji}} *Mencari '{{keyword}}' ...*",
         "DISPLAY_RECOMMENDED_WORK": "{{emoji}} *Menampilkan karya yang paling direkomendasikan untuk kamu...*",
-        "FAIL_TO_LOAD": "Ups, ada yang tidak beres. Coba coba lagi dengan kata kunci yang berbeda!",
+        "FAIL_TO_LOAD": "Ups, ada yang salah. Silakan coba lagi dengan kata kunci yang berbeda!",
         "MADE_WITH": {
             "NONE": "{{tools}}\n{{tags}}",
             "TOOLS": "**Dibuat dengan {{tools}}**\n{{tags}}"
@@ -553,7 +553,7 @@
         "FETCHING": "`Mengambil data portofolio {0}. .`",
         "HEADER": "<:Annie_Smug:523686816545636352>**| Kartu portofolio untuk {0}**",
         "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu.",
-        "LVL_TOO_LOW": "Pengguna harus setidaknya berusia lv **{0}** untuk membuka fitur ini."
+        "LVL_TOO_LOW": "Pengguna ini harus mencapai setidaknya lv **{0}** untuk membuka fitur ini."
     },
     "POST": {
         "IS_EMPTY": "Hmm, **{{user}}** belum memposting apa pun sejak pertama kali aku datang ke sini. {{emoji}}"
@@ -562,41 +562,41 @@
         "FETCHING": "{{emoji}} *Tunggu sebentar, kartu profil kamu masih dalam tahap pembuatan...*",
         "HEADER": "<:Annie_Smug:523686816545636352>**| Kartu profil untuk {0}**",
         "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu.",
-        "NEWCOMER_TIPS": "Pengingat ramah, kamu dapat membumbui kartu kamu dengan perintah **`setcover`**!"
+        "NEWCOMER_TIPS": "Sekadar info, kamu bisa mempercantik kartumu dengan perintah **`setcover`**!"
     },
     "PRUNE": {
         "EXCEEDING_LIMIT": "Maaf, aku tidak bisa menghapus lebih dari **100** pesan sekaligus!",
-        "INVALID_AMOUNT": "Coba cantumkan nomor yang valid.",
-        "SHORT_GUIDE": "Kamu berwenang untuk menggunakan fitur penghapusan pesan massal. Coba tambahkan jumlah yang akan dihapus lain kali.",
+        "INVALID_AMOUNT": "Tolong masukkan angka yang valid.",
+        "SHORT_GUIDE": "Kamu berwenang menggunakan fitur penghapusan pesan massal. Lain kali, jangan lupa sertakan jumlah pesan yang mau dihapus, ya.",
         "SUCCESSFUL": "Hore! **{{amount}}** pesan telah berhasil dihapus! {{emoji}}"
     },
     "QUEST": {
-        "CANCEL": "Baiklah, misi telah dibatalkan.",
-        "COOLDOWN": "╭*:;,．★ ～☆*────────╮\nPencarian kamu berikutnya akan tersedia\n:clock1: **{{time}}**\n╰────────☆～:;,．╯\nKlaim **`{{prefix}}daily`** kamu jika belum!",
+        "CANCEL": "Baiklah, quest telah dibatalkan.",
+        "COOLDOWN": "╭*:;,．★ ～☆*────────╮\nQuest kamu berikutnya akan tersedia\n:clock1: **{{time}}**\n╰────────☆～:;,．╯\nKlaim **`{{prefix}}daily`** kamu jika belum!",
         "DISPLAY": "╭*:;,．★ ～☆*─────────────╮\n\n**__{{questTitle}}__**\n{{description}}\n**Hadiah: {{reward}}**\n\n╰────────────☆～*:;,．*╯",
-        "EMPTY": "Maaf, tidak ada misi yang tersedia untuk diambil saat ini!",
-        "EXPIRED": "Waktu pencarian kamu telah berakhir, jangan khawatir, jalankan saja perintah pencarian lagi untuk melanjutkan dari bagian terakhir yang kamu tinggalkan",
-        "FETCHING": "{{emoji}} `Melihat ke papan pencarian...`",
-        "FOOTER": "Ketik satu jawaban yang benar untuk menyelesaikan misi.",
-        "INCORRECT_ANSWER": "Huhu, jawaban yang salah!",
+        "EMPTY": "Maaf, saat ini tidak ada quest yang bisa diambil!",
+        "EXPIRED": "Waktu quest kamu sudah habis, tapi jangan khawatir, jalankan saja perintah quest lagi untuk melanjutkan dari bagian terakhir yang kamu tinggalkan",
+        "FETCHING": "{{emoji}} `Melihat papan quest...`",
+        "FOOTER": "Ketik satu jawaban yang benar untuk menyelesaikan quest.",
+        "INCORRECT_ANSWER": "Yah, jawabannya salah!",
         "PRAISE": [
-            "Mencengangkan",
+            "Menakjubkan",
             "Luar biasa",
             "GG",
             "Jenius",
             "Kerja bagus",
-            "Menakjubkan",
-            "Agung",
+            "Mengesankan",
+            "Hebat sekali",
             "Bagus"
         ],
-        "SESSION_STILL_RUNNING": "**Sesi pencarian kamu masih aktif!** {{emoji}}",
+        "SESSION_STILL_RUNNING": "**Sesi quest kamu masih aktif!** {{emoji}}",
         "SUCCESSFUL": "**{{praise}}, {{user}}!♡**\n╰ Kamu telah menyelesaikannya dan menerima {{reward}}!"
     },
     "RECYCLE": {
         "CONFIRMATION": "Apakah kamu yakin ingin mengonversi {0}, dengan perbandingan 1:{1} sehingga menghasilkan {2} {3}",
         "CONVERSATION_COMPLETED": "Kamu telah mengonversi {0}, {1}, menjadi {2} {3}",
-        "HAS_NO_ITEMS_TO_RECYCLE": "Maaf, kamu tidak punya barang untuk didaur ulang",
-        "INVALID_FORMAT": "Harap gunakan format yang tepat agar aku dapat menguraikan permintaan kamu.",
+        "HAS_NO_ITEMS_TO_RECYCLE": "Maaf, kamu tidak punya item untuk didaur ulang",
+        "INVALID_FORMAT": "Tolong gunakan format yang benar supaya aku bisa memahami permintaanmu.",
         "NOT_ENOUGH_ITEMS": "Maaf, kamu tidak mempunyai cukup {0} untuk didaur ulang.",
         "STILL_HAS_CARDS_TO_CRAFT": "Maaf, tapi kamu masih punya beberapa kartu untuk diambil",
         "TRANSACTION_CLOSED": "Transaksi ditutup."
@@ -604,9 +604,9 @@
     "REDEEM": {
         "CANCELLED": "Transaksi dibatalkan.",
         "COLLECTOR_FORTUNE": "Ara ara, penukaran berhasil! {0}**{1}(+{2}) Tiket Keberuntungan** telah ditambahkan ke inventaris kamu.\nTiket yang diperoleh digandakan dengan Rany's Blessing.",
-        "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Tiket Keberuntungan** ?\nCoba ketik `y` untuk mengonfirmasi pembelian kamu.",
+        "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Tiket Keberuntungan** ?\nKetik `y` untuk mengonfirmasi pembelianmu.",
         "INSUFFICIENT_BALANCE": "Kamu memerlukan lebih banyak {0}**+{1}** untuk melanjutkan transaksi.",
-        "INVALID_AMOUNT": "Coba masukkan jumlah yang valid.",
+        "INVALID_AMOUNT": "Tolong masukkan jumlah yang valid.",
         "SHORT_GUIDE": "Kamu dapat menukarkan Tiket Keberuntungan dengan mengetik `>redeem <amount/all>`",
         "SUCCESSFUL": "Penukaran berhasil! {0}**{1} Tiket Keberuntungan** telah ditambahkan ke inventaris kamu."
     },
@@ -614,81 +614,81 @@
         "ACCEPTED": "telah menerima permintaan hubungan kamu!",
         "ALREADY_REGISTERED": "**{{user}}** sudah terdaftar sebagai **{{role}}** kamu",
         "CHANGE_DELETE_GUIDE": "Ketik `delete` untuk menghapus atau `change <relationshipName>` untuk mengubah hubungan kamu saat ini dengan mereka.",
-        "DELETE_CONFIRMATION": "Apakah kamu yakin ingin melakukan tindakan ini? Tahukah kamu, tindakan ini tidak dapat diubah dan kamu harus meminta persetujuannya lagi jika ingin kembali menjalin hubungan. Pikirkan dua kali! {{emoji}}",
+        "DELETE_CONFIRMATION": "Kamu yakin mau melakukan ini? Ingat ya, tindakan ini tidak bisa dibatalkan dan kamu harus meminta persetujuannya lagi kalau mau menjalin hubungan kembali. Pikirkan baik-baik! {{emoji}}",
         "GUIDE": "╭*:;,．★ ～☆*───────────────╮\nMulailah menetapkan status hubungan unik dengan teman kamu!\nmisalnya **`{{prefix}}setrel @napu couple`**\nAtau mungkin jika kamu ingin menghapusnya dari hubungan kamu, cukup ketik **`{{prefix}}setrel remove @user`**\n╰────────────☆～*:;,．*╯\nDi bawah ini adalah status hubungan yang tersedia yang dapat kamu gunakan:\n{{list}}",
-        "HIT_LIMIT": "Untuk presentasi terbaik, kamu hanya dapat memiliki hingga **7 hubungan.** {{emoji}}",
-        "HIT_LIMIT_OTHERS": "**Sangat disayangkan.** {{user}} sudah mencapai hubungan maksimal mereka. Mintalah mereka untuk memutuskan salah satu hubungan mereka terlebih dahulu. </3",
+        "HIT_LIMIT": "Supaya tampilannya tetap rapi, kamu hanya bisa memiliki hingga **7 hubungan.** {{emoji}}",
+        "HIT_LIMIT_OTHERS": "**Sayang sekali.** {{user}} sudah mencapai batas maksimal hubungannya. Minta dia memutuskan salah satu hubungannya dulu, ya. </3",
         "IS_EMPTY": "**～Ingin membuat pohon hubungan baru?♡**\nmulai dengan mengetik **`{{prefix}}setrelationship`**",
         "MISSING_GENDER": "Jangan lupa untuk mengatur jenis kelamin kamu terlebih dahulu!\nmisalnya **`{{prefix}}setgender <male/female/neutral>`**",
         "NOT_WITH": "sudah tidak bersamamu lagi.",
         "SELECTION": "Kamu akan menambahkan **{{user}}** ke pohon hubungan kamu. Sekarang pilih peran yang cocok untuk mereka!\n\n{{list}}",
-        "SELECTION_GUIDE": "Ketik hubungan `ID/Name` untuk mulai menetapkan.",
-        "SET_TO_SELF": "Kamu tidak bisa menambahkan hubungan pada kamu sendiri, *baka.* {{emoji}}",
-        "SUCCESSFULLY_REGISTERED": "**{{assignedUser}}** sekarang adalah \n{{user}} {{role}}!",
+        "SELECTION_GUIDE": "Ketik `ID/Name` hubungan untuk mulai menetapkan.",
+        "SET_TO_SELF": "Kamu tidak bisa menambahkan hubungan dengan dirimu sendiri, *baka.* {{emoji}}",
+        "SUCCESSFULLY_REGISTERED": "**{{assignedUser}}** sekarang adalah \n{{role}} {{user}}!",
         "SUCCESSFULLY_REMOVED": "Hubungan kamu dengan **{{user}}** telah dihapus.",
-        "TARGET_CONFIRMATION": "Oke, kamu akan meminta **{{user}}** menjadi **{{relationship}}** kamu?\n──────────────────☆～:;,．\nHarap tunggu hingga **{{mention}}** untuk menerima permintaan ini.",
+        "TARGET_CONFIRMATION": "Oke, kamu akan meminta **{{user}}** menjadi **{{relationship}}** kamu?\n──────────────────☆～:;,．\nTunggu **{{mention}}** menerima permintaan ini, ya.",
         "TARGET_NOT_PART_OF": "**Tunggu, apa?** {{user}} bahkan tidak ada dalam hubungan kamu. Ya ampun. {{emoji}}",
-        "TIPS_AUTHOR_ON_CHECK": "Minta mereka untuk menggunakan **`{{prefix}}setgender`** agar pohon hubungan kamu spesifik gender! {{emoji}}\nJika kamu tidak mengidentifikasi sebagai pria/wanita/netral, abaikan pesan ini, karena kami akan menggunakan terminologi netral",
+        "TIPS_AUTHOR_ON_CHECK": "Minta mereka untuk menggunakan **`{{prefix}}setgender`** agar sebutan di pohon hubungan kamu sesuai gender! {{emoji}}\nJika kamu tidak mengidentifikasi diri sebagai pria/wanita/netral, abaikan pesan ini, karena kami akan menggunakan istilah netral",
         "TYPE_DOESNT_EXIST": "**Maaf- hubungan itu tidak ada.** {{emoji}}",
-        "UNAVAILABLE": "Tidak ada hubungan yang dapat dialihkan saat ini."
+        "UNAVAILABLE": "Tidak ada hubungan yang bisa ditetapkan saat ini."
     },
     "RELATIONSHIPCARD": {
         "FETCHING": "`Mengambil data lencana {0}. .`",
         "HEADER": "<:Annie_Smug:523686816545636352>**| Kartu hubungan untuk {0}**",
         "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu.",
-        "LVL_TOO_LOW": "Pengguna harus setidaknya berusia lv **{0}** untuk membuka fitur ini."
+        "LVL_TOO_LOW": "Pengguna ini harus mencapai setidaknya lv **{0}** untuk membuka fitur ini."
     },
     "REMINDER": {
-        "HOME": "╭*:;,．★ ～☆*─────────────────╮\n**Punya sesuatu untuk diingatkan?♡**\nTanya aku seperti **`{{prefix}}remind to bake a cake in 3 minutes`**!\nLihat daftarmu dengan **`{{prefix}}remind list`**, ubah salah satu dengan **`{{prefix}}remind edit <id>`**, atau hapus salah satu dengan **`{{prefix}}remind delete <id>`**.\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
+        "HOME": "╭*:;,．★ ～☆*─────────────────╮\n**Punya sesuatu untuk diingatkan?♡**\nMinta aku, misalnya **`{{prefix}}remind to bake a cake in 3 minutes`**!\nLihat daftarmu dengan **`{{prefix}}remind list`**, ubah salah satu dengan **`{{prefix}}remind edit <id>`**, atau hapus salah satu dengan **`{{prefix}}remind delete <id>`**.\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
         "HOME_NO_ACTIVE": "Saat ini kamu belum punya pengingat aktif sama sekali. {{emoji}}",
         "HOME_HAS_ACTIVE": "Saat ini kamu punya **{{size}}** pengingat aktif! {{emoji}}",
-        "INVALID_DATE": "**Ups, beri tahu aku kapan harus mengingatkan!** {{emoji}}\n╰─ seharusnya seperti **`{{prefix}}remind to sleep in 8 hours`**",
-        "SUCCESSFUL": "**Annie, siap melayani kamu!♡** {{emoji}}\n╰─ Aku akan mengingatkan kamu bahwa {{time}}!",
+        "INVALID_DATE": "**Ups, beri tahu aku kapan harus mengingatkan!** {{emoji}}\n╰─ contohnya **`{{prefix}}remind to sleep in 8 hours`**",
+        "SUCCESSFUL": "**Annie, siap melayani kamu!♡** {{emoji}}\n╰─ Aku akan mengingatkanmu soal itu {{time}}!",
         "LIST_EMPTY": "**Belum ada yang perlu kuingat!** {{emoji}}\n╰─ Buat satu dengan **`{{prefix}}remind to stretch in 2 hours`** dan aku akan menjaganya~♡",
         "LIST_INTRO": "Saat ini kamu punya **{{size}}** pengingat aktif, dan yang paling dekat akan menyapamu {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n",
         "LIST_ENTRY": "[ID:{{id}}]** {{message}}**\n> Berbunyi {{time}} ({{date}})",
         "LIST_TIP": "**Sudah selesai melihatnya?♡** {{emoji}}\n╰─ Ubah salah satu dengan **`{{prefix}}remind edit <id>`** atau hapus dengan **`{{prefix}}remind delete <id>`**.",
         "DELETE_EMPTY": "**Tidak ada yang bisa kulupakan!** {{emoji}}\n╰─ Kamu tidak punya pengingat aktif saat ini.",
-        "DELETE_MISSING_ID": "**Yang mana yang harus kulepas?** {{emoji}}\n╰─ Beri tahu aku seperti **`{{prefix}}remind delete <id>`**. Ini yang kamu punya:\n{{list}}",
-        "DELETE_NOT_FOUND": "**Hmm, aku tidak bisa menemukan pengingat itu.** {{emoji}}\n╰─ Periksa lagi idnya dengan **`{{prefix}}remind list`** lalu coba lagi, ya?",
+        "DELETE_MISSING_ID": "**Yang mana yang harus kulepas?** {{emoji}}\n╰─ Beri tahu aku, misalnya **`{{prefix}}remind delete <id>`**. Ini yang kamu punya:\n{{list}}",
+        "DELETE_NOT_FOUND": "**Hmm, aku tidak bisa menemukan pengingat itu.** {{emoji}}\n╰─ Periksa lagi ID-nya dengan **`{{prefix}}remind list`** lalu coba lagi, ya?",
         "DELETE_CONFIRMATION": "**Hanya untuk memastikan~♡** {{emoji}}\nApakah aku benar-benar harus melupakan pengingat ini?\n╰─ **{{message}}**\n> Berbunyi {{time}}",
         "DELETE_SUCCESSFUL": "**Anggap saja sudah terlupakan!♡** {{emoji}}\n╰─ Aku tidak akan mengingatkanmu tentang yang itu lagi.",
         "EDIT_EMPTY": "**Belum ada yang bisa diubah!** {{emoji}}\n╰─ Kamu tidak punya pengingat aktif saat ini.",
-        "EDIT_MISSING_ID": "**Yang mana yang mau kita ubah?** {{emoji}}\n╰─ Beri tahu aku seperti **`{{prefix}}remind edit <id>`**. Ini yang kamu punya:\n{{list}}",
-        "EDIT_NOT_FOUND": "**Hmm, aku tidak bisa menemukan pengingat itu.** {{emoji}}\n╰─ Periksa lagi idnya dengan **`{{prefix}}remind list`** lalu coba lagi, ya?",
+        "EDIT_MISSING_ID": "**Yang mana yang mau kita ubah?** {{emoji}}\n╰─ Beri tahu aku, misalnya **`{{prefix}}remind edit <id>`**. Ini yang kamu punya:\n{{list}}",
+        "EDIT_NOT_FOUND": "**Hmm, aku tidak bisa menemukan pengingat itu.** {{emoji}}\n╰─ Periksa lagi ID-nya dengan **`{{prefix}}remind list`** lalu coba lagi, ya?",
         "EDIT_PROMPT_MESSAGE": "**Ayo kita perbarui yang ini!♡** {{emoji}}\nPesan barunya mau berbunyi apa?\n╰─ Saat ini: **{{message}}**\n> Ketik pesan barumu di bawah, atau `cancel` untuk berhenti.",
         "EDIT_PROMPT_TIME": "**Siap!♡** {{emoji}}\nSekarang, kapan aku harus menyapamu?\n╰─ Beri tahu aku durasi seperti **`3 hours`**, **`30m`**, atau **`2 days`**.\n> Ketik di bawah, atau `cancel` untuk berhenti.",
         "EDIT_INVALID_TIME": "**Itu sepertinya bukan durasi yang kupahami.** {{emoji}}\n╰─ Coba sesuatu seperti **`3 hours`**, **`30m`**, atau **`2 days`**.",
         "EDIT_TIMEOUT": "**Sepertinya kamu pergi sebentar~** {{emoji}}\n╰─ Aku sudah membatalkan perubahannya. Mulai lagi kapan saja dengan **`{{prefix}}remind edit <id>`**.",
         "EDIT_CONFIRMATION": "**Ini yang akan berubah~♡** {{emoji}}\n**Sebelumnya::** {{oldMessage}}\n> Berbunyi {{oldTime}}\n**Sesudahnya::** {{newMessage}}\n> Berbunyi {{newTime}}\n╰─ Apakah aku harus menyimpan perubahan ini?",
-        "EDIT_SUCCESSFUL": "**Semua sudah diperbarui!♡** {{emoji}}\n╰─ Aku akan mengingatkan kamu bahwa {{time}}!"
+        "EDIT_SUCCESSFUL": "**Semua sudah diperbarui!♡** {{emoji}}\n╰─ Aku akan mengingatkanmu soal itu {{time}}!"
     },
     "REMOVE_STICKER": {
-        "NO_CHANGES": "Maaf, sepertinya kamu belum melengkapi stiker apa pun.",
-        "SUCCESSFUL": "Stiker profil kamu belum dilengkapi."
+        "NO_CHANGES": "Maaf, sepertinya kamu belum memasang stiker apa pun.",
+        "SUCCESSFUL": "Stiker profilmu sudah dilepas."
     },
-    "REMOVEALLREACTIONS": "Aku telah menghapus semua kemungkinan reaksi dari pesan dengan id: {{id}}",
+    "REMOVEALLREACTIONS": "Aku telah menghapus semua reaksi yang bisa dihapus dari pesan dengan id: {{id}}",
     "REMOVEROLE": {
         "DOESNT_HAVE_THE_ROLE": "**{{user}}** bahkan tidak memiliki peran itu.. tolong jangan menggodaku. {{emoji}}",
-        "MISSING_ARG": "Kamu berwenang untuk menggunakan **Hapus Sistem Peran**, jangan lupa untuk menentukan pengguna target di lain waktu!",
+        "MISSING_ARG": "Kamu berwenang untuk menggunakan **Sistem Hapus Peran**, jangan lupa untuk menentukan pengguna target lain kali, ya!",
         "NO_ROLE_FOUND": "Maaf, aku tidak dapat menemukan peran yang kamu cari. Ketik lagi dengan nama berbeda.",
-        "ROLE_SELECTION": "Sekarang coba ketik nama peran yang ingin aku hapus dari **{{user}}**",
+        "ROLE_SELECTION": "Sekarang, ketik nama peran yang ingin aku hapus dari **{{user}}**",
         "SUCCESSFUL": "Berhasil menghapus **{{role}}** dari **{{user}}.**"
     },
-    "REPORTING_ERROR": "Hai, pengontrol perintah aku gagal saat menguraikan permintaan pengguna. Aku telah membuat log di bawah untuk membantu kamu memecahkan masalahnya. {{emoji}}\n──────────────────☆～:;\n**Stempel Waktu Kecelakaan::**\n╰─{{timestamp}}\n**Pengguna yang Terkena Dampak::**\n╰─{{user}}\n**Perintah yang Terkena Dampak::**\n╰─{{command}}\n──────────────────☆～:;,\nDi bawah ini adalah tanggapan tercetak saat terjadi kecelakaan.\n```diff\n- {{error}}\n```",
+    "REPORTING_ERROR": "Hai, pengontrol perintahku gagal saat menguraikan permintaan pengguna. Aku telah membuat log di bawah untuk membantu kamu memecahkan masalahnya. {{emoji}}\n──────────────────☆～:;\n**Waktu Kejadian::**\n╰─{{timestamp}}\n**Pengguna yang Terkena Dampak::**\n╰─{{user}}\n**Perintah yang Terkena Dampak::**\n╰─{{command}}\n──────────────────☆～:;,\nDi bawah ini adalah respons yang tercatat saat insiden terjadi.\n```diff\n- {{error}}\n```",
     "REQUEST_PING": "**Pong!** {{emoji}}\n╰ diterima dalam {{ping}} ms!",
-    "RESET_EXP": "Metadata pengalaman **{0}** telah disegarkan.",
+    "RESET_EXP": "Metadata EXP **{0}** telah diatur ulang.",
     "RESET_INVENTORY": "Metadata inventaris **{0}** telah dihapus.",
     "ROLE": {
         "ERR": {
             "WRONG": {
-                "FILE": "Maaf tetapi perintah/grup itu tidak ada, coba lakukan `help help` untuk info lebih lanjut",
-                "ROLE": "Aku minta maaf tetapi kamu tidak memiliki peran yang diperlukan untuk perintah ini/ini"
+                "FILE": "Maaf, perintah/grup itu tidak ada. Silakan ketik `help help` untuk info lebih lanjut",
+                "ROLE": "Maaf, tapi kamu tidak memiliki peran yang diperlukan untuk perintah ini"
             }
         }
     },
     "ROLLDICE": {
-        "MISSING_ARGS": "Coba gunakan perintah ini seperti: {{prefix}}rd d6 or {{prefix}}rd 2d6\n {{prefix}}rd <amount of dice to roll>d<amount of sides on the dice>"
+        "MISSING_ARGS": "Silakan gunakan perintah ini seperti: {{prefix}}rd d6 atau {{prefix}}rd 2d6\n {{prefix}}rd <amount of dice to roll>d<amount of sides on the dice>"
     },
     "SAY": {
         "SENT": "Pesan terkirim :)",
@@ -696,10 +696,10 @@
     },
     "SELLFRAGMENTS": {
         "AMOUNT_TOO_LOW": "Kamu harus memasukkan setidaknya {{emoji}}**{{amount}} Fragments** untuk dijual.",
-        "CONFIRMATION": "Kamu akan menjual {{fragmentsEmoji}}**{{fragmentsAmount}}** dengan {{artcoinsEmoji}}**{{artcoinsAmount}}**. Bisakah kita melanjutkan?",
-        "EMPTY_FRAGMENTS": "Ups, apa yang kamu coba lakukan? Kamu bahkan tidak memiliki pecahan untuk dijual. {{emoji}}",
-        "GUIDE": "Aku tahu kamu mungkin lelah melihat pecahan yang kamu kumpulkan ada di inventaris kamu tanpa melakukan apa pun. Namun untungnya, dengan perintah ini kamu dapat menjual fragmen tersebut dengan sejumlah artcoin! tertarik untuk mencoba? ikuti format di bawah ini. {{emoji}}\n\n`{{prefix}}sellfrag <amount/all>`\nmisalnya __{{prefix}}sellfrag 10__ atau __{{prefix}}sellfrag all__\n\n> Perlu diingat, tingkat konversinya adalah **{{rate}}**, jadi kamu harus memiliki setidaknya {{emojiFragment}}**{{min}} Fragments** untuk menggunakan perintah ini!",
-        "INVALID_AMOUNT": "Coba ketik nomor yang tepat atau `all` untuk menjual semua fragmen yang tersedia.",
+        "CONFIRMATION": "Kamu akan menjual {{fragmentsEmoji}}**{{fragmentsAmount}}** seharga {{artcoinsEmoji}}**{{artcoinsAmount}}**. Mau lanjut?",
+        "EMPTY_FRAGMENTS": "Ups, kamu mau ngapain? Kamu bahkan tidak punya fragmen untuk dijual. {{emoji}}",
+        "GUIDE": "Aku tahu kamu mungkin bosan melihat fragmen yang kamu kumpulkan cuma menganggur di inventaris kamu. Namun untungnya, dengan perintah ini kamu dapat menjual fragmen tersebut dengan sejumlah artcoin! tertarik untuk mencoba? ikuti format di bawah ini. {{emoji}}\n\n`{{prefix}}sellfrag <amount/all>`\nmisalnya __{{prefix}}sellfrag 10__ atau __{{prefix}}sellfrag all__\n\n> Perlu diingat, rasio konversinya adalah **{{rate}}**, jadi kamu harus memiliki setidaknya {{emojiFragment}}**{{min}} Fragments** untuk menggunakan perintah ini!",
+        "INVALID_AMOUNT": "Tolong ketik angka yang benar atau `all` untuk menjual semua fragmen yang tersedia.",
         "SUCCESSFUL": "**Fragmen terjual!**"
     },
     "SENDREWARD": {
@@ -707,73 +707,73 @@
         "RECEIVED": "{{user}} telah menerima paket {{packageName}}"
     },
     "SERVER_BOOST": {
-        "SHORT_GUIDE": "Perintah yang tersedia adalah:\n Peningkatan {0} **dihentikan** - untuk melihat jumlah peningkatan yang dimiliki server\n Level {1} **dihentikan**- untuk melihat tingkat peningkatan server saat ini\n Anggota {2} - untuk melihat siapa yang menjadi booster kami :)"
+        "SHORT_GUIDE": "Perintah yang tersedia:\n {0} boost **dihentikan** - untuk melihat jumlah boost yang dimiliki server\n {1} level **dihentikan**- untuk melihat tier boost server saat ini\n {2} members - untuk melihat siapa saja booster kita :)"
     },
     "SERVER_REMOTE": {
-        "AUTHORIZED": "**{0}**, kamu berwenang mengontrol server aku dari jarak jauh. {1}",
-        "CURRENTLY_LIVE": "Saat ini sedang berjalan dalam status produksi.",
-        "CURRENTLY_MT": "Saat ini sedang berjalan dalam status pengembangan.",
+        "AUTHORIZED": "**{0}**, kamu berwenang mengontrol serverku dari jarak jauh. {1}",
+        "CURRENTLY_LIVE": "Saat ini sedang berjalan dalam mode produksi.",
+        "CURRENTLY_MT": "Saat ini sedang berjalan dalam mode pengembangan.",
         "GUIDE": "Ini adalah parameter yang tersedia [-live, -mt, -rs].",
         "PROCESSING": "**Server akan restart dalam {0} detik...**"
     },
-    "SERVERINFO": "Sebuah guild dengan bahasa pilihan mereka sebagai `{{preferredLocale}}`\nDimiliki oleh **{{guildOwner}}**\n\n**• Kapan guild ditemukan?**\nItu persis {{createdAt}}.\ndan aku melihat kamu bergabung ke server ini {{joinedAt}}.\n\n**• Berapa banyak anggota yang kami miliki?**\nAku bisa mencium bau hooman {{userSize}} yang saat ini tinggal di guild ini dan makhluk {{botSize}} lainnya adalah temanku. x)\n\n**• Hmm, bagaimana dengan saluran dan perannya?**\nHah! mereka memiliki saluran {{channelSize}} dan peran {{roleSize}}!\nItukah yang kamu cari?\nTunggu, mereka juga punya {{systemChannel}} sebagai saluran utama mereka.\n\nOke, hanya itu yang aku tahu!",
+    "SERVERINFO": "Sebuah server dengan bahasa pilihan `{{preferredLocale}}`\nDimiliki oleh **{{guildOwner}}**\n\n**• Kapan server ini dibuat?**\nTepatnya {{createdAt}}.\ndan aku melihat kamu bergabung ke server ini {{joinedAt}}.\n\n**• Berapa banyak anggota kita?**\nAku bisa mencium {{userSize}} hooman yang saat ini tinggal di server ini, dan {{botSize}} makhluk lainnya adalah temanku. x)\n\n**• Hmm, bagaimana dengan channel dan perannya?**\nHah! mereka punya {{channelSize}} channel dan {{roleSize}} peran!\nItukah yang kamu cari?\nTunggu, mereka juga punya {{systemChannel}} sebagai channel utama mereka.\n\nOke, hanya itu yang aku tahu!",
     "SESSION_STILL_RUNNING": "**Sesi kamu masih aktif!** {{emoji}}",
     "SETBIO": {
-        "EXCEEDING_LIMIT": "**Aku kesulitan memasukkannya ke dalam saku kecil aku!～** {{emoji}}\n╰─Dapatkah kamu menguranginya sebanyak karakter {{chars}}?",
-        "MISSING_ARG": "╭*:;,．★ ～☆*─────────────────╮\n**Ingin mengatur bio profil unik?♡**\nMari kita ketik **`{{prefix}}setbio <yourMessageHere!>`**\n╰──────────☆～*:;,．*╯\nPerlu diingat bahwa kamu hanya dapat menulis maksimal **156 karakter**.",
-        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*─────────────╮\nAku telah memberikan kartu langsungnya untuk kamu, sehingga kamu dapat melihat apakah itu cocok untuk kamu atau tidak♡\n╰──────────☆～*:;,．*╯\n**Bagaimana kalau kita melakukan ini?**",
+        "EXCEEDING_LIMIT": "**Aku kesulitan memasukkannya ke dalam saku kecilku!～** {{emoji}}\n╰─Bisa kamu kurangi sebanyak {{chars}} karakter?",
+        "MISSING_ARG": "╭*:;,．★ ～☆*─────────────────╮\n**Ingin mengatur bio profil unik?♡**\nYuk, ketik **`{{prefix}}setbio <yourMessageHere!>`**\n╰──────────☆～*:;,．*╯\nPerlu diingat bahwa kamu hanya dapat menulis maksimal **156 karakter**.",
+        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*─────────────╮\nAku sudah merender pratinjau kartunya untukmu, jadi kamu bisa lihat cocok atau tidak♡\n╰──────────☆～*:;,．*╯\n**Kita pakai yang ini?**",
         "RENDERING": "{{emoji}}`merender bio baru untuk kamu...`",
         "SET": "Hore! bio profil baru kamu telah ditetapkan!♡"
     },
     "SETCARTCOIN": {
-        "DISABLED": "dengan disabilitas",
+        "DISABLED": "dinonaktifkan",
         "ENABLED": "diaktifkan",
-        "GUIDE": "╭*:;,．★ ～☆*─────────────────╮\nlevelingnya terasa terlalu mudah? sekarang kamu dapat mengaktifkan fitur konversi artcoin di server kamu!♡\n**`misalnya {{prefix}}setcartcoin <enable/disable>`**\n╰──────────☆～*:;,．*╯\nfitur ini saat ini {{status}} di server.",
-        "INVALID_ACTION": "Kamu hanya dapat menggunakan aktifkan atau nonaktifkan untuk yang satu ini!\n╰─**`misalnya {{prefix}}setcartcoin disable`**",
+        "GUIDE": "╭*:;,．★ ～☆*─────────────────╮\nnaik level terasa terlalu mudah? sekarang kamu bisa mengaktifkan atau menonaktifkan fitur konversi artcoin di server kamu!♡\nmisalnya **`{{prefix}}setcartcoin <enable/disable>`**\n╰──────────☆～*:;,．*╯\nfitur ini saat ini {{status}} di server.",
+        "INVALID_ACTION": "Kamu hanya bisa memakai enable atau disable untuk yang satu ini!\n╰─misalnya **`{{prefix}}setcartcoin disable`**",
         "SUCCESSFULLY_DISABLED": "**baiklah!♡** {{emoji}}\n╰─ dinonaktifkan di server!",
         "SUCCESSFULLY_ENABLED": "**okaa!♡** {{emoji}}\n╰─ diaktifkan untuk server!"
     },
     "SETCOMMAND": {
-        "CHANNEL_ALREADY_REGISTERED": "**Eh?** Kamu tidak dapat mendaftarkan saluran yang sama dua kali! {{emoji}}",
+        "CHANNEL_ALREADY_REGISTERED": "**Eh?** Kamu tidak bisa mendaftarkan channel yang sama dua kali! {{emoji}}",
         "CHANNEL_POOL_ALREADY_EMPTY": "Hei, tidak ada yang perlu direset! {{emoji}}",
-        "GUIDE": "Di sini kamu dapat menentukan saluran perintah mana yang hanya boleh aku dengarkan! {{channelStatus}}\n╭*:;,．★ ～☆*─────────────╮\n\n**`{{prefix}}setcommand channel <channels>`**\n> Di sini kamu dapat menambahkan saluran baru sebagai satu-satunya saluran aku. Jika kamu belum menyiapkan apa pun sebelumnya, aku akan mendengarkan setiap saluran yang terlihat! Kamu juga dapat menambahkan beberapa saluran sekaligus dengan memisahkannya menggunakan koma.\n__misalnya {{prefix}}setcommand channel #general__\n\n**`{{prefix}}setcommand reset`**\n> Berencana membuat ulang saluran server? jangan khawatir, kamu dapat mengembalikan saluran perintah ke default. Ini akan memastikan bahwa aku dapat mendengarkan setiap saluran yang terlihat!\n\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "Di sini kamu bisa menentukan channel perintah mana saja yang boleh aku dengarkan! {{channelStatus}}\n╭*:;,．★ ～☆*─────────────╮\n\n**`{{prefix}}setcommand channel <channels>`**\n> Di sini kamu bisa menambahkan channel baru sebagai channel khusus untukku. Kalau kamu belum mengatur apa pun sebelumnya, aku akan mendengarkan semua channel yang bisa kulihat! Kamu juga bisa menambahkan beberapa channel sekaligus dengan memisahkannya menggunakan koma.\n__misalnya {{prefix}}setcommand channel #general__\n\n**`{{prefix}}setcommand reset`**\n> Berencana membuat ulang channel server? Jangan khawatir, kamu bisa mengembalikan channel perintah ke default. Dengan begitu, aku bisa mendengarkan semua channel yang terlihat!\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "**Hmm, apa itu tadi?** tindakan yang tersedia di SetCommand hanyalah **`channel`** dan **`reset`**, jadi pastikan kamu mengetik tindakan yang benar!",
-        "INVALID_NEW_CHANNEL": "Tunggu sebentar, apakah {{channel}} bahkan sebuah saluran? {{emoji}}",
+        "INVALID_NEW_CHANNEL": "Tunggu sebentar, memangnya {{channel}} itu channel? {{emoji}}",
         "MISSING_TARGET_CHANNEL": "Jangan lupa tentukan channelnya ya. {{emoji}}",
-        "RESET_CONFIRMATION": "Perlu diingat, saluran perintah {{totalChannels}} tidak akan berlaku lagi dan semua saluran yang terlihat akan tersedia untuk aku. Pastikan kamu waspada dengan tindakan ini ya. {{emoji}}",
-        "RESET_SUCCESSFUL": "**Baiklah, selesai!** {{emoji}}\n╰ Penggunaan perintah aku tidak lagi dibatasi.",
-        "UPDATE_CHANNEL_SUCCESSFUL": "**Okai, sempurna!** {{emoji}}\n╰ Saluran {{channel}} telah ditambahkan sebagai saluran perintah aku!"
+        "RESET_CONFIRMATION": "Perlu diingat, {{totalChannels}} channel perintah tidak akan berlaku lagi dan semua channel yang terlihat akan bisa aku gunakan. Pastikan kamu benar-benar paham dengan tindakan ini ya. {{emoji}}",
+        "RESET_SUCCESSFUL": "**Baiklah, selesai!** {{emoji}}\n╰ Penggunaan perintahku tidak lagi dibatasi.",
+        "UPDATE_CHANNEL_SUCCESSFUL": "**Okai, sempurna!** {{emoji}}\n╰ {{channel}} telah ditambahkan sebagai channel perintahku!"
     },
     "SETCOVER": {
-        "ALREADY_USED": "Saat ini kamu menggunakan **{{cover}}** sebagai sampul profil kamu, *baka.* {{emoji}}",
-        "DEFAULT_ALREADY": "Maaf, kamu sudah menggunakan sampul bawaan.",
-        "DISPLAY_USED_REGULAR_COVER": "Saat ini kamu menggunakan **{{cover}}** sebagai sampul profil kamu.",
-        "DISPLAY_USED_SELF_COVER": "Saat ini kamu menggunakan sampul yang diunggah sendiri.",
-        "FETCHING": "{{emoji}} *Tetap duduk! Aku sedang merender pratinjaunya untuk kamu...*",
-        "GUIDE": "╭*:;,．★ ～☆*─────────────────╮\n**Ayo hiasi sampul profilmu!♡**\ndimulai dengan **`{{prefix}}setcover <attachment/imageURL/coverID>`**\n╰──────────☆～*:;,．*╯",
+        "ALREADY_USED": "Saat ini kamu sudah memakai **{{cover}}** sebagai cover profilmu, *baka.* {{emoji}}",
+        "DEFAULT_ALREADY": "Maaf, kamu sudah memakai cover bawaan.",
+        "DISPLAY_USED_REGULAR_COVER": "Saat ini kamu memakai **{{cover}}** sebagai cover profilmu.",
+        "DISPLAY_USED_SELF_COVER": "Saat ini kamu memakai cover yang kamu unggah sendiri.",
+        "FETCHING": "{{emoji}} *Tunggu sebentar ya! Aku sedang merender pratinjaunya untukmu...*",
+        "GUIDE": "╭*:;,．★ ～☆*─────────────────╮\n**Ayo hiasi cover profilmu!♡**\nmulai dengan **`{{prefix}}setcover <attachment/imageURL/coverID>`**\n╰──────────☆～*:;,．*╯",
         "INVALID_FILE_TYPE": "Maaf, jenis file tidak didukung saat ini.\n**Ekstensi file tidak didukung**: {{types}}",
-        "ITEM_DOESNT_EXISTS": "**Apakah sampul itu ada?** {{emoji}}",
-        "NO_EQUIPPABLE_COVER": "**Maaf- Sepertinya kamu tidak memiliki penutup yang dapat dipasang saat ini.**",
-        "OWNED_COVERS": "Jika kamu ingin beralih- periksa sampul punyamu di bawah.",
-        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*─────────────╮\nTerapkan **{{cover}}** sebagai latar belakang profil kamu?\n╰──────────☆～*:;,．*╯\nJika ya, harap bereaksi terhadap tombol hijau untuk mulai menerapkannya! {{emoji}}",
+        "ITEM_DOESNT_EXISTS": "**Memangnya cover itu ada?** {{emoji}}",
+        "NO_EQUIPPABLE_COVER": "**Maaf- Sepertinya kamu tidak punya cover yang bisa dipasang saat ini.**",
+        "OWNED_COVERS": "Kalau kamu ingin ganti- cek cover milikmu di bawah ini.\n",
+        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*─────────────╮\nTerapkan **{{cover}}** sebagai latar belakang profilmu?\n╰──────────☆～*:;,．*╯\nKalau iya, silakan tekan tombol hijau untuk mulai menerapkannya! {{emoji}}",
         "PREVIEW_SELF_UPLOAD": "╭*:;,．★ ～☆*─────────────╮\nUnggah yang ini sebagai latar belakang profil kamu?\n╰──────────☆～*:;,．*╯\nPerlu diingat, {{emoji}}**{{uploadCost}}** akan dipotong dari inventaris kamu setelah kamu mengunggah ini.♡",
         "SUCCESSFUL": "{{emoji}} **{{cover}}** berhasil dipasang!♡",
-        "SUCCESSFUL_ON_SELF_UPLOAD": "**Ya! semuanya berjalan lancar!♡**\n╰─Kamu berhasil mengunggah sampul kamu sendiri!",
+        "SUCCESSFUL_ON_SELF_UPLOAD": "**Yeay! semuanya berjalan lancar!♡**\n╰─Kamu berhasil mengunggah cover-mu sendiri!",
         "SUGGEST_TO_UPLOAD": "Ayo unggah/beli satu untuk membuat profilmu lebih unik!♡ {{emoji}}",
-        "UPLOAD_INSUFFICIENT_COST": "**Sowwy- artcoin tidak mencukupi...** </3\n╰─Kamu memerlukan sisa {{emoji}}**`{{requiredLeft}}`** untuk mengunggah sampul kamu sendiri."
+        "UPLOAD_INSUFFICIENT_COST": "**Sowwy- artcoins tidak cukup...** </3\n╰─Kamu masih butuh {{emoji}}**`{{requiredLeft}}`** lagi untuk mengunggah cover-mu sendiri."
     },
     "SETEXP": {
-        "ADD_CONFIRMATION": "Haruskah aku melakukan penambahan exp untuk {{user}}?\nDi bawah ini adalah pratinjau kartu level mereka yang diperbarui.",
-        "ADD_OVERLIMIT": "**Aku minta maaf!** karena pencegahan spam sistem; Kamu tidak dapat menambahkan exp di atas batas lunak. Kamu hanya dapat menambahkan hingga {{amount}} exp sekaligus. {{emoji}}",
+        "ADD_CONFIRMATION": "Apakah aku perlu menambahkan exp untuk {{user}}?\nDi bawah ini pratinjau kartu level mereka setelah diperbarui.",
+        "ADD_OVERLIMIT": "**Maaf ya!** demi mencegah spam pada sistem, kamu tidak bisa menambahkan exp melebihi batas yang ditentukan. Kamu hanya bisa menambahkan maksimal {{amount}} exp sekaligus. {{emoji}}",
         "ALREADY_DISABLED": "**Modul EXP belum diaktifkan♡**\nUntuk mengaktifkan, ketik **`{{prefix}}setexp enable`**",
         "ALREADY_ENABLED": "Modul EXP telah diaktifkan oleh **{{user}}, {{date}}**",
         "ALREADY_ENABLED_BY_DEFAULT": "Baka! Aku sudah mengaktifkan modul ini secara default! {{emoji}}",
-        "GUIDE": "Ini adalah pusat kendali utama kamu untuk mengonfigurasi **Modul Leveling EXP**. Di bawah ini adalah tindakan yang tersedia yang dapat kamu gunakan. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> Secara default, modul ini otomatis diaktifkan setelah aku diundang ke guild ini. Namun jika kamu telah menonaktifkannya, kamu dapat mengaktifkan kembali modul melalui tindakan ini.\n\n**`{{prefix}}setexp disable`**\n> Bosan mengikuti kompetisi level dengan teman kamu? Kamu dapat menonaktifkan modul kapan saja melalui tindakan ini.\n\n**`{{prefix}}setexp add <user> <amount>`**\n> Bermigrasi dari bot lain? lelah menggiling exp? atau mungkin hanya ingin bersenang-senang dengan lompatan level yang cepat? jangan khawatir, kamu dapat menambahkan beberapa exp pada diri kamu atau anggota lain.\n\n**`{{prefix}}setexp minus <user> <amount>`**\n> Aku tahu bahwa beberapa orang mungkin menjengkelkan dan kami ingin menghukum mereka atas perilaku tersebut. Dengan tindakan ini, kamu akan bisa mengurangi exp seseorang atau bahkan kamu sendiri!\n\n**`{{prefix}}setexp reset <user>`**\n> Bosan menjadi pengguna level tinggi? oh baiklah, mau bagaimana lagi. Tindakan ini memungkinkan kamu untuk mengubah akun exp kamu atau seseorang menjadi akun baru.\n\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "Ini adalah pusat kendali utama kamu untuk mengonfigurasi **Modul Leveling EXP**. Di bawah ini adalah tindakan yang tersedia yang dapat kamu gunakan. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> Secara default, modul ini otomatis diaktifkan setelah aku diundang ke server ini. Namun jika kamu telah menonaktifkannya, kamu dapat mengaktifkan kembali modul melalui tindakan ini.\n\n**`{{prefix}}setexp disable`**\n> Bosan mengikuti kompetisi level dengan temanmu? Kamu bisa menonaktifkan modul kapan saja melalui tindakan ini.\n\n**`{{prefix}}setexp add <user> <amount>`**\n> Bermigrasi dari bot lain? capek grinding exp? atau mungkin hanya ingin bersenang-senang dengan lompatan level yang cepat? jangan khawatir, kamu dapat menambahkan beberapa exp untuk dirimu sendiri atau anggota lain.\n\n**`{{prefix}}setexp minus <user> <amount>`**\n> Aku tahu bahwa beberapa orang mungkin menjengkelkan dan kita ingin menghukum mereka atas perilaku tersebut. Dengan tindakan ini, kamu akan bisa mengurangi exp seseorang atau bahkan milikmu sendiri!\n\n**`{{prefix}}setexp reset <user>`**\n> Bosan menjadi pengguna level tinggi? oh baiklah, mau bagaimana lagi. Tindakan ini memungkinkanmu mengembalikan akun exp milikmu atau orang lain ke awal.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Maaf! tapi aku hanya menerima tindakan berikut `{{actions}}`",
-        "INVALID_AMOUNT_TO_ADD": "**Ups**, harap tentukan jumlah exp valid yang ingin aku tambahkan.\nmisalnya **`{{prefix}}setexp add @{{user}} 150`**",
-        "INVALID_AMOUNT_TO_MINUS": "Hmm, apa itu sebenarnya. Kamu harus menentukan angka yang valid untuk pengurangan!\nmisalnya **`{{prefix}}setexp minus @{{user}} 50`**",
+        "INVALID_AMOUNT_TO_ADD": "**Ups**, tolong tentukan jumlah exp yang valid untuk aku tambahkan.\nmisalnya **`{{prefix}}setexp add @{{user}} 150`**",
+        "INVALID_AMOUNT_TO_MINUS": "Hmm, itu apa sih? Kamu harus menentukan angka yang valid untuk pengurangan!\nmisalnya **`{{prefix}}setexp minus @{{user}} 50`**",
         "MINUS_CONFIRMATION": "Apakah kamu yakin ingin mengurangi exp {{user}}?\nDi bawah ini adalah pratinjau kartu level mereka yang diperbarui.",
-        "MINUS_OVERLIMIT": "**Berhenti disitu.** Kamu tidak bisa mengatur exp {{user}} di bawah nol, *baka*. {{emoji}}",
+        "MINUS_OVERLIMIT": "**Berhenti di situ.** Kamu tidak bisa membuat exp {{user}} kurang dari nol, *baka*. {{emoji}}",
         "MISSING_AMOUNT_ON_ADD": "Hm? berapa jumlah exp yang harus aku berikan?\nmisalnya **`{{prefix}}setexp add @{{user}} 500`**",
         "MISSING_AMOUNT_ON_MINUS": "Hei, jangan lupa tentukan expnya!\nmisalnya **`{{prefix}}setexp minus @{{user}} 100`**",
         "MISSING_USER_ON_ADD": "Jangan lupa tentukan pengguna yang akan menerima exp!\nmisalnya **`{{prefix}}setexp add @napu 500`**",
@@ -781,73 +781,73 @@
         "MISSING_USER_ON_RESET": "Hm,.. exp siapa yang harus direset? jangan lupa tentukan penggunanya ya!? {{emoji}}",
         "RESET_CONFIRMATION": "Reset akun exp {{user}}?",
         "SUCCESSFULLY_DISABLED": "Selesai! **Modul Leveling EXP** telah dinonaktifkan! anggota kamu tidak akan mendapatkan poin pengalaman melalui aktivitas obrolan lagi di masa mendatang.",
-        "SUCCESSFULLY_ENABLED": "Hore! **Modul Leveling EXP** telah diaktifkan di guild ini! anggota kamu akan segera mulai mendapatkan poin pengalaman.",
+        "SUCCESSFULLY_ENABLED": "Hore! **Modul Leveling EXP** telah diaktifkan di server ini! anggotamu akan segera mulai mendapatkan poin pengalaman.",
         "UPDATED": "exp telah diperbarui!♡",
         "WIPED": "exp telah dihapus!♡"
     },
     "SETGENDER": {
         "ALREADY_SET": "Kamu telah menetapkan diri kamu sebagai {{gender}}.",
         "GUIDE": "╭*:;,．★ ～☆*──────────╮\nMari atur jenis kelamin kamu untuk membuka lebih banyak fitur!\nmisalnya **`{{prefix}}setgender <male/female/neutral >`**\n╰──────────☆～*:;,．*╯\n{{currentGender}}",
-        "HASNT_SET": "Kamu belum menetapkannya sejak pertama kali kita bertemu; Atau kamu ingin dirujuk dengan gender netral.",
-        "INVALID": "**Ups,** Kamu hanya dapat menetapkan sebagai netral, perempuan, atau laki-laki! {{emoji}}",
-        "SUCCESSFUL": "**Kesempurnaan!** {{emoji}}\n╰ Status gender kamu telah diperbarui!"
+        "HASNT_SET": "Kamu belum mengaturnya sejak pertama kali kita bertemu; atau kamu ingin disebut dengan gender netral.",
+        "INVALID": "**Ups,** kamu hanya bisa memilih netral, perempuan, atau laki-laki! {{emoji}}",
+        "SUCCESSFUL": "**Sempurna!** {{emoji}}\n╰ Status gender kamu telah diperbarui!"
     },
     "SETGUILDBIO": {
-        "CONFIRMATION": "Apakah kamu yakin ingin menyetel biodata guild ini ke:\n`{{newBio}}`?\n\n Ketik `y` untuk mengonfirmasi tindakan.",
-        "EXCEEDING_LIMIT": "Maaf, biografinya terlalu panjang, harap kurangi **300 karakter!**",
-        "GUILD_UNREGISTERED": "Karena kegagalan sistem, guild ini belum didaftarkan. Coba hubungi pengembang aku untuk membantu mendaftarkan guild kamu.",
-        "MISSING_ARG": "Jika kamu ingin membuat bio baru untuk guild kamu, coba ketik bio baru di sebelah perintah! `{{prefix}}setguildbio <newbio>`",
-        "SUCCESSFUL": "Biodata guild ini telah berhasil diperbarui!"
+        "CONFIRMATION": "Apakah kamu yakin ingin mengatur bio server ini menjadi:\n`{{newBio}}`?\n\n Ketik `y` untuk mengonfirmasi tindakan.",
+        "EXCEEDING_LIMIT": "Maaf, bio-nya terlalu panjang. Tolong buat kurang dari **300 karakter!**",
+        "GUILD_UNREGISTERED": "Karena kegagalan sistem, server ini belum terdaftar. Silakan hubungi pengembangku untuk membantu mendaftarkan server kamu.",
+        "MISSING_ARG": "Kalau kamu ingin membuat bio baru untuk server kamu, silakan ketik bio barunya setelah perintah! `{{prefix}}setguildbio <newbio>`",
+        "SUCCESSFUL": "Bio server ini telah berhasil diperbarui!"
     },
     "SETLANGUAGE": {
-        "GUIDE": "╭*:;,．★ ～☆*─────────────────╮\nPilih salah satu bahasa favorit kamu dan aku akan mulai berbicara dalam bahasa itu setiap kali kamu memakai command ~\nBahasa yang tersedia :: {{languages}}\n**`misalnya {{prefix}}setlang id`**\n╰──────────☆～*:;,．*╯\nSaat ini disetel ke {{currentLanguage}}.",
-        "INVALID_LANG": "Eh, aku belum belajar bahasa itu!\nCoba pilih salah satu dari berikut :: {{languages}}",
+        "GUIDE": "╭*:;,．★ ～☆*─────────────────╮\nPilih salah satu bahasa favorit kamu dan aku akan mulai berbicara dalam bahasa itu setiap kali kamu memakai perintah ~\nBahasa yang tersedia :: {{languages}}\n**`misalnya {{prefix}}setlang id`**\n╰──────────☆～*:;,．*╯\nSaat ini disetel ke {{currentLanguage}}.",
+        "INVALID_LANG": "Eh, aku belum belajar bahasa itu!\nSilakan pilih salah satu dari berikut ini :: {{languages}}",
         "SUCCESSFUL": "**Oke! bahasaku telah diperbarui♡**\nMulai sekarang, aku akan berbicara dalam {{language}}!"
     },
     "SETLEVELUPMESSAGE": {
-        "ALREADY_DISABLED": "**Pesan Naik Level belum diaktifkan di guild ini-♡**\n╰─Untuk mengaktifkan, ketik **`{{prefix}}setlvlupmsg enable`**",
+        "ALREADY_DISABLED": "**Pesan Naik Level belum diaktifkan di server ini-♡**\n╰─Untuk mengaktifkan, ketik **`{{prefix}}setlvlupmsg enable`**",
         "ALREADY_ENABLED": "Pesan Naik Level sudah diaktifkan oleh **{{user}}, {{date}}**",
-        "DISPLAY_REGISTERED_CHANNEL": "**Saat ini aku sedang mengirimkannya ke {{channel}}♡**\n╰─Jika kamu ingin berpindah saluran, coba ketik\n╰─**`{{prefix}}setlvlupmsg channel #yournewchannel!`**",
-        "DISPLAY_UNREACHABLE_CHANNEL": "**Aku pikir saluran yang didaftarkan sebelumnya telah dihapus...**\n╰─Ingin memperbaruinya? ketik **`{{prefix}}setlvlupmsg channel #yournewchannel!`**",
-        "GUIDE": "Gunakan salah satu tindakan berikut untuk mengaktifkan atau menonaktifkan modul pesan naik level di guild ini. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlvlupmsg enable`**\n> Dengan mengaktifkan modul ini, guildmu akan menerima pesan peningkatan level setiap kali seseorang naik level (tentu saja).\n\n**`{{prefix}}setlvlupmsg channel #targetchannel`**\n> Beberapa dari kamu mungkin ingin dikirim di tempat yang rapi agar pengalaman mengobrol kamu tidak terganggu. Untungnya, kamu dapat mengatur saluran khusus untuk itu!\n__misalnya {{prefix}}setlvlupmsg channel #bread__\n\n**`{{prefix}}setlvlupmsg text <message>`**\n> Mari personalisasikan pesan kenaikan level kamu dengan beberapa kutipan keren! sistem ini bekerja mirip dengan SetWelcomer, jadi kamu dapat menambahkan {{user}} di pesan untuk menyebutkan pengguna yang naik level.\n__misalnya {{prefix}}setlvlupmsg text whoa, {{user}} got new level!__\n\n**`{{prefix}}setlvlupmsg disable`**\n> Bosan dengan pesan naik level yang mengganggu? maka saatnya untuk menonaktifkannya.\n\n╰──────────☆～*:;,．*╯",
+        "DISPLAY_REGISTERED_CHANNEL": "**Saat ini aku mengirimkannya ke {{channel}}♡**\n╰─Kalau kamu ingin mengganti channel-nya, silakan ketik\n╰─**`{{prefix}}setlvlupmsg channel #yournewchannel!`**",
+        "DISPLAY_UNREACHABLE_CHANNEL": "**Sepertinya channel yang didaftarkan sebelumnya sudah dihapus...**\n╰─Mau memperbaruinya? ketik **`{{prefix}}setlvlupmsg channel #yournewchannel!`**",
+        "GUIDE": "Gunakan salah satu tindakan berikut untuk mengaktifkan atau menonaktifkan modul pesan naik level di server ini. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlvlupmsg enable`**\n> Dengan mengaktifkan modul ini, servermu akan menerima pesan naik level setiap kali seseorang naik level (tentu saja).\n\n**`{{prefix}}setlvlupmsg channel #targetchannel`**\n> Sebagian dari kalian mungkin ingin pesannya dikirim di tempat yang rapi agar obrolan tetap tidak terganggu. Untungnya, kamu bisa mengatur channel khusus untuk itu!\n__misalnya {{prefix}}setlvlupmsg channel #bread__\n\n**`{{prefix}}setlvlupmsg text <message>`**\n> Mari personalisasikan pesan naik level kamu dengan beberapa kutipan keren! sistem ini bekerja mirip dengan SetWelcomer, jadi kamu dapat menambahkan {{user}} di pesan untuk menandai (mention) pengguna yang naik level.\n__misalnya {{prefix}}setlvlupmsg text whoa, {{user}} got new level!__\n\n**`{{prefix}}setlvlupmsg disable`**\n> Bosan dengan pesan naik level yang mengganggu? maka saatnya untuk menonaktifkannya.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Maaf, aku hanya menerima tindakan **`enable`**, **`disable`**, dan **`channel`** dalam modul ini.",
-        "INVALID_CHANNEL": "**Oopsie- sepertinya ini bukan saluran yang valid...** {{emoji}}",
-        "MISSING_CHANNEL_PARAMETER": "**Saat ini aku mengirimkannya ke saluran mana pun!♡**\n╰─Jika kamu ingin menggunakan saluran khusus, ketik format di bawah ini\n╰─**`{{prefix}}setlvlupmsg channel #channelname`**",
-        "MISSING_TEXT_PARAMETER": "**Ada teks khusus yang ingin kamu tampilkan?** Kamu dapat mempersonalisasi teks dalam pesan peningkatan level di server ini dengan mengetik **`{{prefix}}setlvlupmsg text <message>`**",
-        "SUCCESSFULLY_DISABLED": "Selesai! **Modul Pesan Naik Level** telah berhasil dinonaktifkan!\nguild ini tidak akan menerima pesan peningkatan level lagi di masa mendatang.",
-        "SUCCESSFULLY_ENABLED": "Hore! **Modul Pesan Naik Level** telah berhasil diaktifkan di guild ini!",
-        "SUCCESSFULLY_RESET_CHANNEL": "**Ya ya, konfigurasi telah diatur ulang ke default!**{{emoji}}\n╰─Sekarang pesan peningkatan level akan dikirim ke saluran mana pun!",
-        "SUCCESSFULLY_SET_CHANNEL": "**Oke, semuanya sudah siap!**{{emoji}}\n╰─Peningkatan level berikutnya akan dikirim ke {{channel}}!",
+        "INVALID_CHANNEL": "**Oopsie- sepertinya ini bukan channel yang valid...** {{emoji}}",
+        "MISSING_CHANNEL_PARAMETER": "**Saat ini aku mengirimkannya ke channel mana pun!♡**\n╰─Kalau kamu ingin memakai channel khusus, ketik format di bawah ini\n╰─**`{{prefix}}setlvlupmsg channel #channelname`**",
+        "MISSING_TEXT_PARAMETER": "**Ada teks khusus yang ingin kamu tampilkan?** Kamu bisa mempersonalisasi teks pesan naik level di server ini dengan mengetik **`{{prefix}}setlvlupmsg text <message>`**",
+        "SUCCESSFULLY_DISABLED": "Selesai! **Modul Pesan Naik Level** telah berhasil dinonaktifkan!\nserver ini tidak akan menerima pesan naik level lagi di masa mendatang.",
+        "SUCCESSFULLY_ENABLED": "Hore! **Modul Pesan Naik Level** telah berhasil diaktifkan di server ini!",
+        "SUCCESSFULLY_RESET_CHANNEL": "**Siap, konfigurasi telah dikembalikan ke default!**{{emoji}}\n╰─Sekarang pesan naik level akan dikirim ke channel mana pun!",
+        "SUCCESSFULLY_SET_CHANNEL": "**Oke, semuanya sudah siap!**{{emoji}}\n╰─Pesan naik level berikutnya akan dikirim ke {{channel}}!",
         "SUCCESSFULLY_UPDATE_TEXT": "**Terlihat segar!** {{emoji}}\n╰ Teks pesan naik level telah berhasil diperbarui!",
-        "TEXT_CONFIRMATION": "Di atas adalah pratinjau pesan peningkatan level server ini setelah teks baru diterapkan. Haruskah kita menerapkannya?"
+        "TEXT_CONFIRMATION": "Di atas adalah pratinjau pesan naik level server ini setelah teks baru diterapkan. Mau kita terapkan?"
     },
     "SETLOGS": {
         "ALREADY_DISABLED": "**Log ini belum diaktifkan♡**\nUntuk mengaktifkan, ketik **`{{prefix}}setlogs enable`**",
         "ALREADY_ENABLED": "Modul ini telah diaktifkan oleh **{{user}}, {{date}}**",
-        "GUIDE": "Ini adalah pusat kendali kamu untuk mengonfigurasi **Sistem Log**. Lihat tindakan apa saja yang tersedia untuk modul ini:\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlog enable`**\n> Tindakan ini akan mengaktifkan fitur pencatatan aktivitas di guild kamu setelah kamu mengaktifkannya dan untuk jenis log yang akan kamu terima, mengikuti preset default.\n\n**`{{prefix}}setlogs channel <targetChannel>`**\n> Tindakan ini menentukan saluran mana yang harus dikirim oleh Annie dan pastikan Annie juga memiliki akses ke saluran itu!\nmisalnya __{{prefix}}setlogs channel #logs__\n\n**`{{prefix}}setlogs disable`**\n> Aku tahu kamu mungkin merasa kesal karena menerima semua log yang tidak berguna dari aku, itu sebabnya tindakan ini ada.\n\n╰──────────☆～*:;,．*╯",
-        "INVALID_ACTION": "Sangat bagus! harap gunakan hanya salah satu tindakan ini `{{actions}}`",
-        "INVALID_CHANNEL": "**Hmm, sepertinya ini bukan saluran yang valid.**\nBisakah kamu mencoba saluran lain? {{emoji}}",
-        "MISSING_CHANNEL": "**Jangan lupa sertakan saluran log target ya?♡** {{emoji}}\nmisalnya **`{{prefix}}setlog channel #mylogs`**",
+        "GUIDE": "Ini adalah pusat kendali kamu untuk mengonfigurasi **Sistem Log**. Lihat tindakan apa saja yang tersedia untuk modul ini:\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlog enable`**\n> Tindakan ini akan mengaktifkan fitur pencatatan aktivitas di server kamu, dan jenis log yang akan kamu terima mengikuti preset default.\n\n**`{{prefix}}setlogs channel <targetChannel>`**\n> Tindakan ini menentukan channel tempat Annie mengirim log, dan pastikan Annie juga punya akses ke channel itu!\nmisalnya __{{prefix}}setlogs channel #logs__\n\n**`{{prefix}}setlogs disable`**\n> Aku tahu kamu mungkin merasa kesal karena menerima semua log yang tidak berguna dariku, itu sebabnya tindakan ini ada.\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "Maaf! tolong gunakan salah satu tindakan ini saja `{{actions}}`",
+        "INVALID_CHANNEL": "**Hmm, sepertinya ini bukan channel yang valid.**\nBisakah kamu mencoba channel lain? {{emoji}}",
+        "MISSING_CHANNEL": "**Jangan lupa sertakan channel tujuan log-nya ya!♡** {{emoji}}\nmisalnya **`{{prefix}}setlog channel #mylogs`**",
         "SHOULD_BE_ENABLED": "Hai! Kamu belum mengaktifkan **Modul Log**!\naktifkan dengan mengetik `{{prefix}}setlog enable`",
         "SUCCESSFULLY_DISABLED": "Selesai! **Modul Log** telah berhasil dinonaktifkan!",
         "SUCCESSFULLY_ENABLED": "Hore! **Modul Log** telah berhasil diaktifkan!",
         "SUCCESSFULLY_UPDATING_CHANNEL": "Baiklah! Aku akan segera mulai mengirim log ke {{channel}}!"
     },
     "SETPREFIX": {
-        "CURRENT_SET": "╭*:;,．★ ～☆*──────────╮\nAwalan untuk **{{guild}}** saat ini ditetapkan sebagai **`{{prefix}}`**\nJika kamu ingin mengubahnya, coba ketikkan perintah diikuti dengan awalan baru!\n╰──────────☆～*:;,．*╯\nDemi keamanan kamu, awalan khusus dan default dapat digunakan dalam perintah ini♡",
+        "CURRENT_SET": "╭*:;,．★ ～☆*──────────╮\nPrefix untuk **{{guild}}** saat ini diatur sebagai **`{{prefix}}`**\nKalau kamu ingin mengubahnya, silakan ketik perintah ini diikuti prefix baru!\n╰──────────☆～*:;,．*╯\nDemi keamananmu, prefix kustom maupun default bisa dipakai untuk perintah ini♡",
         "FOLLOW_UP": "Sekarang coba ketik **`{{prefix}}ping`**",
-        "SUCCESSFUL": "**Terasa seperti baru!** {{emoji}}\n╰ Awalan aku telah disetel ke **`{{prefix}}`**"
+        "SUCCESSFUL": "**Terasa seperti baru!** {{emoji}}\n╰ Prefix-ku telah diatur ke **`{{prefix}}`**"
     },
     "SETPROFILE": {
-        "DEPRECATE_COVER_ACTION": "{{emoji}} Opsi ini tidak lagi tersedia untuk digunakan. Coba gunakan `{{prefix}}setcover` sebagai gantinya.",
-        "EQUIPPED_ITEMS": "**{{item}}** saat ini dilengkapi sebagai profil kamu {{type}}.",
+        "DEPRECATE_COVER_ACTION": "{{emoji}} Opsi ini sudah tidak tersedia. Silakan gunakan `{{prefix}}setcover` sebagai gantinya.",
+        "EQUIPPED_ITEMS": "**{{item}}** saat ini terpasang sebagai {{type}} profilmu.",
         "EQUIPPING_GUIDE": "Balas dengan `equip <{{type}}ID>` jika kamu ingin mengubahnya.",
         "EQUIPPING_NOTHING": "Hei, tidak ada yang bisa dipakai, baka. {{emoji}}",
-        "GUIDE": "Harap sertakan jenis item yang ingin kamu sesuaikan seperti **sampul, lencana, stiker, atau yang lainnya.**",
-        "INVALID_ACTION": "Harap hanya gunakan `equip` atau `unequip`.",
+        "GUIDE": "Tolong sertakan jenis item yang ingin kamu ubah, seperti **cover, lencana, stiker, atau yang lainnya.**",
+        "INVALID_ACTION": "Tolong gunakan `equip` atau `unequip` saja.",
         "INVALID_ITEM": "Sepertinya itu bukan item yang valid.. atau kamu tidak memilikinya di inventaris kamu.",
-        "MISSING_TARGET_ITEM": "Jangan lupa sertakan ID barangnya.",
-        "NO_EQUIPPED_ITEMS": "**Kamu tidak memiliki perlengkapan {{type}} saat ini.**",
+        "MISSING_TARGET_ITEM": "Jangan lupa sertakan ID item-nya ya.",
+        "NO_EQUIPPED_ITEMS": "**Kamu belum memasang {{type}} apa pun saat ini.**",
         "NON_PROFILEDECORATION": "Maaf, itu bukan dekorasi profil yang dapat disesuaikan.",
         "SUCCESSFUL": "**{{item}}** {{itemType}} telah berhasil {{actionType}}!",
         "UNEQUIPPED_ITEMS": "Dan ini adalah {{type}} kamu yang tersedia:",
@@ -855,103 +855,103 @@
         "UNEQUIPPING_NOTHING": "Apa yang ingin kamu lepaskan? {{emoji}}"
     },
     "SETRANK": {
-        "ADD_INVALID_REQUIRED_LEVEL": "Harap hanya mencantumkan nomor yang valid (dalam kisaran 1 ~ 999)!",
+        "ADD_INVALID_REQUIRED_LEVEL": "Tolong masukkan angka yang valid saja ya (dalam rentang 1 ~ 999)!",
         "ADD_MISSING_ARG": "Jangan lupa sertakan nama peran dan level yang dibutuhkan!\nmisalnya __{{prefix}}setrank add @Kawaii 10__",
         "ADD_MISSING_REQUIRED_LEVEL": "**Jangan lupa sertakan level yang dibutuhkan!♡**\nmisalnya **`{{prefix}}setrank add {{role}} 15`**",
         "ADD_MISSING_TARGET_ROLE": "**Sertakan peran dan level yang diperlukan untuk mendapatkannya♡**\nmisalnya **`{{prefix}}setrank add @cupcake 10`**",
-        "ADD_ROLE_ALREADY_REGISTERED": "Maaf, tetapi peran ini telah terdaftar sebagai peringkat **LV{{level}}** berdasarkan **{{user}}**, **{{date}}**! Jika kamu ingin menghapus konfigurasi untuk peringkat ini, kamu dapat mengetik **`{{prefix}}setrank delete {{role}}`** sebagai gantinya.",
+        "ADD_ROLE_ALREADY_REGISTERED": "Maaf, peran ini sudah terdaftar sebagai rank **LV{{level}}** oleh **{{user}}**, **{{date}}**! Kalau kamu ingin menghapus konfigurasi rank ini, kamu bisa mengetik **`{{prefix}}setrank delete {{role}}`**.",
         "ADD_ROLE_ALREADY_REGISTERED_HEADER": "Tidak dapat mendaftarkan peran ini.",
-        "ALREADY_DISABLED": "**Peringkat Khusus belum diaktifkan♡**\nUntuk mengaktifkan, ketik **`{{prefix}}setrank enable`**",
+        "ALREADY_DISABLED": "**Rank Kustom belum diaktifkan♡**\nUntuk mengaktifkan, ketik **`{{prefix}}setrank enable`**",
         "ALREADY_ENABLED": "Modul ini telah diaktifkan oleh **{{user}}, {{date}}**",
         "DELETE_MISSING_TARGET_ROLE": "**Jangan lupa sertakan perannya!♡** {{emoji}}",
-        "DELETE_UNREGISTERED_ROLE": "Eh, apa yang coba kamu hapus? peran peringkat ini bahkan belum terdaftar!",
-        "FIRST_TIMER_TIP": "Ingin mendaftarkan peran peringkat pertama kamu? ayo ketik `{{prefix}}setrank add <role> <requiredLevel>` !",
-        "GUIDE": "Ini adalah pusat kendali kamu untuk mengonfigurasi sistem peringkat peran khusus di guild! sekarang gunakan tindakan berikut untuk memulai konfigurasi. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setrank enable`**\n> Jika kamu masih baru dalam konfigurasi peringkat, coba gunakan tindakan ini terlebih dahulu dan aku akan memandu kamu hingga bagian selanjutnya.\n\n**`{{prefix}}setrank add <role> <requiredLevel>`**\n> Tindakan ini mendaftarkan peran tertentu ke dalam sistem peringkat peran dan memungkinkan kamu menentukan level yang diperlukan untuk mendapatkannya.\nmisalnya __{{prefix}}setrank add @Kawaii 15__\n\n**`{{prefix}}setrank delete <role>`**\n> Tindakan ini menghapus peran tertentu dari sistem peringkat guild ini dan pastikan untuk memiliki setidaknya dua peringkat peran yang terdaftar sebelum menghapusnya.\nmisalnya __{{prefix}}setrank delete @Kawaii__\n\n**`{{prefix}}setrank info`**\n> Tindakan ini menampilkan konfigurasi sistem peringkat peran saat ini di guild.\n\n**`{{prefix}}setrank stack`**\n> Pernahkah kamu membayangkan mempertahankan semua peran keras kamu? Sekarang dimungkinkan untuk menumpuknya! cukup jalankan perintah ini sekali dan itu akan otomatis diaktifkan.\n\n**`{{prefix}}setrank reset`**\n> Tindakan ini menghapus semua konfigurasi peringkat peran yang ada di guild dan akan menggunakan konfigurasi default. Ini adalah hal yang baik untuk dilakukan jika kamu ingin memulai dari awal lagi.\n\n**`{{prefix}}setrank disable`**\n> Tindakan ini menonaktifkan sistem peringkat peran di guild. Meskipun demikian, konfigurasi kamu sebelumnya tidak akan dihapus dan kamu dapat mengaktifkannya kembali kapan saja.\n\n╰──────────☆～*:;,．*╯",
-        "HEADER_INFO": "Modul Peringkat Kustom",
-        "INFO_DISABLED_BY_USER": "Modul ini membuat {{emoji}} **dinonaktifkan** oleh **{{user}}, {{date}}**. Jika kamu ingin mengaktifkannya kembali, kamu dapat melakukannya dengan mengetikkan `{{prefix}}setrank enable`",
-        "INFO_DISABLED_FIRST_TIME": "Status modul ini adalah {{emoji}} **dinonaktifkan** di {{guild}}! jika kamu ingin menyiapkan Modul Peringkat Khusus di guild ini, coba mulai dengan mengetik `{{prefix}}setrank enable`",
-        "INFO_ENABLED": "Oh, status modul ini adalah {{emoji}} **diaktifkan** di {{guild}}! Saat ini total **{{rankSize}}** tersedia rank disini yang bisa kamu lihat daftar lengkapnya dibawah ini:\n{{list}}",
-        "INFO_ENABLED_ZERO_RANKS": "Status modul ini adalah {{emoji}} **diaktifkan** di {{guild}}, namun sayangnya mereka tampaknya belum menyiapkan peran peringkatnya. Jadi, pastikan untuk mengaturnya dengan mengetik:\n`{{prefix}}setrank add <role> <requiredLevel>`",
+        "DELETE_UNREGISTERED_ROLE": "Eh, kamu mau menghapus apa? peran rank ini bahkan belum terdaftar!",
+        "FIRST_TIMER_TIP": "Ingin mendaftarkan peran rank pertamamu? ayo ketik `{{prefix}}setrank add <role> <requiredLevel>` !",
+        "GUIDE": "Ini adalah pusat kendalimu untuk mengonfigurasi sistem rank peran kustom di server! sekarang gunakan tindakan berikut untuk memulai konfigurasi. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setrank enable`**\n> Kalau kamu masih baru dalam konfigurasi rank, coba gunakan tindakan ini dulu dan aku akan memandumu sampai selesai.\n\n**`{{prefix}}setrank add <role> <requiredLevel>`**\n> Tindakan ini mendaftarkan peran yang diberikan ke dalam sistem rank peran dan memungkinkan kamu menentukan level yang dibutuhkan untuk mendapatkannya.\nmisalnya __{{prefix}}setrank add @Kawaii 15__\n\n**`{{prefix}}setrank delete <role>`**\n> Tindakan ini menghapus peran tertentu dari sistem rank server ini. Pastikan ada setidaknya dua peran rank yang terdaftar sebelum menghapusnya.\nmisalnya __{{prefix}}setrank delete @Kawaii__\n\n**`{{prefix}}setrank info`**\n> Tindakan ini menampilkan konfigurasi sistem rank peran saat ini di server.\n\n**`{{prefix}}setrank stack`**\n> Pernahkah kamu membayangkan bisa menyimpan semua peran yang sudah susah payah kamu kumpulkan? Sekarang peran-peran itu bisa ditumpuk! cukup jalankan perintah ini sekali untuk menyalakan atau mematikannya.\n\n**`{{prefix}}setrank reset`**\n> Tindakan ini menghapus semua konfigurasi rank peran yang ada di server dan akan kembali ke konfigurasi default. Cocok dilakukan kalau kamu ingin memulai dari awal lagi.\n\n**`{{prefix}}setrank disable`**\n> Tindakan ini menonaktifkan sistem rank peran di server. Meski begitu, konfigurasi sebelumnya tidak akan dihapus dan kamu bisa mengaktifkannya kembali kapan saja.\n\n╰──────────☆～*:;,．*╯",
+        "HEADER_INFO": "Modul Rank Kustom",
+        "INFO_DISABLED_BY_USER": "Modul ini telah {{emoji}} **dinonaktifkan** oleh **{{user}}, {{date}}**. Kalau kamu ingin mengaktifkannya kembali, kamu bisa mengetik `{{prefix}}setrank enable`",
+        "INFO_DISABLED_FIRST_TIME": "Status modul ini {{emoji}} **nonaktif** di {{guild}}! kalau kamu ingin menyiapkan Modul Rank Kustom di server ini, silakan mulai dengan mengetik `{{prefix}}setrank enable`",
+        "INFO_ENABLED": "Oh, status modul ini {{emoji}} **aktif** di {{guild}}! Saat ini ada total **{{rankSize}}** rank yang tersedia di sini, dan kamu bisa melihat daftar lengkapnya di bawah ini:\n{{list}}",
+        "INFO_ENABLED_ZERO_RANKS": "Status modul ini {{emoji}} **aktif** di {{guild}}, tapi sayangnya sepertinya belum ada peran rank yang diatur. Jadi, pastikan untuk mengaturnya dengan mengetik:\n`{{prefix}}setrank add <role> <requiredLevel>`",
         "INVALID_ACTION": "Maaf, tapi aku tidak mengenali tindakan itu. :(",
         "INVALID_ROLE": "**Maaf- Aku tidak dapat menemukan peran itu.** {{emoji}}",
-        "RESET_ANIMATION": "{{emoji}} `menghapus semua peringkat khusus di {{guild}} ...`",
-        "RESET_CONFIRMATION": "Ini akan menghapus semua peringkat khusus di guild, apakah kamu yakin ingin melakukan tindakan ini?",
+        "RESET_ANIMATION": "{{emoji}} `menghapus semua rank kustom di {{guild}} ...`",
+        "RESET_CONFIRMATION": "Ini akan menghapus semua rank kustom di server ini, apakah kamu yakin ingin melakukan tindakan ini?",
         "RESET_CONFIRMATION_WARN": "Efeknya tidak dapat dibatalkan setelah kamu menekan tombol hijau.",
-        "RESET_NULL_RANKS": "Maaf! Bukannya aku tidak ingin melakukannya... tapi guild ini tidak memiliki peringkat terdaftar untuk aku atur ulang-",
-        "ROLE_TOO_HIGH": "Uhh, **{{role}}** tidak dapat dijangkau dan terlalu tinggi! dapatkah kamu memindahkannya ke peran **{{annieRole}}** terlebih dahulu? {{emoji}}",
-        "STACK_DISABLE": "**Peran tidak lagi bertumpuk! ♡**\n╰ Anggota kamu sekarang akan mempertahankan satu peran peringkat dalam satu waktu.",
-        "STACK_ENABLE": "**Ya, peran surga! ♡**\n╰ Anggota kamu sekarang akan mempertahankan peran peringkat mereka sebelumnya.",
+        "RESET_NULL_RANKS": "Maaf! Bukannya aku tidak mau melakukannya... tapi server ini tidak punya rank terdaftar untuk kuatur ulang-",
+        "ROLE_TOO_HIGH": "Uhh, **{{role}}** terlalu tinggi dan tidak bisa aku jangkau! bisakah kamu memindahkannya ke bawah peran **{{annieRole}}** dulu? {{emoji}}",
+        "STACK_DISABLE": "**Peran tidak lagi bertumpuk! ♡**\n╰ Anggotamu sekarang hanya akan memiliki satu peran rank dalam satu waktu.",
+        "STACK_ENABLE": "**Yay, surganya peran! ♡**\n╰ Anggotamu sekarang akan tetap memiliki peran rank mereka sebelumnya.",
         "SUCCESSFULLY_ADDED": "Anggota kamu akan mulai mendapatkan peran **{{role}}** setelah mereka mencapai **LV{{level}}**.\nJika ada anggota yang sudah melampaui level yang disyaratkan, maka mereka akan mendapatkannya setelah naik level.",
-        "SUCCESSFULLY_ADDED_HEADER": "Peringkat baru telah ditambahkan!",
-        "SUCCESSFULLY_DELETED": "**{{role}}** telah berhasil dihapus dari konfigurasi peran peringkat guild ini. Perlu diingat, anggota yang ada mungkin masih memiliki peran tersebut jika kamu tidak menghapusnya secara manual.",
-        "SUCCESSFULLY_DELETED_HEADER": "Peringkat telah dihapus!",
-        "SUCCESSFULLY_DISABLED": "Selesai! **Modul Peringkat Khusus** telah berhasil dinonaktifkan di guild ini!",
-        "SUCCESSFULLY_ENABLED": "Hore! **Modul Peringkat Khusus** telah berhasil diaktifkan di guild ini!",
-        "SUCCESSFULLY_RESET": "**Selesai! Konfigurasi Peringkat Khusus di guild ini berhasil dihapus!**"
+        "SUCCESSFULLY_ADDED_HEADER": "Rank baru telah ditambahkan!",
+        "SUCCESSFULLY_DELETED": "**{{role}}** telah berhasil dihapus dari konfigurasi peran rank server ini. Perlu diingat, anggota yang sudah ada mungkin masih memiliki peran tersebut jika kamu tidak menghapusnya secara manual.",
+        "SUCCESSFULLY_DELETED_HEADER": "Rank telah dihapus!",
+        "SUCCESSFULLY_DISABLED": "Selesai! **Modul Rank Kustom** telah berhasil dinonaktifkan di server ini!",
+        "SUCCESSFULLY_ENABLED": "Hore! **Modul Rank Kustom** telah berhasil diaktifkan di server ini!",
+        "SUCCESSFULLY_RESET": "**Selesai! Konfigurasi Rank Kustom di server ini berhasil dihapus!**"
     },
     "SETSHOP": {
-        "ADD_BUFF": "**Apakah akan memberikan efek bonus setelah digunakan? (Kamu dapat menambahkan hingga 3 efek bonus per item)**\n♡ Ketik **`done`** untuk menyelesaikan pendaftaran.\n♡ Ketik **`addrole <roles>`** untuk mendapatkan peran tertentu setelah digunakan.\n♡ Ketik **`removerole <roles>`** untuk menghapus peran tertentu dari pengguna yang pernah digunakan.\n♡ Ketik **`additem <amount> <itemName/itemId>`** untuk menerima item tertentu setelah digunakan.\n♡ Ketik **`removeitem <amount> <itemName/itemId>`** untuk menghapus item tertentu dari inventaris pengguna.\n♡ Ketik **`expboost <percentage> <duration>`** Untuk memberikan peningkatan exp kepada pengguna selama jangka waktu tertentu.\n♡ Ketik **`acboost <percentage> <duration>`** untuk memberikan peningkatan artcoin kepada pengguna selama jangka waktu tertentu.",
+        "ADD_BUFF": "**Apakah akan memberikan efek bonus setelah digunakan? (Kamu dapat menambahkan hingga 3 efek bonus per item)**\n♡ Ketik **`done`** untuk menyelesaikan pendaftaran.\n♡ Ketik **`addrole <roles>`** untuk mendapatkan peran tertentu setelah digunakan.\n♡ Ketik **`removerole <roles>`** untuk menghapus peran tertentu dari pengguna setelah digunakan.\n♡ Ketik **`additem <amount> <itemName/itemId>`** untuk menerima item tertentu setelah digunakan.\n♡ Ketik **`removeitem <amount> <itemName/itemId>`** untuk menghapus item tertentu dari inventaris pengguna.\n♡ Ketik **`expboost <percentage> <duration>`** Untuk memberikan peningkatan EXP kepada pengguna selama jangka waktu tertentu.\n♡ Ketik **`acboost <percentage> <duration>`** untuk memberikan peningkatan artcoin kepada pengguna selama jangka waktu tertentu.",
         "ADD_BUFF_INVALID_DURATION": "Jangan lupa tentukan durasinya ya. Bisa berupa **`2 minutes`, `5 hours`, atau bahkan **`7 days`**!",
-        "ADD_BUFF_INVALID_ITEM_AMOUNT": "Coba tulis jumlah barang yang tepat!",
-        "ADD_BUFF_INVALID_MULTIPLIER": "Coba tulis pengganda yang tepat untuk booster. Misalnya, **`100%`** atau **`50%`**.",
+        "ADD_BUFF_INVALID_ITEM_AMOUNT": "Tolong tulis jumlah item yang benar ya!",
+        "ADD_BUFF_INVALID_MULTIPLIER": "Tolong tulis pengganda yang benar untuk booster-nya. Misalnya, **`100%`** atau **`50%`**.",
         "ADD_BUFF_INVALID_ROLE": "Tunggu, apakah peran itu ada di server ini?",
         "ADD_BUFF_INVALID_TARGET_ITEM": "Apakah item ini ada? Aku tidak ingat aku punya yang ini.",
         "ADD_BUFF_MISSING_ROLE": "Jangan lupa tulis/sebutkan perannya!",
-        "ADD_BUFF_OUT_OF_RANGE": "Eh,. Aku tidak mengenali buff jenis itu. Harap gunakan hanya yang telah aku sebutkan di atas.",
+        "ADD_BUFF_OUT_OF_RANGE": "Eh,. Aku tidak mengenali jenis buff itu. Tolong gunakan yang sudah aku sebutkan di atas saja ya.",
         "ADD_BUFF_TOO_HIGH_ROLE": "Argh peran itu terlalu tinggi,. Tolong pindahkan ke bawah agar aku bisa mengambilnya.",
-        "ADD_CONFIRMATION": "Bisakah kita membuat item ini?",
+        "ADD_CONFIRMATION": "Kita buat item ini sekarang?",
         "ADD_DESCRIPTION": "**Apa deskripsi itemnya?**",
-        "ADD_DESCRIPTION_OVERLIMIT": "Harap buat deskripsi item sesingkat **{{limit}} karakter**!",
-        "ADD_MESSAGE_UPON_USE": "**Pesan apa yang akan ditampilkan saat item digunakan?**\nTambahkan soket **`{{user}}`** untuk menyebutkan pengguna dan **`{{item}}`** untuk menyebutkan item yang digunakan. Atau ketik **`~`** jika kamu tidak ingin menentukan pesan khusus apa pun.",
-        "ADD_MESSAGE_UPON_USE_OVERLIMIT": "Buat pesan sesingkat **{{limit}} karakter**!",
-        "ADD_MISSING_NAME": "Jangan lupa sebutkan nama barangnya ya.",
+        "ADD_DESCRIPTION_OVERLIMIT": "Tolong buat deskripsi item maksimal **{{limit}} karakter** ya!",
+        "ADD_MESSAGE_UPON_USE": "**Pesan apa yang akan ditampilkan saat item digunakan?**\nTambahkan placeholder **`{{user}}`** untuk menyebut pengguna dan **`{{item}}`** untuk menyebut item yang digunakan. Atau ketik **`~`** jika kamu tidak ingin menentukan pesan kustom.",
+        "ADD_MESSAGE_UPON_USE_OVERLIMIT": "Pesannya maksimal **{{limit}} karakter** ya!",
+        "ADD_MISSING_NAME": "Jangan lupa sebutkan nama itemnya ya.",
         "ADD_NAME": "**Apa nama itemnya?**",
         "ADD_NAME_DUPLICATE": "**'{{item}}'** sudah ada di server ini. Kamu tidak dapat menggunakan nama ini untuk membuat item duplikat!",
-        "ADD_NAME_FOOTER": "Informasi item akan diperbarui secara bertahap di penyematan ini.",
+        "ADD_NAME_FOOTER": "Informasi item akan diperbarui secara bertahap di embed ini.",
         "ADD_NAME_OVERLIMIT": "Kamu hanya dapat menulis **{{limit}} karakter** untuk nama item!",
-        "ADD_OVERLIMIT_NAME": "Kamu tidak dapat mencantumkan nama item yang lebih panjang dari **20 karakter**! coba ketik lagi dengan nama yang lebih pendek.",
-        "ADD_PRICE": "**Berapa biayanya?**",
-        "ADD_PRICE_INVALID": "Coba tulis nomor yang tepat untuk harga barang tersebut!",
+        "ADD_OVERLIMIT_NAME": "Nama item tidak boleh lebih dari **20 karakter**! silakan ketik lagi dengan nama yang lebih pendek.",
+        "ADD_PRICE": "**Berapa harganya?**",
+        "ADD_PRICE_INVALID": "Tolong tulis angka yang benar untuk harga item ini!",
         "ADD_SESSION_STILL_ACTIVE": "Harap tunggu beberapa saat sebelum mendaftarkan item lagi.",
-        "ADD_STOCK": "**Berapa banyak stok yang tersedia?**\nKetik **`~`** untuk stok tidak terbatas, atau ketik nomor apa pun untuk stok terbatas.",
-        "ADD_STOCK_INVALID": "**Untuk stok, coba pilih **`~`** atau nomor.",
+        "ADD_STOCK": "**Berapa banyak stok yang akan tersedia?**\nKetik **`~`** untuk stok tidak terbatas, atau ketik angka berapa pun untuk stok terbatas.",
+        "ADD_STOCK_INVALID": "**Untuk stok, silakan pilih **`~`** atau angka.",
         "ADD_SUCCESSFUL": "**Hore! item telah dibuat!** {{emoji}}\n╰─ Sekarang kamu dapat memeriksanya di perintah **`{{prefix}}shop`**.",
-        "ADD_TRADABILITY": "**Apakah barang ini dapat diperdagangkan? (y/n)**",
-        "ADD_TRADABILITY_INVALID": "Harap hanya diisi dengan **`y`** atau **`n`**.",
+        "ADD_TRADABILITY": "**Apakah item ini bisa di-trade? (y/n)**",
+        "ADD_TRADABILITY_INVALID": "Tolong isi dengan **`y`** atau **`n`** saja ya.",
         "ALREADY_DISABLED": "Toko belum dibuka di server ini.**\nUntuk mengaktifkannya, gunakan **`{{prefix}}setshop enable`**",
         "ALREADY_ENABLED": "Toko sudah dibuka oleh **{{user}}, {{date}}**",
-        "CONFIRMATION_IMAGE": "**Terapkan gambar berikut sebagai spanduk toko?**",
+        "CONFIRMATION_IMAGE": "**Terapkan gambar berikut sebagai banner toko?**",
         "DELETE_CONFIRMATION": "Apakah kamu yakin ingin menghapus item '{{item}}' ini? Perlu diingat bahwa kamu tidak akan dapat menggunakan '{{item}}' sebagai nama item di masa mendatang selama masih ada beberapa anggota yang memilikinya.",
         "DELETE_EMPTY_ITEMS": "Ehh, server ini bahkan tidak memiliki item khusus apa pun.",
         "DELETE_MISSING_TARGET": "Jangan lupa tentukan itemnya ya. {{emoji}}",
-        "DELETE_SUCCESSFUL": "**{{item}}** item telah dihapus dari toko!",
+        "DELETE_SUCCESSFUL": "Item **{{item}}** telah dihapus dari toko!",
         "EDIT_DESC_SUCCESSFUL": "**Deskripsi '{{item}}'** telah diperbarui!",
-        "EDIT_GUIDE": "**Metadata item '{{item}}' manakah yang ingin kamu ubah?**\n♡ Pilih **`name`** untuk mengubah namanya.\n♡ Pilih **`description`** untuk mengubah deskripsinya\n♡ Pilih **`price`** untuk mengubah harga jualnya.\n♡ Pilih **`stock`** Untuk mengupdate stoknya. Kamu juga dapat menggunakan **`~`** untuk mengatur stok tanpa batas.\n♡ Pilih **`response`** untuk mengubah respons Annie ketika seseorang menggunakan item tersebut. Sertakan **`{{user}}`** untuk menyebutkan pengguna dan **`{{item}}`** untuk menyebutkan nama item.\nDan terakhir, Tekan **`done`** setelah kamu puas dengan perubahan baru.",
+        "EDIT_GUIDE": "**Metadata item '{{item}}' manakah yang ingin kamu ubah?**\n♡ Pilih **`name`** untuk mengubah namanya.\n♡ Pilih **`description`** untuk mengubah deskripsinya\n♡ Pilih **`price`** untuk mengubah harga jualnya.\n♡ Pilih **`stock`** Untuk memperbarui stoknya. Kamu juga dapat menggunakan **`~`** untuk mengatur stok tanpa batas.\n♡ Pilih **`response`** untuk mengubah respons Annie ketika seseorang menggunakan item tersebut. Sertakan **`{{user}}`** untuk menyebutkan pengguna dan **`{{item}}`** untuk menyebutkan nama item.\nDan terakhir, tekan **`done`** setelah kamu puas dengan perubahan baru.",
         "EDIT_MISSING_PARAM": "Jangan lupa sertakan data-data yang diperlukan!",
-        "EDIT_MSGUPONUSE_OVERLIMIT": "Pesan tanggapan aku tidak boleh melebihi **{{limit}} karakter**!",
+        "EDIT_MSGUPONUSE_OVERLIMIT": "Pesan tanggapanku tidak boleh melebihi **{{limit}} karakter**!",
         "EDIT_MSGUPONUSE_SUCCESSFUL": "**Pesan tanggapan '{{item}}'** telah diperbarui!",
-        "EDIT_NAME_SUCCESSFUL": "**'{{oldItem}}'** nama item telah diubah menjadi **'{{newItem}}'**!",
-        "EDIT_PRICE_INVALID": "Coba ketik nomor yang valid!",
+        "EDIT_NAME_SUCCESSFUL": "Nama item **'{{oldItem}}'** telah diubah menjadi **'{{newItem}}'**!",
+        "EDIT_PRICE_INVALID": "Tolong ketik angka yang valid!",
         "EDIT_PRICE_OVERLIMIT": "Perlu diingat, kamu tidak boleh melebihi harga **{{limit}}** artcoin.",
-        "EDIT_PRICE_SUCCESSFUL": "**'{{item}}'** harga telah diperbarui!",
-        "EDIT_STOCK_OVERLIMIT": "Hai, kamu tidak dapat mengisi ulang item **{{limit}}** sekaligus!",
-        "EDIT_STOCK_SUCCESSFUL": "**Persediaan '{{item}}'** telah diperbarui!",
+        "EDIT_PRICE_SUCCESSFUL": "**Harga '{{item}}'** telah diperbarui!",
+        "EDIT_STOCK_OVERLIMIT": "Hei, kamu tidak bisa menambah stok sebanyak **{{limit}}** item sekaligus!",
+        "EDIT_STOCK_SUCCESSFUL": "**Stok '{{item}}'** telah diperbarui!",
         "EDIT_TIMEOUT": "Antarmuka pengeditan untuk item **'{{item}}'** telah ditutup karena tidak ada aktivitas.",
         "EMPTY_ROLE_PARAMETER": "Perlu diperbarui",
         "EMPTY_TEXT_PARAMETER": "Jangan lupa tulis pesan yang ingin kamu tampilkan di toko!\nmisalnya `{{prefix}}setshop text welcomer to our shop, {{user}}!`",
-        "GUIDE": "Siap membuat item virtual khusus yang dapat dibeli oleh anggota kamu? {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setshop open`**\n> Jangan lupa buka tokonya dulu, sebelum apply yang lain!\n\n**`{{prefix}}setshop text <message>`**\n> Buat header toko yang singkat namun unik di server kamu! Gunakan {{user}} untuk menyebut pengguna.\nmisalnya __{{prefix}}setshop text Welcome to our shop, {{user}}!__\n\n**`{{prefix}}setshop delete <itemId/itemName>`**\n> Barang terdaftar kamu sepertinya tidak begitu menarik? Aku kira sudah waktunya untuk menghapusnya.\n\n**`{{prefix}}setshop add <itemName>`**\n> Tidak ada yang lebih baik daripada membuat item kamu sendiri untuk server kamu! Beri nama unik, tetapkan harga, tambahkan efek, dan keuntungan.\n\n**`{{prefix}}setshop edit <itemId/itemName>`**\n> Kehilangan beberapa detail pada item yang baru kamu daftarkan?\n\n**`{{prefix}}setshop image <attachment/url>`**\n> Untuk meningkatkan personalisasi lebih jauh lagi, coba unggah spanduk unik untuk toko server kamu!\n\n**`{{prefix}}setshop close`**\n> Punya sesuatu dalam pikiran? ingin menetapkan hari belanja untuk anggota kamu? Kamu dapat menutup toko terlebih dahulu dan membukanya kembali kapan pun kamu siap.\n\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "Siap membuat item virtual khusus yang dapat dibeli oleh anggota kamu? {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setshop open`**\n> Jangan lupa buka tokonya dulu, sebelum mengatur yang lain!\n\n**`{{prefix}}setshop text <message>`**\n> Buat header toko yang singkat namun unik di server kamu! Gunakan {{user}} untuk menyebut pengguna.\nmisalnya __{{prefix}}setshop text Welcome to our shop, {{user}}!__\n\n**`{{prefix}}setshop delete <itemId/itemName>`**\n> Item yang kamu daftarkan sepertinya kurang menarik? Mungkin sudah waktunya untuk menghapusnya.\n\n**`{{prefix}}setshop add <itemName>`**\n> Tidak ada yang lebih baik daripada membuat item kamu sendiri untuk server kamu! Beri nama unik, tetapkan harga, tambahkan efek, dan raih untung!\n\n**`{{prefix}}setshop edit <itemId/itemName>`**\n> Ada detail yang terlewat pada item yang baru kamu daftarkan?\n\n**`{{prefix}}setshop image <attachment/url>`**\n> Untuk meningkatkan personalisasi lebih jauh lagi, coba unggah banner unik untuk toko server kamu!\n\n**`{{prefix}}setshop close`**\n> Punya rencana? ingin menetapkan hari belanja untuk anggota kamu? Kamu dapat menutup toko terlebih dahulu dan membukanya kembali kapan pun kamu siap.\n\n╰──────────☆～*:;,．*╯",
         "IMAGE_INVALID_UPLOAD": "Hmm, sepertinya itu bukan gambar yang valid. Bisakah kamu mengunggah sebagai lampiran atau menentukan url gambar? {{emoji}}",
-        "IMAGE_MISSING_ATTACHMENT": "Tertarik menggunakan gambar custom untuk banner toko?\nmisalnya **`{{prefix}}setshop image <attachment/url>`**",
+        "IMAGE_MISSING_ATTACHMENT": "Tertarik menggunakan gambar kustom untuk banner toko?\nmisalnya **`{{prefix}}setshop image <attachment/url>`**",
         "IMAGE_NOT_RESETABLE": "Toko kamu sudah menggunakan banner default.",
-        "IMAGE_SUCCESSFULLY_APPLIED": "**Spanduk diperbarui!** {{emoji}}\n╰ Coba ketik **`{{prefix}}shop`** untuk melihat hasilnya.",
-        "INTERFACE_CLOSED": "Antarmuka daftar toko telah ditutup.",
+        "IMAGE_SUCCESSFULLY_APPLIED": "**Banner diperbarui!** {{emoji}}\n╰ Coba ketik **`{{prefix}}shop`** untuk melihat hasilnya.",
+        "INTERFACE_CLOSED": "Antarmuka pendaftaran item toko telah ditutup.",
         "INVALID_ACTION": "Maaf- Aku hanya mengenali tindakan berikut\n**`{{availableActions}}`**",
         "INVALID_ROLE": "Maaf, aku tidak dapat menemukan peran apa pun dengan nama itu.",
         "ITEM_DOESNT_EXISTS": "Aku tidak dapat menemukan item apa pun bernama **'{{item}}'** di server ini..",
         "NAME_EMBED": "╰☆～**Nama ::** {{arg}}",
         "NO_MORE_BUFFS": "Maaf tidak ada lagi buff yang dapat ditambahkan",
         "ROLE_SUCCESSFULLY_REGISTERED": "Perlu diperbarui",
-        "ROLE_TOO_HIGH": "Ah, aku tidak dapat mencapai peran **{{role}}**. Itu terlalu tinggi! dapatkah kamu memindahkannya ke peran **{{annieRole}}** terlebih dahulu? {{emoji}}",
+        "ROLE_TOO_HIGH": "Aw, aku tidak bisa menjangkau peran **{{role}}**. Terlalu tinggi! bisakah kamu memindahkannya ke bawah peran **{{annieRole}}** dulu? {{emoji}}",
         "SUCCESSFULLY_DISABLED": "Toko telah berhasil ditutup.",
         "SUCCESSFULLY_ENABLED": "Toko sekarang dibuka!",
         "TEXT_SUCCESSFULLY_REGISTERED": "**Teks diperbarui!** {{emoji}}\n╰ Ketik **`{{prefix}}shop`** untuk melihat tampilannya."
@@ -959,74 +959,74 @@
     "SETSOCIALMEDIA": {
         "ALREADY_REGISTERED": "Kamu sudah memiliki akun **{{account}}** yang terdaftar. {{emoji}}",
         "MISSING_ARG": "Ah, kamu melewatkan sesuatu. Ya, url akun! tolong sertakan lain kali!",
-        "SOURCE_UNSUPPORTED": "Saat ini kamu hanya dapat menyetel tautan profil **{{list}}**. Agar situs kamu ditambahkan, coba minta di {{supportServer}}",
+        "SOURCE_UNSUPPORTED": "Saat ini kamu hanya dapat mengatur tautan profil **{{list}}**. Agar situsmu ditambahkan, silakan ajukan permintaan di {{supportServer}}",
         "SUCCESSFUL": "Hore! akun **{{account}}** kamu telah ditautkan!"
     },
     "SETWELCOMER": {
-        "ADDITIONAL_CHANNEL_FAIL_NOT_REGISTERED": "Sepertinya saluran yang kamu coba tambahkan belum terdaftar, atau merupakan saluran selamat datang utama kamu",
-        "ADDITIONAL_CHANNEL_FAIL_REGISTERED": "Sepertinya saluran yang kamu coba tambahkan sudah terdaftar",
-        "ADDITIONAL_CHANNEL_SUCCESSFULLY_REGISTERED": "Baiklah! Aku akan menyapa pengguna di salah satu {{channels}} ini setiap kali mereka bergabung ke guild ini!",
-        "ADDITIONAL_CHANNELS": "Berikut adalah semua saluran kamu yang tersedia dan terdaftar\n{{channels}}",
-        "ALREADY_DISABLED": "**Welcomer belum diaktifkan di guild ini.**\nUntuk mengaktifkannya, gunakan **`{{prefix}}setwelcomer enable`**",
+        "ADDITIONAL_CHANNEL_FAIL_NOT_REGISTERED": "Sepertinya channel yang ingin kamu tambahkan belum terdaftar, atau merupakan channel sambutan utamamu",
+        "ADDITIONAL_CHANNEL_FAIL_REGISTERED": "Sepertinya channel yang ingin kamu tambahkan sudah terdaftar",
+        "ADDITIONAL_CHANNEL_SUCCESSFULLY_REGISTERED": "Baiklah! Aku akan menyapa pengguna di salah satu {{channels}} ini setiap kali mereka bergabung ke server ini!",
+        "ADDITIONAL_CHANNELS": "Berikut semua channel terdaftar yang tersedia untukmu\n{{channels}}",
+        "ALREADY_DISABLED": "**Welcomer belum diaktifkan di server ini.**\nUntuk mengaktifkannya, gunakan **`{{prefix}}setwelcomer enable`**",
         "ALREADY_ENABLED": "Welcomer sudah diaktifkan oleh **{{user}}, {{date}}**",
-        "CHANNEL_SUCCESSFULLY_REGISTERED": "Baiklah! Aku akan menyapa pengguna di {{channel}} setiap kali mereka bergabung ke guild ini!",
-        "CONFIRMATION_IMAGE": "Terapkan gambar berikut sebagai latar belakang selamat datang?",
-        "DEFAULT_IMAGE_ALREADY_REGISTERED": "Hai, sepertinya kamu telah menetapkan ini sebagai opsi untuk gambar default selamat datang.",
-        "DEFAULT_IMAGE_SUCCESSFULLY_REGISTERED": "Hore! gambar penyambutan default guild ini telah diperbarui!",
-        "EMPTY_CHANNEL_PARAMETER": "**Jangan lupa tentukan nama salurannya!**\nmisalnya **`{{prefix}}setwelcomer channel #general`**",
-        "EMPTY_IMAGE_PARAMETER": "Jangan lupa tulis opsi gambar default apa yang ingin kamu gunakan!\nmisalnya. `{{prefix}}setwelcomer defaultimage user pfp`",
+        "CHANNEL_SUCCESSFULLY_REGISTERED": "Baiklah! Aku akan menyapa pengguna di {{channel}} setiap kali mereka bergabung ke server ini!",
+        "CONFIRMATION_IMAGE": "Pakai gambar berikut sebagai latar belakang welcomer?",
+        "DEFAULT_IMAGE_ALREADY_REGISTERED": "Hai, sepertinya kamu sudah memilih opsi ini sebagai gambar default welcomer.",
+        "DEFAULT_IMAGE_SUCCESSFULLY_REGISTERED": "Hore! gambar default welcomer server ini telah diperbarui!",
+        "EMPTY_CHANNEL_PARAMETER": "**Jangan lupa tentukan nama channel-nya!**\nmisalnya **`{{prefix}}setwelcomer channel #general`**",
+        "EMPTY_IMAGE_PARAMETER": "Jangan lupa tulis opsi gambar default yang ingin kamu gunakan!\nmisalnya `{{prefix}}setwelcomer defaultimage user pfp`",
         "EMPTY_ROLE_PARAMETER": "Jangan lupa tentukan perannya!\nmisalnya `{{prefix}}setwelcome role @bunny`",
-        "EMPTY_TEXT_PARAMETER": "Jangan lupa tulis pesan yang ingin kamu tampilkan di bagian selamat datang!\nmisalnya. `{{prefix}}setwelcomer text welcome to our guild!`",
-        "GUIDE": "Gunakan salah satu tindakan berikut untuk memulai penyiapan modul penyambutan untuk guild ini. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> Satu langkah pertama yang mungkin ingin kamu coba adalah memastikan modul ini diaktifkan di guild.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Tetapkan saluran target tempat kamu ingin mengirim pesan selamat datang.\nmisalnya __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> Kamu dapat membuat pesan selamat datang khusus yang unik untuk guild ini. Sertakan {{guild}} atau {{user}} untuk soket.\nmisalnya __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Mari beri mereka hadiah karena bergabung dengan server lucu ini dengan beberapa peran manis! Jika kamu tidak sengaja menetapkan peran yang salah, kamu selalu dapat melakukan opsi 'reset'.\n(Untuk mendaftar) mis. __{{prefix}}setwelcomer role @muffins @cupcake__\n(Untuk mengatur ulang) mis. __{{prefix}}setwelcomer role reset__\n\n**`{{prefix}}setwelcomer image <attachment/url>`**\n> Tidak ada yang lebih baik daripada memiliki latar belakang yang dipersonalisasi untuk kafe kamu! sekarang kamu dapat menggunakan gambar khusus untuk penyambutan. Formatnya hampir sama dengan cara kamu menggunakan SetCover.\n\n**`{{prefix}}setwelcomer noimage`**\n> Alihkan opsi ini jika kamu ingin pesan sambutan yang lebih bersih, sederhana & polos tanpa gambar apa pun!\n\n**`{{prefix}}setwelcomer userimage`**\n> Bosan memilih gambar selamat datang yang cocok? alihkan opsi ini untuk menampilkan gambar pengguna sebagai latar belakang selamat datang!\n\n**`{{prefix}}setwelcomer theme <dark/light>`**\n> Apakah mode lampu terlalu terang untuk kamu? kita semua melakukannya. Makanya aku kasih tema gelap tehee.\n\n**{{prefix}}setwelcomer multiple add <channel>**\n> Untuk menambahkan saluran tambahan. **Harus melakukan saluran `{{prefix}}setwelcomer` terlebih dahulu**\n\n{{prefix}}setwelcomer multiple remove <channel>**\n> Untuk menghapus saluran tambahan.\n\n**`{{prefix}}setwelcomer preview`**\n> Ingin melihat seperti apa sambutanmu sebelum rekanmu melihatnya?\n\n**`{{prefix}}setwelcomer disable`**\n> Bosan dengan pesan selamat datang yang berisi spam? Kamu dapat menonaktifkan modul ini kapan saja.\n\n╰──────────☆～*:;,．*╯",
-        "IMAGE_INVALID_UPLOAD": "Hmm, sepertinya itu bukan gambar yang valid. Bisakah kamu mengunggah sebagai lampiran atau menentukan url gambar? {{emoji}}",
-        "IMAGE_MISSING_ATTACHMENT": "Mari gunakan gambar khusus untuk penyambutan! {{emoji}}\nmisalnya **`{{prefix}}setwelcomer image <attachment/url>`**",
-        "IMAGE_SUCCESSFULLY_APPLIED": "**Hore, semuanya sempurna!** {{emoji}}\n╰─ Gambar khusus untuk penyambutan telah diterapkan!",
+        "EMPTY_TEXT_PARAMETER": "Jangan lupa tulis pesan yang ingin kamu tampilkan di welcomer!\nmisalnya `{{prefix}}setwelcomer text welcome to our guild!`",
+        "GUIDE": "Gunakan salah satu tindakan berikut untuk mulai menyiapkan modul welcomer di server ini. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> Langkah pertama yang sebaiknya kamu lakukan untuk memastikan modul ini aktif di server.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Tetapkan channel tujuan tempat pesan welcomer akan dikirim.\nmisalnya __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> Kamu bisa membuat pesan welcomer unik khusus untuk server ini. Sertakan {{guild}} atau {{user}} untuk menyisipkan nama server atau pengguna.\nmisalnya __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Ayo beri mereka hadiah karena sudah bergabung ke server lucu ini dengan beberapa peran manis! Kalau kamu tidak sengaja memberikan peran yang salah, kamu selalu bisa memakai opsi 'reset'.\n(Untuk mendaftarkan) misalnya __{{prefix}}setwelcomer role @muffins @cupcake__\n(Untuk reset) misalnya __{{prefix}}setwelcomer role reset__\n\n**`{{prefix}}setwelcomer image <attachment/url>`**\n> Tidak ada yang lebih menyenangkan daripada punya latar belakang pribadi untuk kafemu! Sekarang kamu bisa memakai gambar kustom untuk welcomer. Formatnya kurang lebih sama dengan cara kamu menggunakan SetCover.\n\n**`{{prefix}}setwelcomer noimage`**\n> Aktifkan opsi ini kalau kamu ingin pesan welcomer yang lebih bersih, sederhana & polos tanpa gambar apa pun!\n\n**`{{prefix}}setwelcomer userimage`**\n> Bosan memilih gambar welcomer yang cocok? Aktifkan opsi ini untuk menampilkan foto profil pengguna sebagai latar belakang welcomer!\n\n**`{{prefix}}setwelcomer theme <dark/light>`**\n> Mode terang terlalu silau buatmu? Kita semua juga begitu. Makanya aku sediakan tema gelap, tehee.\n\n**{{prefix}}setwelcomer multiple add <channel>**\n> Untuk menambahkan channel tambahan. **Harus jalankan `{{prefix}}setwelcomer` channel terlebih dahulu**\n\n{{prefix}}setwelcomer multiple remove <channel>**\n> Untuk menghapus channel tambahan.\n\n**`{{prefix}}setwelcomer preview`**\n> Ingin melihat tampilan welcomer-mu sebelum teman-temanmu melihatnya?\n\n**`{{prefix}}setwelcomer disable`**\n> Bosan dengan pesan welcomer yang terasa seperti spam? Kamu bisa menonaktifkan modul ini kapan saja.\n\n╰──────────☆～*:;,．*╯",
+        "IMAGE_INVALID_UPLOAD": "Hmm, sepertinya itu bukan gambar yang valid. Bisakah kamu mengunggahnya sebagai lampiran atau memberikan URL gambarnya? {{emoji}}",
+        "IMAGE_MISSING_ATTACHMENT": "Ayo pakai gambar kustom untuk welcomer! {{emoji}}\nmisalnya **`{{prefix}}setwelcomer image <attachment/url>`**",
+        "IMAGE_SUCCESSFULLY_APPLIED": "**Hore, semuanya sempurna!** {{emoji}}\n╰─ Gambar kustom untuk welcomer sudah diterapkan!",
         "INVALID_ACTION": "Maaf- Aku hanya mengenali tindakan berikut\n**`{{availableActions}}`**",
-        "INVALID_CHANNEL": "**Maaf- Aku tidak dapat menemukan saluran itu.** {{emoji}}",
-        "INVALID_DEFAULT_IMAGE_OPTION": "Hanya nilai yang diterima adalah `regular` atau `user pfp`",
+        "INVALID_CHANNEL": "**Maaf- Aku tidak dapat menemukan channel itu.** {{emoji}}",
+        "INVALID_DEFAULT_IMAGE_OPTION": "Nilai yang diterima hanya `regular` atau `user pfp`",
         "INVALID_ROLE": "Maaf, aku tidak dapat menemukan peran apa pun dengan nama itu.",
-        "NO_DEFAULT_CHANNEL": "Harap lengkapi set saluran selamat datang utama dan teks selamat datang utama terlebih dahulu.",
-        "NOIMAGE_SUCCESSFULLY_DISABLED": "**Oke!♡** Aku mengaktifkan gambar penyambutan.",
-        "NOIMAGE_SUCCESSFULLY_ENABLED": "**Baiklah!♡** sambutan aku tidak lagi menampilkan gambar. Hanya teks biasa!",
+        "NO_DEFAULT_CHANNEL": "Tolong atur channel sambutan utama dan teks sambutan utama terlebih dahulu ya.",
+        "NOIMAGE_SUCCESSFULLY_DISABLED": "**Oke!♡** Aku sudah mengaktifkan gambar welcomer.",
+        "NOIMAGE_SUCCESSFULLY_ENABLED": "**Baiklah!♡** welcomer-ku tidak lagi menampilkan gambar. Hanya teks biasa!",
         "ONBOARDWAIT": {
             "ALREADY_CONFIGURED": "Modul sudah dikonfigurasi",
             "NOT_ENABLED": "Orientasi harus diaktifkan terlebih dahulu",
-            "TRY_AGAIN": "Coba coba lagi nanti."
+            "TRY_AGAIN": "Silakan coba lagi sebentar lagi."
         },
-        "ONBOARDWAIT_CONFIRM": "**Penantian orientasi** telah berhasil {{setting}} di guild ini!",
-        "ROLE_SUCCESSFULLY_REGISTERED": "Oke! Aku akan mulai menugaskan peran **{{role}}** kepada anggota guild masa depan kita!",
-        "ROLE_SUCCESSFULLY_RESET": "**Baiklah, selesai!** peran yang ditetapkan dalam penyambutan telah dihapus♡",
-        "ROLE_TOO_HIGH": "Ah, aku tidak dapat mencapai peran **{{role}}**. Itu terlalu tinggi! dapatkah kamu memindahkannya ke peran **{{annieRole}}** terlebih dahulu? {{emoji}}",
-        "SUCCESSFULLY_DISABLED": "**Modul Selamat Datang** telah berhasil dinonaktifkan di guild ini!",
-        "SUCCESSFULLY_ENABLED": "**Modul Selamat Datang** telah berhasil diaktifkan di guild ini!",
-        "TEXT_SUCCESSFULLY_REGISTERED": "Hore! pesan selamat datang guild ini telah diperbarui!",
-        "THEME_INVALID": "**Apa itu tema?** Harap gunakan hanya **`light`** atau **`dark`**.",
-        "THEME_MISSING_NAME": "Mari beralih ke tema penyambutan!\nmisalnya **`{{prefix}}setwelcomer theme <light/dark>`**",
-        "THEME_SUCCESSFULLY_UPDATED": "**Baiklah, {{user}}!** {{emoji}}\n╰─ Tema penyambutan telah ditetapkan ke {{theme}}!",
+        "ONBOARDWAIT_CONFIRM": "**Onboarding wait** telah berhasil {{setting}} di server ini!",
+        "ROLE_SUCCESSFULLY_REGISTERED": "Oke! Aku akan mulai memberikan peran **{{role}}** kepada anggota baru server kita!",
+        "ROLE_SUCCESSFULLY_RESET": "**Baiklah, selesai!** peran yang diberikan oleh welcomer telah dihapus♡",
+        "ROLE_TOO_HIGH": "Ah, aku tidak bisa menjangkau peran **{{role}}**. Posisinya terlalu tinggi! bisakah kamu memindahkannya ke bawah peran **{{annieRole}}** dulu? {{emoji}}",
+        "SUCCESSFULLY_DISABLED": "**Modul Welcomer** telah berhasil dinonaktifkan di server ini!",
+        "SUCCESSFULLY_ENABLED": "**Modul Welcomer** telah berhasil diaktifkan di server ini!",
+        "TEXT_SUCCESSFULLY_REGISTERED": "Hore! pesan welcomer server ini telah diperbarui!",
+        "THEME_INVALID": "**Hah, itu tema?** Tolong gunakan **`light`** atau **`dark`** saja ya.",
+        "THEME_MISSING_NAME": "Ayo ganti tema welcomer!\nmisalnya **`{{prefix}}setwelcomer theme <light/dark>`**",
+        "THEME_SUCCESSFULLY_UPDATED": "**Baiklah, {{user}}!** {{emoji}}\n╰─ Tema welcomer telah diatur ke {{theme}}!",
         "TIPS_TO_PREVIEW": "Ingin melihat seperti apa tampilannya? {{emoji}}",
-        "USERIMAGE_SUCCESSFULLY_DISABLED": "**Oke!** sekarang pesan selamat datang akan menggunakan latar belakang set terbaru.",
-        "USERIMAGE_SUCCESSFULLY_ENABLED": "**Selesai!** sekarang gambar profil pengguna akan ditampilkan sebagai latar belakang selamat datang."
+        "USERIMAGE_SUCCESSFULLY_DISABLED": "**Oke!** sekarang pesan welcomer akan menggunakan latar belakang yang terakhir diatur.",
+        "USERIMAGE_SUCCESSFULLY_ENABLED": "**Selesai!** sekarang foto profil pengguna akan ditampilkan sebagai latar belakang welcomer."
     },
     "SHOP": {
         "BUY_TIPS": "Ketik **`{{prefix}}buy <item>`** untuk membelinya! {{emoji}}",
         "CLOSED": "Ah, tokonya masih tutup! tolong kembali lagi lain kali!",
         "FOOTER": "Ketik **{{prefix}}buy <name/ID>** untuk membeli item!",
-        "GATEWAY_SELECTION": "╭*:;,．★ ～☆*─────────────────╮\n**Selamat datang di pasar aku!**\napa yang ingin kamu beli hari ini? atau lebih spesifiknya, toko mana yang ingin kamu kunjungi? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Toko Sampul**\n\n☆～(2) **Toko Hadiah**\n☆～(3) **Toko Bahan**\n☆～(4) **Toko Lencana**",
-        "INVALID_TYPE": "Maaf, aku tidak mengenali jenis barang itu... {{emoji}}",
-        "NO_ITEMS": "**Tidak ada yang perlu dibeli!** server ini belum menyiapkan tokonya sendiri.",
+        "GATEWAY_SELECTION": "╭*:;,．★ ～☆*─────────────────╮\n**Selamat datang di pasarku!**\napa yang ingin kamu beli hari ini? atau lebih spesifiknya, toko mana yang ingin kamu kunjungi? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Toko Cover**\n\n☆～(2) **Toko Hadiah**\n☆～(3) **Toko Bahan**\n☆～(4) **Toko Lencana**",
+        "INVALID_TYPE": "Maaf, aku tidak mengenali jenis item itu... {{emoji}}",
+        "NO_ITEMS": "**Tidak ada yang bisa dibeli!** server ini belum menyiapkan tokonya sendiri.",
         "RETRIEVING": "{{emoji}} `mengambil semua {{itemType}} yang dapat dibeli ...`",
         "SETUP_TIPS": "Coba minta pemilik/admin server untuk menyiapkannya dengan perintah **`{{prefix}}setshop`**!♡",
         "TEMPORARILY_CLOSED": "**H-hai! toko tutup sementara hingga pemberitahuan lebih lanjut.**\n╰─Maaf atas ketidaknyamanan ini! {{emoji}}",
-        "UNAVAILABLE": "Toko kami saat ini tutup, kami tidak memiliki barang untuk dijual saat ini. {{emoji}}"
+        "UNAVAILABLE": "Toko kami sedang tutup, saat ini kami tidak punya item untuk dijual. {{emoji}}"
     },
     "SHOP_LOG": {
         "ALREADY_DISABLED": "**Log ini belum diaktifkan♡**\nUntuk mengaktifkan, ketik **`{{prefix}}shoplog enable`**",
         "ALREADY_ENABLED": "Modul ini telah diaktifkan oleh **{{user}}, {{date}}**",
-        "GUIDE": "Ini adalah pusat kendali kamu untuk mengonfigurasi **Sistem Log Toko**. Lihat tindakan apa saja yang tersedia untuk modul ini:\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}shoplog enable`**\n> Tindakan ini akan mengaktifkan fitur pencatatan aktivitas di guild kamu setelah kamu mengaktifkannya dan untuk jenis log yang akan kamu terima, mengikuti preset default.\n\n**`{{prefix}}shoplog channel <targetChannel>`**\n> Tindakan ini menentukan saluran mana yang harus dikirim oleh Annie dan pastikan Annie juga memiliki akses ke saluran itu!\nmisalnya __{{prefix}}shoplog channel #logs__\n\n**`{{prefix}}shoplog disable`**\n> Aku tahu kamu mungkin merasa kesal karena menerima semua log yang tidak berguna dari aku, itu sebabnya tindakan ini ada.\n\n╰──────────☆～*:;,．*╯",
-        "INVALID_ACTION": "Sangat bagus! harap gunakan hanya salah satu tindakan ini `{{actions}}`",
-        "INVALID_CHANNEL": "**Hmm, sepertinya ini bukan saluran yang valid.**\nBisakah kamu mencoba saluran lain? {{emoji}}",
-        "ITEM_BOUGHT": "{{user}}`{{userId}}` baru saja membeli {{itemName}}Q`{{itemId}}`",
-        "MISSING_CHANNEL": "**Jangan lupa sertakan saluran log target ya?♡** {{emoji}}\nmisalnya **`{{prefix}}shoplog channel #mylogs`**",
+        "GUIDE": "Ini adalah pusat kendali kamu untuk mengonfigurasi **Sistem Log Toko**. Lihat tindakan apa saja yang tersedia untuk modul ini:\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}shoplog enable`**\n> Tindakan ini akan mengaktifkan fitur pencatatan aktivitas di server kamu, dan jenis log yang akan kamu terima mengikuti preset default.\n\n**`{{prefix}}shoplog channel <targetChannel>`**\n> Tindakan ini menentukan channel tempat Annie mengirim log, dan pastikan Annie juga punya akses ke channel itu!\nmisalnya __{{prefix}}shoplog channel #logs__\n\n**`{{prefix}}shoplog disable`**\n> Aku tahu kamu mungkin kesal menerima semua log yang tidak berguna dariku, itu sebabnya tindakan ini ada.\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "Maaf ya! tolong gunakan salah satu tindakan ini saja `{{actions}}`",
+        "INVALID_CHANNEL": "**Hmm, sepertinya ini bukan channel yang valid.**\nBisakah kamu mencoba channel lain? {{emoji}}",
+        "ITEM_BOUGHT": "{{user}}`{{userId}}` baru saja membeli {{itemName}}`{{itemId}}`",
+        "MISSING_CHANNEL": "**Jangan lupa sertakan channel log tujuannya, oke?♡** {{emoji}}\nmisalnya **`{{prefix}}shoplog channel #mylogs`**",
         "SHOULD_BE_ENABLED": "Hai! Kamu belum mengaktifkan **Modul Log**!\naktifkan dengan mengetik `{{prefix}}shoplog enable`",
         "SUCCESSFULLY_DISABLED": "Selesai! **Modul Log** telah berhasil dinonaktifkan!",
         "SUCCESSFULLY_ENABLED": "Hore! **Modul Log** telah berhasil diaktifkan!",
@@ -1034,67 +1034,67 @@
     },
     "STATCARD": {
         "FETCHING": "`Mengambil data statistik {0}. .`",
-        "HEADER": "<:Annie_Smug:523686816545636352>**| Kartu status untuk {0}**",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Kartu statistik untuk {0}**",
         "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu.",
-        "LVL_TOO_LOW": "Pengguna harus setidaknya berusia lv **{0}** untuk membuka fitur ini."
+        "LVL_TOO_LOW": "Pengguna harus minimal lv **{0}** untuk membuka fitur ini."
     },
     "STRIKE": {
-        "DISPLAY_RECORD": "Inilah yang aku temukan untuk **{{user}}**\n\nTotal pemogokan **{{recordsLength}}** telah dicatat.\nYang terbaru ditambahkan oleh **{{reportedBy}}**\n\n{{list}}\n\nKetik `+ <reason>` untuk menambahkan teguran baru.",
-        "ENTRY_REGISTER": "Terima kasih! laporan kamu untuk **{{user}}** telah didaftarkan.",
-        "GUIDE": "Kamu berwenang untuk menggunakan **Sistem Serangan.**\n\nFitur ini digunakan untuk melacak perilaku buruk yang disebabkan oleh anggota di server dan secara otomatis memberi mereka tindakan penalti seperti mute, kick atau bahkan ban.",
-        "NULL_RECORD": "**{{user}}** belum memiliki rekor teguran apa pun. Coba ketik `+ <reason>` untuk menambahkan teguran baru."
+        "DISPLAY_RECORD": "Inilah yang aku temukan untuk **{{user}}**\n\nTotal **{{recordsLength}}** teguran telah tercatat.\nYang terbaru ditambahkan oleh **{{reportedBy}}**\n\n{{list}}\n\nKetik `+ <reason>` untuk menambahkan teguran baru.",
+        "ENTRY_REGISTER": "Terima kasih! laporan kamu untuk **{{user}}** telah dicatat.",
+        "GUIDE": "Kamu berwenang untuk menggunakan **Sistem Teguran.**\n\nFitur ini digunakan untuk melacak perilaku buruk anggota di server dan secara otomatis memberi mereka tindakan penalti seperti mute, kick atau bahkan ban.",
+        "NULL_RECORD": "**{{user}}** belum memiliki catatan teguran apa pun. Silakan ketik `+ <reason>` untuk menambahkan teguran baru."
     },
     "SWITCH_THEME": {
         "ALREADY_THAT_THEME": "Kamu sedang menggunakan tema ini, *baka.* {{emoji}}",
-        "MISSING_KEYWORD": "**Coba tentukan tema yang ingin kamu gunakan!~♡**\nmisalnya **`{{prefix}}theme dark`**",
+        "MISSING_KEYWORD": "**Tolong tentukan tema yang ingin kamu gunakan!~♡**\nmisalnya **`{{prefix}}theme dark`**",
         "NO_MATCHING_KEYWORD": "**Maaf- aku tidak dapat menemukan tema apa pun dengan nama itu.** {{emoji}}",
         "NO_THEME_OWNED": "Maaf tetapi sepertinya kamu tidak memiliki item ini, kamu dapat mengunjungi toko untuk membelinya.",
         "NO_THEMES_OWNED": "Maaf tapi sepertinya kamu tidak memiliki tema apa pun",
-        "SET_LIGHTMODE": "Hore! berhasil disetel ke **Mode Cahaya!**",
+        "SET_LIGHTMODE": "Hore! berhasil disetel ke **Mode Terang!**",
         "SET_NIGHTMODE": "Hore! berhasil disetel ke **Mode Malam!**",
         "UNAVAILABLE": "Fitur ini hanya tersedia untuk **Server Booster / Donator**."
     },
     "SYS_NOTIFICATION": {
-        "FIVESTAR_PULL": "{0} telah menarik {1} **{2}(★★★★★)** dari Lucky Ticket! :tada:"
+        "FIVESTAR_PULL": "{0} telah mendapatkan {1} **{2}(★★★★★)** dari Lucky Ticket! :tada:"
     },
     "SYSTEM_STATS": {
-        "DISPLAY": "**Hewoo!♡*** Kamu sedang melihat statistik simpul aku. Data ini dapat menjadi tambahan yang berguna ketika kamu melaporkan bug kepada pengembang!\n╭*:;,．★ ～☆*───────╮\n**•Siapa pengasuh aku?**\n> Sampaikan salam pada Naph dan Pan! mereka adalah orang-orang yang dengan murah hati merawatku dan mengajariku hal-hal baru. Aku dikembangkan murni untuk proyek pribadi; tapi aku sangat menghargai donasi apa pun!\n───────\n**• Apakah aku yang asli, Annie?**\n> Ya, tapi sebenarnya tidak. Apa yang kamu lihat sekarang adalah replika aku yang bernama **{{shard}}**.\n───────\n**• Hmm, apakah aku tertinggal?**\n> Mungkin? saat ini latensi aku adalah {{ping}} ms. Tapi jangan pedulikan jumlahnya, aku akan berusaha sebaik mungkin melayani kamu!\n───────\n**• Sudah berapa lama aku bangun?**\n> Sekitar {{uptime}} menurut aku? dengan total memori yang digunakan {{memory}}. Ya, maaf soal itu. Aku cukup sering tidur.\n───────\n**• Berapa banyak guild yang pernah aku layani?**\n> Pada versi saat ini (v{{version}}) terdapat total server {{servers}} yang telah aktif menggunakan layanan aku. Perintah {{totalCommands}} juga dijalankan di dalam server ini! Aku tahu angkanya mungkin tidak terlalu tinggi,.. tapi ini adalah pencapaian besar bagi aku. {{emoji}}\n╰────────☆～*:;,．*╯",
+        "DISPLAY": "**Hewoo!♡*** Kamu sedang melihat statistik node-ku. Data ini bisa menjadi tambahan yang berguna ketika kamu melaporkan bug kepada pengembang!\n╭*:;,．★ ～☆*───────╮\n**•Siapa yang merawatku?**\n> Sapa Naph dan Pan dong! mereka adalah orang-orang yang dengan murah hati merawatku dan mengajariku hal-hal baru. Aku dikembangkan murni untuk proyek pribadi; tapi aku sangat menghargai donasi apa pun!\n───────\n**• Apakah aku Annie yang asli?**\n> Iya, tapi sebenarnya bukan. Yang kamu lihat sekarang adalah salah satu replikaku yang bernama **{{shard}}**.\n───────\n**• Hmm, apakah aku sedang lag?**\n> Mungkin? saat ini latensiku {{ping}} ms. Tapi jangan pedulikan angkanya, aku akan berusaha sebaik mungkin melayanimu!\n───────\n**• Sudah berapa lama aku bangun?**\n> Sekitar {{uptime}} menurutku? dengan total memori terpakai {{memory}}. Ya, maaf soal itu. Aku cukup sering tidur.\n───────\n**• Sudah berapa banyak server yang aku layani?**\n> Pada versi saat ini (v{{version}}) ada total {{servers}} server yang aktif menggunakan layananku. Sebanyak {{totalCommands}} perintah juga sudah dijalankan di server-server ini! Aku tahu angkanya mungkin tidak terlalu tinggi,.. tapi ini adalah pencapaian besar bagiku. {{emoji}}\n╰────────☆～*:;,．*╯",
         "HEADER": "Keadaan Annie",
         "INSIGHT": "Aku dapat melihat **{{percentage}}%** dari titik data **{{days}} hari terakhir** sebelumnya. {{emoji}}",
-        "INVALID_DATE": "Parameter tidak valid, kawan. Coba ketik `7` sebagai parameter untuk mendapatkan data gabungan minggu ini.",
+        "INVALID_DATE": "Parameter tidak valid, baka. Coba ketik `7` sebagai parameter untuk mendapatkan data gabungan minggu ini.",
         "NO_DATA_FOUND": "Aku tidak dapat menemukan data apa pun yang terkait dengan bidang **{{selectedMetric}}**. {{emoji}}"
     },
     "UNAUTHORIZED_ACCESS": "Kamu tidak diizinkan untuk menggunakan fitur tingkat administrator.",
     "UNMUTE": {
-        "MISSING_ARG": "Kamu berwenang untuk menggunakan **Sistem Suarakan**. Coba tentukan pengguna target lain kali!",
-        "NO_MUTE_ROLE": "Maaf, tidak ada peran bisu yang dapat ditemukan.",
-        "SUCCESSFUL": "Berhasil mengaktifkan suara **{{user}}**",
+        "MISSING_ARG": "Kamu berwenang untuk menggunakan **Sistem Unmute**. Lain kali, tolong sebutkan pengguna targetnya ya!",
+        "NO_MUTE_ROLE": "Maaf, tidak ada peran mute yang dapat ditemukan.",
+        "SUCCESSFUL": "Berhasil membatalkan mute **{{user}}**",
         "USER_DOESNT_HAVE_ROLE": "Maaf, {{user}}, saat ini tidak dibisukan."
     },
     "TRADE": {
-        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Ada sesuatu yang ingin dibagi?♡**\nCoba panggil aku dengan **`{{prefix}}trade @user`** dan aku akan membuka jendela trade untuk kalian berdua!\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Ingin berbagi sesuatu dengan teman?♡**\nGunakan **`{{prefix}}trade @user`** dan aku akan membuka jendela trade untuk kalian berdua!\n╰──────────☆～*:;,．*╯",
         "FETCHING": "{{emoji}} *Tunggu sebentar-* aku sedang membuka jendela trade untuk kalian berdua..",
-        "REQUEST_PROMPT": "**{{a}}** mengundang kedalam trade. **{{b}}** punya waktu sekitar **30 detik** untuk merespons sebelum permintaan ini kedaluwarsa.",
+        "REQUEST_PROMPT": "**{{a}}** mengajukan permintaan trade, menunggu konfirmasi dari **{{b}}**. Mereka punya waktu sekitar **30 detik** untuk merespons sebelum waktu habis.",
         "REQUEST_DECLINED": "**{{b}}** menolak permintaan trade.",
         "REQUEST_TIMEOUT": "Boo ~ **{{b}}** tidak merespons permintaan trade-mu tepat waktu.",
         "SELF_TRADE": "Kamu tidak bisa trade dengan dirimu sendiri, *baka*. {{emoji}}",
         "BOT_TRADE": "Bot bukan partner trade yang valid.",
         "ALREADY_IN_TRADE": "**{{user}}** sedang berada dalam trade aktif lain; tunggu sampai trade-nya selesai.",
         "ACTIVE_HEADER": "Trade terbuka :: {{guildName}}",
-        "ACTIVE_HINT": "Pakai tombol di bawah untuk menambah atau menghapus item, set artcoins, atau ready.",
+        "ACTIVE_HINT": "Pakai tombol di bawah untuk menambah atau menghapus item, mengatur artcoins, atau mengunci tawaran.",
         "OFFER_LINE": "{{qty}}× {{item}}",
         "OFFER_EMPTY": "*(belum ada item)*",
         "OFFER_ARTCOINS": "{{emoji}} {{amount}}",
         "READY_YES": "Terkunci ✓",
         "READY_NO": "Terbuka ✗",
         "READY_REVOKED": "Penawaran berubah — kedua sisi perlu mengunci ulang.",
-        "ITEM_NOT_FOUND": "Aku tidak menemukan item itu di inventory-mu.",
+        "ITEM_NOT_FOUND": "Aku tidak menemukan item itu di inventarismu.",
         "ITEM_NOT_TRADEABLE": "**{{item}}** terikat dan tidak bisa di-trade.",
         "INSUFFICIENT_ITEM": "{{user}} tidak punya **{{qty}}× {{item}}**.",
         "QTY_INVALID": "Jumlah harus berupa bilangan bulat positif.",
         "AC_INVALID": "Jumlah artcoin harus berupa bilangan bulat tidak negatif.",
         "AC_INSUFFICIENT": "{{user}} hanya punya {{emoji}} **{{balance}}**.",
-        "AC_MODAL_TITLE": "Set artcoins yang ditawarkan",
+        "AC_MODAL_TITLE": "Atur artcoins yang ditawarkan",
         "AC_MODAL_LABEL": "Jumlah (0 untuk hapus)",
         "AC_LABEL_WITH_BALANCE": "Jumlah (kamu punya {{balance}}; 0 untuk hapus)",
         "AC_PLACEHOLDER": "0 sampai {{max}}",
@@ -1105,30 +1105,30 @@
         "ADD_MODAL_TITLE": "Tambahkan item",
         "ADD_MODAL_ITEM_LABEL": "Nama atau ID item",
         "ADD_MODAL_QTY_LABEL": "Jumlah",
-        "ADD_SELECT_PROMPT": "Pilih item dari inventory-mu untuk ditawarkan.",
+        "ADD_SELECT_PROMPT": "Pilih item dari inventarismu untuk ditawarkan.",
         "ADD_SELECT_PLACEHOLDER": "Pilih item…",
-        "ADD_QTY_MODAL_TITLE": "Berapa banyak?",
+        "ADD_QTY_MODAL_TITLE": "Berapa banyak yang ditawarkan?",
         "ADD_QTY_LABEL_WITH_OWNED": "Jumlah (kamu punya {{owned}})",
         "ADD_QTY_PLACEHOLDER": "1 sampai {{max}}",
         "ADD_QTY_ERROR_TOO_MANY": "Terlalu banyak — maks {{max}}",
         "ADD_QTY_ERROR_INVALID": "Tidak valid — harus 1 atau lebih",
         "ADD_TOO_MANY_RETRIES": "Terlalu banyak percobaan tidak valid. Klik Add lagi untuk mencoba ulang.",
         "ADD_NO_TRADEABLE_ITEMS": "Kamu tidak punya item yang bisa di-trade di server ini.",
-        "ADD_SELECT_TIMEOUT": "Pemilihan kedaluwarsa.",
+        "ADD_SELECT_TIMEOUT": "Waktu pemilihan habis.",
         "REMOVE_MODAL_TITLE": "Hapus item",
         "REMOVE_NO_ITEMS": "Kamu belum menawarkan apa pun.",
         "FINAL_PROMPT": "Kedua sisi sudah terkunci. Konfirmasi dalam 10 detik untuk menyelesaikan trade.",
         "FINAL_PROMPT_WAITING": "Menunggu sisi lain untuk konfirmasi…",
-        "FINAL_TIMEOUT": "Konfirmasi terakhir kedaluwarsa — kunci dilepas.",
-        "ACTIVE_HINT_FOLLOWUP": "Jangan lupa periksa itemnya sebelum tekan **Lock** !!♡ {{emoji}}",
+        "FINAL_TIMEOUT": "Waktu konfirmasi akhir habis — kunci dilepas.",
+        "ACTIVE_HINT_FOLLOWUP": "Periksa item yang ditawarkan secara berkala sebelum menekan **Lock** ♡ setiap perubahan akan melepas kunci kedua pihak. {{emoji}}",
         "EXEC_SUCCESS": "**Trade selesai!♡**\n╰─ {{a}} dan {{b}} baru saja saling bertukar item.",
         "EXEC_SUCCESS_FOLLOWUP": "Pakai **`{{prefix}}tradehistory`** untuk melihat riwayat transaksimu {{emoji}}",
         "EXEC_FAILED_INSUFFICIENT": "Trade dibatalkan — {{user}} tidak lagi memiliki cukup item atau saldo.",
         "EXEC_FAILED_GENERIC": "Trade gagal saat eksekusi. Tidak ada yang berubah.",
-        "CANCELLED": "Trade dibatalkan.",
+        "CANCELLED": "**Sayang sekali** .. tidak ada trade menarik yang terjadi {{emoji}} mungkin lain kali??",
         "IDLE_TIMEOUT": "Jendela trade ditutup karena tidak ada aktivitas.",
-        "NOT_PARTICIPANT": "Hanya kedua peserta trade yang bisa menggunakan tombol ini.",
-        "INVENTORY_EMPTY": "Inventory {{user}} tidak punya item yang bisa di-trade di server ini."
+        "NOT_PARTICIPANT": "Ssst !! hanya peserta trade yang bisa menggunakan tombol ini !!",
+        "INVENTORY_EMPTY": "Inventaris {{user}} tidak punya item yang bisa di-trade di server ini."
     },
     "TRADEHISTORY": {
         "GUIDE": "Pakai `{{prefix}}tradehistory` untuk melihat trade terakhirmu, atau `{{prefix}}tradehistory @user` untuk melihat milik orang lain.",
@@ -1148,41 +1148,41 @@
     },
     "USE": {
         "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nApakah kamu ingin menggunakan **{{item}}**?\n╰────────☆～*:;,．*╯\n{{footer}}",
-        "CONFIRMATION_TIPS": "Coba bereaksi terhadap\n tombol hijau untuk melanjutkan.",
+        "CONFIRMATION_TIPS": "Silakan tekan\n tombol hijau untuk melanjutkan.",
         "INSUFFICIENT": "Ups, sepertinya kamu tidak memiliki item tersebut.",
-        "INVALID_ITEM": "Apakah barang itu ada? *hmm..* {{emoji}}",
+        "INVALID_ITEM": "Apakah item itu memang ada? *hmm..* {{emoji}}",
         "NO_ITEMS": "Ehh, kamu tidak punya item untuk digunakan! {{emoji}}",
         "SUCCESSFUL": "{{user}} telah menggunakan {{item}}!♡",
-        "UNUSABLE": "Berhenti disana, item ini tidak dapat digunakan! {{emoji}}"
+        "UNUSABLE": "Berhenti di situ, item ini tidak dapat digunakan! {{emoji}}"
     },
     "USER": {
         "IS_INVALID": "**Maaf- Aku tidak dapat menemukan pengguna itu.**",
         "REGISTRATION_ON_PROCESS": "Coba perintah ini lagi dalam beberapa detik!♡"
     },
     "USER_PERMS": {
-        "END": ") hak istimewa untuk menggunakan perintah ini.",
-        "START": "Kamu membutuhkan LV"
+        "END": ") untuk menggunakan perintah ini.",
+        "START": "Kamu membutuhkan hak akses LV"
     },
     "USERDATA": {
-        "AVAILABLE_OPTIONS": "Maaf, satu-satunya pilihan aku adalah membuat tabel, mengambil, atau menghapus.",
+        "AVAILABLE_OPTIONS": "Maaf, pilihanku hanya tables, retrieve, atau remove.",
         "DELETE": "Semua data yang terkait dengan pengguna:{{user}} telah dihapus",
         "INVALID_OPTION": "Maaf, itu bukan pilihan yang valid",
-        "INVALID_USE_SELF": "Aku minta maaf tetapi kamu tidak dapat melakukan perintah ini pada diri kamu sendiri",
+        "INVALID_USE_SELF": "Maaf, tapi kamu tidak bisa menjalankan perintah ini pada dirimu sendiri",
         "INVALID_USER": "Maaf, aku tidak dapat menemukan pengguna itu.",
         "PROMPT": "Kamu dapat memilih untuk mengambil data apa pun berdasarkan tabel tertentu atau salah satu pengelompokan yang telah aku tentukan sebelumnya, dengan mengetikkannya setelah pesan ini (1 per perintah)\nPengelompokan:\nSemua\n${{data}}",
         "SUCCESSFUL_ALL": "Berikut ini semua data untuk pengguna dengan id: {{user}}",
         "SUCCESSFUL_GROUP": "Berikut data dari grup `{{input}}` untuk pengguna dengan id: {{user}}",
-        "SUCCESSFUL_TABLE": "Berikut data tabel `{{input}}` untuk user dengan id: {{user}}"
+        "SUCCESSFUL_TABLE": "Berikut data tabel `{{input}}` untuk pengguna dengan id: {{user}}"
     },
     "VERIFICATION_REQUEST": {
         "MODS_UNAVAILABLE": "Halo **{0}**, moderator kami saat ini tidak ada. Jadi harap bersabar! Aku akan mencoba membangunkan mereka. {1}",
-        "NOTIFY_ALL_MODS": "{0} Bangun! {1} kami memiliki permintaan {2} baru!",
-        "NOTIFY_AVAILABLE_MODS": "Hei, hei! kami mendapat permintaan verifikasi baru!\n{0}"
+        "NOTIFY_ALL_MODS": "{0} Bangun! {1} kita punya permintaan {2} baru!",
+        "NOTIFY_AVAILABLE_MODS": "Hei, hei! kita dapat permintaan verifikasi baru!\n{0}"
     },
     "VOTE": {
-        "IS_COOLDOWN": "**Hai, pemungutan suara berikutnya masih dalam masa cooldown!**\n╰ Selagi kita membahasnya, mengapa tidak **{{page}}** tentang aku terlebih dahulu? {{emoji}}",
-        "READY": "╭*:;,．★ ～☆*─────────────────╮\n**Bisakah kamu meluangkan waktu sebentar untuk memilih aku di {{url}}?**\n Jangan khawatir tentang hadiahnya! Aku sudah menyiapkan sesuatu yang spesial untukmu♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nIngat, suara kamu akan tersedia setiap **12 jam.**",
-        "SUGGEST_TO_REGISTER": "jika ini pertama kalinya kamu, tautkan akun perselisihan kamu ke situs tersebut sehingga kamu dapat memberi aku suara !! {{emoji}}",
-        "UNAVAILABLE": "**Aku minta maaf,** keadaan aku saat ini belum mendukung layanan pemungutan suara. Coba hubungi pengembang aku untuk rincian lebih lanjut."
+        "IS_COOLDOWN": "**Hai, vote berikutnya masih dalam cooldown!**\n╰ Sambil menunggu, kenapa tidak **{{page}}** tentang aku dulu? {{emoji}}",
+        "READY": "╭*:;,．★ ～☆*─────────────────╮\n**Bisakah kamu meluangkan waktu sebentar untuk vote aku di {{url}}?**\n Jangan khawatir tentang hadiahnya! Aku sudah menyiapkan sesuatu yang spesial untukmu♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nIngat, kamu bisa vote lagi setiap **12 jam.**",
+        "SUGGEST_TO_REGISTER": "jika ini pertama kalinya, tautkan akun Discord-mu ke situs tersebut supaya kamu bisa memberiku vote !! {{emoji}}",
+        "UNAVAILABLE": "**Aku minta maaf,** kondisiku saat ini belum mendukung layanan vote. Silakan hubungi pengembangku untuk rincian lebih lanjut."
     }
 }
