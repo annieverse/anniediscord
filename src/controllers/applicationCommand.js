@@ -43,8 +43,11 @@ module.exports = async (client, interaction, command) => {
     // Check Bot's permissions before procceding
     let checkPerm = false
     try {
-        if (!interaction.channel.isDMBased()) {
-            checkPerm = reply.checkPermissions(interaction.channel)
+        // interaction.channel is null when the channel isn't cached (e.g. DMs, unseen threads)
+        const channel = interaction.channel
+            ?? await client.channels.fetch(interaction.channelId).catch(() => null)
+        if (channel && !channel.isDMBased()) {
+            checkPerm = reply.checkPermissions(channel)
         }
         if (!checkPerm) {
             if (clearPendingCommandCooldown) clearPendingCommandCooldown()
