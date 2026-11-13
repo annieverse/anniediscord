@@ -10,10 +10,9 @@ const DEFAULT_BODY_LIMIT = `64kb`
 /**
  * Mount Annie's private API onto an existing Express app.
  *
- * Auth: every route under the configured base path requires a `Bearer` token.
- * Prefer `PRIVATE_API_TOKEN`; `DASHBOARD_API_TOKEN` is still accepted as a
- * legacy fallback for existing dashboard deployments. If neither env var is
- * set, the API refuses all traffic with 503.
+ * Auth: every route under the configured base path requires a `Bearer` token
+ * matching `PRIVATE_API_TOKEN`. If the env var is not set, the API refuses
+ * all traffic with 503.
  *
  * Versioning: routes live under `/api/v1/*`. New versions add a sibling
  * directory under `routes/` rather than mutating v1.

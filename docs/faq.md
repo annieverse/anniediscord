@@ -7,7 +7,7 @@
 **A:** Simply type **`>help`**.
 
 **Q: What should I do with the ![:fragments:](https://cdn.discordapp.com/emojis/577121735917174785.webp?size=16&quality=lossless) fragments I got from gacha?**  
-**A:** Fragments are merely a garbage item. You can sell them for couple of artcoins through **`/sellfrag`** command.
+**A:** Fragments are merely a garbage item. You can sell them for couple of artcoins through **`/sellfragments`** command.
 
 **Q: How to enable the greeting message?**  
 **A:** Simply type **`/setwelcomer`** to see all the guided steps to setup a greeting message in your server.
@@ -19,7 +19,7 @@
 **A:** Type **`>setprefix`** followed by your desired command. For example,. **`>setprefix napu`** will resulting the commands to be callable via napusetprefix, napubal, napuping, etc. ***This is temporarily disabled until we are able to get the needed intent.**
 
 **Q: Is it possible to remove/delete autorole from Annie's Welcomer?**  
-**A:** Yes, the recent update has added a new option to reset your autorole configuration from Annie's Welcomer. This can be done by typing **`/setwelcomer role reset`**.
+**A:** Yes, the recent update has added a new option to reset your autorole configuration from Annie's Welcomer. This can be done by typing **`/setwelcomer reset_role`**.
 
 **Q: I can't assign old relationship types like sister, brother or mommy anymore?**  
 **A:** Nope, they are still in the database. The recent update has made these relationship types to be grouped into several new type. For example, 'Daddy' and 'Mommy' relationships are grouped in 'Parent' type.
@@ -49,7 +49,7 @@
 **A:** We set Annie to restart herself at least once in a day to conserve the server resources.
 
 **Q: What is the rate for XP and AC?**  
-**A:** XP= `1-5` per message AC = `10-15` per message _Please note we do have on our road map the ability to change this_  
+**A:** XP= `10-15` per message AC = `1-5` per message _Please note we do have on our road map the ability to change this_  
 
 **Q: Can I disable Annie's Levels?**  
 **A:** Yes just use the `/setrank disable` command.

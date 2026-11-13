@@ -107,11 +107,11 @@ module.exports = {
     /**
      * The executed function upon command invocation.
      * The standard provided prarameters are writen in sequence below
-     * [client, reply, message, arg, locale]
+     * [client, reply, message, arg, locale, prefix]
      * @required Only for MessageCommands
      * @type {function}
      */
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         // ... Set up and then point to this.run()
     },
     /**
@@ -123,6 +123,14 @@ module.exports = {
      */
     async Iexecute(client, reply, interaction, options, locale) {
         // ... Set up and then point to this.run()
+    },
+    /**
+     * Responds to autocomplete requests for this command's options.
+     * @Optional Only if an option sets `autocomplete: true`
+     * @type {function}
+     */
+    async autocomplete(client, interaction) {
+        // ... interaction.respond([{ name, value }])
     },
     async run(client, reply, messageRef, locale){
         // ... Your command ran here.
