@@ -1,3 +1,10 @@
+## [10.4.2](https://github.com/annieverse/anniediscord/compare/v10.4.1...v10.4.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* **locale:** clean up Indonesian translations ([72957eb](https://github.com/annieverse/anniediscord/commit/72957eb291a67219bd9c8bbf27ebd88852ca8aa1))
+
 ## [10.4.1](https://github.com/annieverse/anniediscord/compare/v10.4.0...v10.4.1) (2026-06-02)
 
 
