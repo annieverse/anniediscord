@@ -1,3 +1,10 @@
+## [10.4.3](https://github.com/annieverse/anniediscord/compare/v10.4.2...v10.4.3) (2026-11-13)
+
+
+### Bug Fixes
+
+* **slash:** guard null interaction.channel in permission check ([1b50774](https://github.com/annieverse/anniediscord/commit/1b50774a834976b9f69f9734fcd3763ef6323436))
+
 ## [10.4.2](https://github.com/annieverse/anniediscord/compare/v10.4.1...v10.4.2) (2026-11-13)
 
 
