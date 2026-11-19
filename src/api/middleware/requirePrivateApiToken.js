@@ -11,25 +11,38 @@ const TOKEN_ENV_KEYS = [`PRIVATE_API_TOKEN`]
  */
 module.exports = function requirePrivateApiToken({ logger }) {
 	return function privateApiTokenMiddleware(req, res, next) {
-		const { expected, source } = getConfiguredToken()
-		if (!expected) {
+		const result = checkAuthorizationHeader(req.get(`authorization`))
+		if (result.ok) return next()
+		if (result.error === `private_api_unconfigured`) {
 			logger.warn({ action: `private_api_unconfigured`, path: req.path })
-			return res.status(503).json({ ok: false, error: `private_api_unconfigured` })
 		}
-
-		const header = req.get(`authorization`) || ``
-		const match = header.match(/^Bearer\s+(.+)$/i)
-		if (!match) return res.status(401).json({ ok: false, error: `missing_bearer_token` })
-
-		const supplied = match[1]
-		if (!constantTimeEqual(supplied, expected)) {
-			logger.warn({ action: `private_api_unauthorized`, path: req.path, ip: req.ip, tokenSource: source })
-			return res.status(401).json({ ok: false, error: `invalid_token` })
+		if (result.error === `invalid_token`) {
+			logger.warn({ action: `private_api_unauthorized`, path: req.path, ip: req.ip, tokenSource: result.source })
 		}
-
-		return next()
+		return res.status(result.status).json({ ok: false, error: result.error })
 	}
 }
+
+/**
+ * Validate a raw `Authorization` header against the configured token.
+ * Shared by the Express gate above and the WebSocket upgrade handler, which
+ * never passes through Express middleware.
+ *
+ * @param {string} [header]
+ * @return {{ ok: boolean, status: number, error: string|null, source: string|null }}
+ */
+function checkAuthorizationHeader(header) {
+	const { expected, source } = getConfiguredToken()
+	if (!expected) return { ok: false, status: 503, error: `private_api_unconfigured`, source }
+
+	const match = (header || ``).match(/^Bearer\s+(.+)$/i)
+	if (!match) return { ok: false, status: 401, error: `missing_bearer_token`, source }
+
+	if (!constantTimeEqual(match[1], expected)) return { ok: false, status: 401, error: `invalid_token`, source }
+
+	return { ok: true, status: 200, error: null, source }
+}
+module.exports.checkAuthorizationHeader = checkAuthorizationHeader
 
 /**
  * @return {{ expected: string|null, source: string|null }}

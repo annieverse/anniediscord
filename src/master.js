@@ -108,7 +108,8 @@ async function masterShard() {
 	})
 
 	const server = express()
-	require(`./api`)(server)
+	const privateApi = require(`./api`)
+	privateApi(server, { manager })
 	manager.on(`shardCreate`, shard => {
 		const shardLogger = createLogger.child({ shard: getCustomShardId(shard.id) })
 		shard.on(ShardEvents.Death, (p) => {
@@ -281,7 +282,8 @@ async function masterShard() {
 		}
 	}))
 	const port = process.env.PORT || 3000
-	server.listen(port, () => logger.info({ action: `LISTENING_TO_PORT`, port }))
+	const httpServer = server.listen(port, () => logger.info({ action: `LISTENING_TO_PORT`, port }))
+	privateApi.attachRealtime(httpServer, { manager })
 }
 
 module.exports = masterShard

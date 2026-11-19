@@ -21,9 +21,10 @@ src/
   annie.js                # Annie client, one instance per shard
   api/                    # private HTTP API mounted on the master's Express app
     index.js              #   mount + auth gate + JSON body parser
-    middleware/           #   requirePrivateApiToken.js
-    routes/v1/            #   /api/v1/ping, /api/v1/commands
-    lib/                  #   listCommands.js (reads command metadata from disk)
+    middleware/           #   requirePrivateApiToken.js, requireLoopback.js
+    routes/v1/            #   /api/v1/ping, /api/v1/commands, /api/v1/shards
+    lib/                  #   listCommands.js (reads command metadata from disk), shardStatus.js
+    realtime/             #   shardStream.js (WebSocket feed on /api/v1/shards/stream)
   commands/<group>/       # artsy, developer, fun, setting, system, user
   commands/loader.js      # builds the command Collections
   commands/applicationCommandsLoader.js   # pushes slash commands to Discord
@@ -154,7 +155,10 @@ When you need bot-wide state, follow this same pattern instead of importing sing
 
 - Every route requires `Authorization: Bearer <PRIVATE_API_TOKEN>` (`src/api/middleware/requirePrivateApiToken.js`). With the env var unset, every request gets 503.
 - `GET /api/v1/ping` — liveness. `GET /api/v1/commands` — command metadata read from disk by `src/api/lib/listCommands.js`, with functions stripped and anything above `permissionLevel` 3 (developer commands) left out.
-- The API runs in the master process, which has no Discord client and no `client.db`. A route that needs bot state has to go through the `ShardingManager` (`broadcastEval`), as the vote webhook does.
+- `GET /api/v1/shards` and `GET /api/v1/shards/:id` — live shard status (id, one-based number, codename, gateway ping, master→shard retrieval latency, guild counts) built by `src/api/lib/shardStatus.js`. It probes each shard with `shard.eval` rather than `broadcastEval`, so a dead or still-spawning shard is reported as `unavailable` instead of failing the whole response.
+- `ws://…/api/v1/shards/stream` — the same snapshot pushed over WebSocket (`src/api/realtime/shardStream.js`, `ws` package) every `SHARD_STREAM_INTERVAL_MS` (default 5000) and right after a shard changes state. Express never sees upgrade requests, so `master.js` wires it with `privateApi.attachRealtime(httpServer, { manager })`; the handler repeats the token check itself.
+- The `/shards` routes and the stream are same-host only (`src/api/middleware/requireLoopback.js`): the socket address must be loopback and the request must carry no proxy forwarding headers. The rest of the API is token-only.
+- The API runs in the master process, which has no Discord client and no `client.db`. `master.js` hands the `ShardingManager` to the API (`ctx.manager`); a route that needs bot state has to go through it (`shard.eval` / `broadcastEval`), as the vote webhook does.
 - The JSON body parser is scoped to `/api` so it does not touch `/dblwebhook`.
 
 ## Trade system
