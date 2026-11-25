@@ -1,3 +1,10 @@
+## [10.5.1](https://github.com/annieverse/anniediscord/compare/v10.5.0...v10.5.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* **shardError:** stop relaying transient gateway handshake errors ([78845b2](https://github.com/annieverse/anniediscord/commit/78845b24b01b97720f8cb0e94b64af70038055ea))
+
 # [10.5.0](https://github.com/annieverse/anniediscord/compare/v10.4.3...v10.5.0) (2026-11-19)
 
 
