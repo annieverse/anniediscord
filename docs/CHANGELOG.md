@@ -1,3 +1,10 @@
+# [10.5.0](https://github.com/annieverse/anniediscord/compare/v10.4.3...v10.5.0) (2026-11-19)
+
+
+### Features
+
+* **api:** shards/server status ([b8327f4](https://github.com/annieverse/anniediscord/commit/b8327f4cbc354ce00ff4f6496e8dc4765d8283bd))
+
 ## [10.4.3](https://github.com/annieverse/anniediscord/compare/v10.4.2...v10.4.3) (2026-11-13)
 
 
